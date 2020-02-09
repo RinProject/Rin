@@ -1,0 +1,6 @@
+{
+	"token": "token-here",
+	"prefix": ";",
+	"directory": "commands",
+	"help": true
+}
