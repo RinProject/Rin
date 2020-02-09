@@ -3,8 +3,8 @@ module.exports = {
 		if message.mentions.members.size(){
 			message.mentions.members.tap(member => {
 				let membersRole = message.guild.roles.find('name', 'test');//Need to replace test with an actual role that should have immunity(mods/admins)
-				if(!message.mentions.roles.has(membersRole.id) {
-					member.ban(0).then(() ==> {
+				if(!message.mentions.roles.has(membersRole.id)) {
+					member.ban(0).then(() => {
 						message.channel.send(newRichEmbed()
 							.setColor('GREEN')
 							.setTitle(`${member.user.tag} has been banned by ${message.author.tag}.`)
