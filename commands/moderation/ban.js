@@ -1,6 +1,6 @@
 module.exports = {
 	async run(message) {
-		if message.mentions.members.size(){
+		if (message.mentions.members.size()){
 			message.mentions.members.tap(member => {
 				let membersRole = message.guild.roles.find('name', 'test');//Need to replace test with an actual role that should have immunity(mods/admins)
 				if(!message.mentions.roles.has(membersRole.id)) {
@@ -28,5 +28,10 @@ module.exports = {
                 .setTitle(`Please mention users to ban.`)
             );
 		}
-	}
+	},
+  description: 'Bans a user',
+	detailed: 'Bans all users mentioned',
+	examples: prefix => `${prefix}ban @someone1, @someone2, @someone3`,
+	name: 'ban',
+	perms: BAN_MEMBERS,
 }
