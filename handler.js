@@ -19,7 +19,7 @@ function initializer(config){
 					message.channel.send('', {embed: {description:  `**${commands[args[1].toLowerCase()].name}**\nDescription:\n${commands[args[1].toLowerCase()].detailed}\nExample(s):\n${commands[args[1].toLowerCase()].examples}`}});
 				//send a message to the user with all commands and desriptions
 				message.author.send({embed: {title: '**Command list**', description: `A list over all the commands the bot has.\nThese can be used by ${prefix}{commandname} or dming this bot the command.\nFor command sepcific info add the name of the command after help.`, fields: help}});
-				//if message sent in guild notify that info is sent directly 
+				//if message sent in guild notify that info is sent directly
 				if(message.guild) message.channel.send('', {embed: {title: '**Command list**', description: `${message.author} you have been sent a direct message with a command list.`}});
 			},
 			description: 'Help command.',
@@ -78,7 +78,7 @@ function handle(message){
 			if(!message.member.hasPermission(perm, null, true, true))
 				lacking.push(perm);
 		})
-		if(lacking)
+		if(lacking])
 			return message.channel.send('', {embed: {title: 'You lack the necessary permissions to use this command!', description: `You are lacking the following permission(s): ${lacking.join('\n')}`}});
 	}
 	//run command
