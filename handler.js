@@ -73,12 +73,11 @@ function handle(message){
 	//check permission
 	if(commands[args[0].toLowerCase()].perms){
 		let lacking = [];
-		console.log('checking perms')
 		commands[args[0].toLowerCase()].perms.forEach(perm => {
-			if(!message.member.hasPermission(perm, null, true, true))
+			if(!message.member.hasPermission(perm))
 				lacking.push(perm);
-		})
-		if(lacking])
+		});
+		if(lacking[0])
 			return message.channel.send('', {embed: {title: 'You lack the necessary permissions to use this command!', description: `You are lacking the following permission(s): ${lacking.join('\n')}`}});
 	}
 	//run command
