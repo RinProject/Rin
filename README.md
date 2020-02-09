@@ -1,2 +1,2 @@
 # Rin
- Mod Bot
+ Discord Mod Bot
