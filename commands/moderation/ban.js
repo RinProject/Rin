@@ -33,5 +33,5 @@ module.exports = {
 	detailed: 'Bans all users mentioned',
 	examples: prefix => `${prefix}ban @someone1, @someone2, @someone3`,
 	name: 'ban',
-	perms: BAN_MEMBERS,
+	perms: [`BAN_MEMBERS`]
 }
