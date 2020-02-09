@@ -1,0 +1,22 @@
+{
+  "name": "rin",
+  "version": "0.0.1",
+  "description": "asdf",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vAnomali378/Rin.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vAnomali378/Rin/issues"
+  },
+  "homepage": "https://github.com/vAnomali378/Rin#readme",
+  "dependencies": {
+    "discord.js": "^11.5.1"
+  }
+}
