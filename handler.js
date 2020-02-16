@@ -11,20 +11,19 @@ function initializer(config){
 	prefix = config.prefix||'!';
 	//add help command if wanted
 	if(config.help || config.help == undefined){
-		//help += '***help***\nHelp command, gets a list of commands or specific info about a command.\n\n';
-		help.push({name: 'system', value: 'help\nHelp command, gets a list of commands or specific info about a command.\n\n'});
+		help.push({name: 'system', value: 'help: Help command, gets a list of commands or specific info about a command.\n\n'});
 		commands.help = {
-			run: (message, args)=>{
+			run: async function (message, args){
 				if(commands[args[1]])//return command specific info if available
-					message.channel.send('', {embed: {description:  `**${commands[args[1].toLowerCase()].name}**\nDescription:\n${commands[args[1].toLowerCase()].detailed}\nExample(s):\n${commands[args[1].toLowerCase()].examples}`}});
+					return message.channel.send('', {embed: {description:  `**${commands[args[1].toLowerCase()].name}**\nDescription:\n${commands[args[1].toLowerCase()].detailed}\nExample(s): \`${commands[args[1].toLowerCase()].examples}\``}});
 				//send a message to the user with all commands and desriptions
-				message.author.send({embed: {title: '**Command list**', description: `A list over all the commands the bot has.\nThese can be used by ${prefix}{commandname} or dming this bot the command.\nFor command sepcific info add the name of the command after help.`, fields: help}});
+				message.author.send({embed: {title: '**Command list**', description: `A list over all the commands the bot has.\nFor specific command info ${prefix}help [command_name]`, fields: help}});
 				//if message sent in guild notify that info is sent directly
 				if(message.guild) message.channel.send('', {embed: {title: '**Command list**', description: `${message.author} you have been sent a direct message with a command list.`}});
 			},
-			description: 'Help command.',
+			description: 'Help command',
 			detailed: 'Help command, gets a list of commands or specific info about a command.',
-			examples: prefix => `${prefix}help, ${prefix}help [command_name]`,
+			examples: `${prefix}help, ${prefix}help [command_name]`,
 			name: 'help',
 			perms: null,
 		}
@@ -49,10 +48,12 @@ function initializer(config){
 				//adds command to commands object
 				commands[cmd.name] = cmd;
 				//adds to help command list
-				category.value += `${cmd.name}:\n${cmd.description}\n\n`;
+				category.value += `${cmd.name}: ${cmd.description}\n\n`;
 			}
-		})
-		help.push(category);
+		});
+		//Only push folders with commands to help command display
+		if(category.value)
+			help.push(category);
 	});
 };
 
