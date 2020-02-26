@@ -52,7 +52,7 @@ const images = ['https://thumbs.gfycat.com/AlienatedUnawareArcherfish-size_restr
 'https://media.tenor.com/images/aab83bd3725feeaccb9929f8ca964db9/tenor.gif',
 'https://media1.giphy.com/media/qscdhWs5o3yb6/giphy.gif'];
 module.exports = {
-	run: function (message){
+	run: async function (message){
 		if(message.mentions.users.first())
             message.channel.send('', {embed: {
                 title:`${message.mentions.users.first().username} has been hugged by ${message.author.username}`,
