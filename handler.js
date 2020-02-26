@@ -64,11 +64,12 @@ function handle(message){
 	if(!message.content.startsWith(prefix)){
 		if(message.guild) return;
 		//split into arguments
-		args = message.content.split(/\s+(?=([^"]*"[^"]*")*[^"]*$)|"/);
+		args = message.content.split(/\s/);
 	}else{
 		//split into arguments and remove prefix
-		args = message.content.slice(prefix.length).split(/\s+(?=([^"]*"[^"]*")*[^"]*$)|"/);
+		args = message.content.slice(prefix.length).split(/\s/);
 	}
+	args = args.filter(str => str);
 	//check existance of command
 	if(!commands[args[0].toLowerCase()]) return;
 	//check permission
