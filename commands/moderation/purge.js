@@ -2,7 +2,7 @@ module.exports = {
     async run(message) {
         const args = message.content.split(' ');
         if (args.length == 1){
-            message.channel.fetchMessage({limit: 10}).then(message => {
+            message.channel.fetchMessage({limit: 2}).then(message => {
                 message.channel.bulkDelete(messages);
             })
         } else {
@@ -10,7 +10,7 @@ module.exports = {
                       message.channel.bulkDelete(messages);
             });
         }
-    }
+    },
     description: 'Purges Messages',
   	detailed: 'Purges Messages',
   	examples: prefix => `${prefix}purge <number of message to delete>`,
