@@ -64,10 +64,10 @@ function handle(message){
 	if(!message.content.startsWith(prefix)){
 		if(message.guild) return;
 		//split into arguments
-		args = message.content.split(/\W/);
+		args = message.content.split(/\s+(?=([^"]*"[^"]*")*[^"]*$)|"/);
 	}else{
 		//split into arguments and remove prefix
-		args = message.content.slice(prefix.length).split(/\W/);
+		args = message.content.slice(prefix.length).split(/\s+(?=([^"]*"[^"]*")*[^"]*$)|"/);
 	}
 	//check existance of command
 	if(!commands[args[0].toLowerCase()]) return;
