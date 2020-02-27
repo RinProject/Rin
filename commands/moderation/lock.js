@@ -1,6 +1,6 @@
 module.exports = {
     async run (message) {
-      const everyone = message.guild.defaultRole.id;
+      const everyone = message.guild.defaultRole.id;0
       if (message.content.split(' ')[1] != 'off') {
         message.channel.overwritePermissions(everyone, {
           'SEND_MESSAGES': false
