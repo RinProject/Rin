@@ -23,7 +23,7 @@ module.exports = {
 				} else {
 					message.channel.send('', {
 						embed: {
-							title: `${member.user.tag} was not kicked. Reason: Member cannot be kicked by bot.`,
+							title: `${member.user.tag} was not kicked. Reason: Member cannot be kicked by bot. Check my status in the servers role hierarchy.`,
 							color: 0xFF0000
 						}
 					});

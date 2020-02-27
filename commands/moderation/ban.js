@@ -23,7 +23,7 @@ module.exports = {
 				} else {
 					message.channel.send('', {
 						embed: {
-							title: `${member.user.tag} was not banned. Reason: Member cannot be banned by bot.`,
+							title: `${member.user.tag} was not banned. Reason: Member cannot be banned by bot. Check my status in the servers role hierarchy.`,
 							color: 0xFF0000
 						}
 					});
