@@ -1,18 +1,15 @@
 module.exports = {
-   async run (message) {
-     const args = message.content.slice(1).split(' ');
-     const command = args.shift().toLowerCase();
-     const x = 0000FF;
+    async run (message, args) {
+      if (!args[1]) return;
 
-     const color = message.content.slice(x.length).split(' ')
-     message.member.guild.createRole({
-       name: `${x}`,
-       color: 0x`${color}`
-     });
-   },
-   description: 'Creates a role',
-   detailed: 'Creates a role: Takes in name and color',
-   examples: prefix => `${prefix}createrole @rolename #hexcolor`,
-   name: 'createrole',
-   perms: ['MANAGE_ROLES']
+      mesage.member.guild.createRole({
+        name: args[1],
+        color: parseInt(args[2].replace('#',''),16)
+      });
+    },
+       description: 'Creates a role',
+       detailed: 'Creates a role: Takes in name and color',
+       examples: prefix => ${prefix}createrole @rolename #hexcolor,
+       name: 'createrole',
+       perms: ['MANAGE_ROLES']
 }
