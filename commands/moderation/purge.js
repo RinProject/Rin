@@ -1,5 +1,11 @@
 module.exports = {
     async run(message) {
+
+      // Check for sufficent permissions
+      if (!message.guild.me.hasPermission('MANAGE_MESSAGES')) {
+        return message.channel.send('I need the ``manage messages`` permission to purge messages.');
+      }
+
         const args = message.content.split(' ');
         if (args.length == 1){
             message.channel.fetchMessage({limit: 2}).then(messages => {
@@ -7,10 +13,10 @@ module.exports = {
             })
         } else {
             const num = parseInt(args[1]);
-            if (num > 100) {
+            if (num > 99) {
               message.channel.send('', {
                 embed: {
-                  title: 'Please Enter a Smaller Number',
+                  title: 'Please enter a smaller number.',
                   color: 0xFF0000
                 }
               });
