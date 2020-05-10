@@ -18,7 +18,7 @@ module.exports = {
 					console.log(err);
 				else
 					if(rows[0])
-						message.channel.send('',{embed: {color: 0xff80cc, title: `Your senpai is ${message.guild.members.get(rows[0].senpai).displayName||rows[0].senpai}`}});
+						message.channel.send('',{embed: {color: 0xff80cc, title: `Your senpai is ${message.client.users.cache.get(rows[0].senpai).username||rows[0].senpai}`}});
 					else
 						message.channel.send('',{embed: {color: 0xff0000, title: 'You have no senpai!'}});
 			});

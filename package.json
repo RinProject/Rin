@@ -4,7 +4,8 @@
   "description": "asdf",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "nodemon .",
+    "start": "node ."
   },
   "repository": {
     "type": "git",
@@ -17,7 +18,7 @@
   },
   "homepage": "https://github.com/vAnomali378/Rin#readme",
   "dependencies": {
-    "discord.js": "^11.5.1",
-    "sqlite3": "^4.1.1"
+    "discord.js": "^12.2.0",
+    "sqlite3": "^4.2.0"
   }
 }
