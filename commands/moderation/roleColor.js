@@ -5,7 +5,7 @@ module.exports = {
   /*  message.member.colorRole.edit({                                                                                                // edit the color role
                     color: finalA                                                                                                                  // set color to the random generated one
                 })*/
-    message.member.colorRole.edit({
+    message.member.roles.color.edit({
             color: parseInt(args[2].replace('#',''), 16)||0x0000ff,
     })
   },

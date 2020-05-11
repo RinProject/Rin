@@ -6,6 +6,7 @@ let commands;
 let help = [];
 let prefix = '';
 let webhook;
+let owners;
 
 /** 
  * Intializes command handler
@@ -14,7 +15,7 @@ let webhook;
  * @param {string} config.prefix bot prefix
  * @param {string} config.directory command top level directory
  * @param {boolean} [config.help=true] wheter to include help command
- * @param {number[]} config.owners an array of owners
+ * @param {string[]} config.owners an array of owners
  * @param {string} config.webhook webhook url for login errors
  * @param {object} client the active discord.js client
  * @returns {void}
@@ -24,6 +25,8 @@ function initializer(config, client){
 		throw 'No owners registered';
 	if(config.webhook==undefined)
 		throw 'No logging webhook provided, bot will default to telling users to contact owners.';
+
+	owners = config.owners;
 
 	webhook = config.webhook.match(/\/slack$/) ? 
 	config.webhook.replace(/^https:\/\/discordapp.com/, '') : 
@@ -36,7 +39,7 @@ function initializer(config, client){
 		help.push({name: 'system', value: 'help: Help command, gets a list of commands or specific info about a command.\n\n'});
 		const footerText = 'Created by: ' + (()=>{
 			let acc = '';
-			config.owners.forEach(cur=>{
+			owners.forEach(cur=>{
 				const owner = client.users.cache.get(cur);
 				acc+=`${owner.username}#${owner.discriminator}, `;
 			});
