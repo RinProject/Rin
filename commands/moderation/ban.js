@@ -2,8 +2,7 @@ module.exports = {
 	async run(message) {
 		if (message.mentions.members.first()) {
 			message.mentions.members.tap(member => {
-				let membersRole = message.guild.roles.find('name', 'Cutie');
-				if (!message.mentions.roles.has(membersRole.id)) {
+				if (message.guild.me.hasPermission('BAN_MEMBERS')) {
 					member.ban(0).then(() => {
 						message.channel.send('', {
 							embed: {
