@@ -1,7 +1,6 @@
 module.exports = {
 	async run(message, args) {
 		let member = message.mentions.members.first() || await message.guild.members.cache.get(args[1]);
-		console.log(member)
 		if (member == undefined) {
 			return message.channel.send('', {
 				embed: {
