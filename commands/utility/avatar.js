@@ -7,7 +7,7 @@ module.exports = {
 					title: `${message.author.username}'s Avatar`,
 					color: 0xFF80CC,
 					image: {
-						url: message.author.avatarURL(),
+						url: message.author.displayAvatarURL(),
 						height: 512, 
 						width: 512
 					}
