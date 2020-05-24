@@ -6,7 +6,9 @@ module.exports = {
 				title: `${member.user.username}'s Avatar`,
 				color: 0xFF80CC,
 				image: {
-					url: member.user.avatarURL(),
+					url: member.user.avatarURL({
+						size: 512
+					}),
 					height: 512, 
 					width: 512
 				}
