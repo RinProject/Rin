@@ -22,7 +22,7 @@ module.exports = {
               });
             } else {
                 return message.channel.fetchMessages({limit: num + 1}).then(messages => {
-                    message.channel.bulkDelete(messages);
+                    message.channel.bulkDelete(messages,true);
                 });
             }
         }

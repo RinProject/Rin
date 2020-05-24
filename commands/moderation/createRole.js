@@ -1,22 +1,32 @@
 module.exports = {
    async run (message, args) {
-
-     // Check for bot permissions
-     if (!message.guild.me.hasPermission('MANAGE_ROLES')) {
-      return message.channel.send('', {
-        embed: {
-          title: `An error occured.`,
-          description: "I need the ``manage roles`` permission to create roles.",
-          color: 0xFF0000
-        }
-      });
-    }
-
-     if(!args[1]) return;
-     message.member.guild.createRole({
-       name: args[1],
-       color: parseInt(args[2].replace('#',''), 16)||0x0000ff
-     });
+      if (args[1] == undefined) {
+        return message.channel.send('', {
+            embed: {
+                "title":`Please follow the format: ${prefix}createrole @rolename #hexcolor`,
+                "color": 0xFF0000
+            }
+        });
+      } else if (args[2] == undefined) {
+        return message.channel.send('', {
+            embed: {
+                "title":`Please follow the format: ${prefix}createrole @rolename #hexcolor`,
+                "color": 0xFF0000
+            }
+        });
+      } else {
+          message.member.guild.createRole({
+              name: args[1],
+              color: parseInt(args[2].replace('#',''), 16)||0x0000ff
+          });
+          let role = message.guild.roles.find('name', args[1]);
+          return message.channel.send('', {
+              embed: {
+                  "title": `Role ${role} created with the color ${args[2]}.`,
+                  "color": args[2]
+              }
+          });
+      }
    },
    description: 'Creates a role',
    detailed: 'Creates a role: Takes in name and color',
