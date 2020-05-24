@@ -1,6 +1,7 @@
 module.exports = {
 	async run(message, args) {
 		let member = message.mentions.members.first() || await message.guild.members.cache.get(args[1]);
+		console.log(member)
 		if (member == undefined) {
 			return message.channel.send('', {
 				embed: {
@@ -16,10 +17,10 @@ module.exports = {
 		} else {
 			return message.channel.send('', {
 				embed: {
-					title: `${message.mentions.users.first().username}'s Avatar`,
+					title: `${member.user.username}'s Avatar`,
 					color: 0xFF80CC,
 					image: {
-						url: message.mentions.users.first().avatarURL(),
+						url: member.user.avatarURL(),
 						height: 512, 
 						width: 512
 					}
