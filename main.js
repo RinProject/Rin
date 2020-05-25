@@ -3,6 +3,7 @@ const client = new Discord.Client();
 
 //load config file
 const config = (()=>{let configuration = require("./config.json"); configuration.directory = `${__dirname}\\${configuration.directory}`;return configuration})();
+client.prefix = config.prefix;
 
 client.on('ready', () => {
 	//print some information about the bot
