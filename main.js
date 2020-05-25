@@ -740,4 +740,9 @@ client.on('guildMemberUpdate', (oldMember, newMember)=>{
 	});
 });
 
+process.on('unhandledRejection', error => {
+	if(error.name!='RangeError [EMBED_FIELD_VALUE]')
+		console.error('Unhandled promise rejection:', error);
+});
+
 client.login(config.token);
