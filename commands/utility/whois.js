@@ -145,6 +145,7 @@ module.exports = {
 			}
 		});
 	},
+	aliases: ['who'],
 	description: 'Returns info of a user',
 	detailed: 'Returns info of a user',
 	examples: prefix => `${prefix}whois @someone`,
