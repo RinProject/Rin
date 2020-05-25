@@ -4,14 +4,12 @@ module.exports = {
 		embed: {
                 title: `Calculating ping..`,
 		color: 0xFF80CC
-		}
-		}
-		).then(
+		}}).then(
             msg => {
                 msg.edit('', {
                 embed: {
                     title: `Ping`,
-                    description: `The API latency is ${(msg.createdTimestamp - message.createdTimestamp)}ms\n The heartbeat latency is ${message.client.ws.ping}ms`,
+                    description: `:hourglass: ${(msg.createdTimestamp - message.createdTimestamp)}ms\n\n :heartbeat: ${message.client.ws.ping}ms`,
                     color: 0xFF80CC
                 }})
                 }
