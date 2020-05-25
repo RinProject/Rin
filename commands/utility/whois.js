@@ -84,17 +84,18 @@ module.exports = {
 				roles+=role.toString()+' ';
 		});
 		let permissions = '';
-		importantPerms.forEach(permission=>{
-			if(member.hasPermission(permission.name))
-				permissions += `${permission.name}, `
-		});
+		if(roles)
+			importantPerms.forEach(permission=>{
+				if(member.hasPermission(permission.name))
+					permissions += `${permission.name}, `
+			});
 
 		message.guild.members.cache.sort((member1, member2)=>member1.joinedTimestamp-member2.joinedTimestamp);
 		let members = message.guild.members.cache.array(),
 			joinPosition = 0;
 
 		for (let i = 0; i < members.length; i++) {
-			if(members[i].id==message.author.id){
+			if(members[i].id==member.id){
 				joinPosition = i;
 				break;
 			}
@@ -129,12 +130,12 @@ module.exports = {
 					{
 						name: `Roles (${member.roles.cache.size-1})`,
 						inline: false,
-						value: roles
+						value: roles || 'none'
 					},
 					{
 						name: 'Important permissions',
 						inline: false,
-						value: permissions.replace(/, $/, '')
+						value: permissions.replace(/, $/, '') || 'none'
 					}
 				],
 				footer:{
