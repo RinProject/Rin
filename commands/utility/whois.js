@@ -7,6 +7,7 @@ const options = {
 	minute: 'numeric',
 	second: 'numeric',
 	timeZone: 'UTC',
+	timeZoneName: 'short',
 	hour12: false
 };
 
