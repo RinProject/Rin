@@ -4,6 +4,9 @@ module.exports = {
         let voiceChannels = 0;
         let textChannels = 0;
 
+        let people = 0;
+        let bots = 0;
+
         let roles = 0;
 
         message.guild.channels.cache.each(channel => {
@@ -13,6 +16,13 @@ module.exports = {
                 voiceChannels++;
             if (channel.type == 'text')
                 textChannels++;
+        });
+
+        message.guild.members.cache.each(member => {
+            if (member.user.bot)
+                bots++;
+            else
+                people++;
         });
 
         message.guild.roles.cache.each(role => {
@@ -43,8 +53,23 @@ module.exports = {
                         inline: true
                     },
                     {
+                        name: 'Prefix',
+                        value: `${message.client.prefix}`,
+                        inline: true
+                    },
+                    {
                         name: 'Members',
                         value: `${message.guild.memberCount}`,
+                        inline: true
+                    },
+                    {
+                        name: 'Humans',
+                        value: `${people}`,
+                        inline: true
+                    },
+                    {
+                        name: 'Bots',
+                        value: `${bots}`,
                         inline: true
                     },
                     {
@@ -63,19 +88,24 @@ module.exports = {
                         inline: true
                     },
                     {
+                        name: 'Roles',
+                        value: `${roles}`,
+                        inline: true
+                    },
+                    {
+                        name: 'Emojis',
+                        value: `${message.guild.emojis.cache.size}`,
+                        inline: true
+                    },
+                    {
+                        name: 'Verification',
+                        value: `${message.guild.verificationLevel}`,
+                        inline: true
+                    },
+                    {
                         name: 'Created At',
                         value: `${message.guild.createdAt}`,
                         inline: false
-                    },
-                    {
-                        name: 'Roles',
-                        value: `\t${roles}`,
-                        inline: true
-                    },
-                    {
-                        name: 'Prefix',
-                        value: `${message.client.prefix}`,
-                        inline: true
                     }
                 ],
                 footer: {
