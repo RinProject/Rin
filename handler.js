@@ -34,7 +34,7 @@ function initializer(config, client){
 	config.webhook.replace(/^https:\/\/discordapp.com/, '') + '/slack';
 
 	commands = {};
-	commandAliases = {};
+	commandAliases = {help: 'help'};
 	prefix = config.prefix||'!';
 	//add help command if wanted
 	if(config.help || config.help === undefined){
