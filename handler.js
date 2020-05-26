@@ -38,7 +38,7 @@ function initializer(config, client){
 	prefix = config.prefix||'!';
 	//add help command if wanted
 	if(config.help || config.help === undefined){
-		help.push({name: 'system', inline: false, value: 'help: Help command, gets a list of commands or specific info about a command.\n\n'});
+		help.push({name: 'system', value: 'help: Help command, gets a list of commands or specific info about a command.\n\n'});
 		const footerText = 'Created by: ' + (()=>{
 			let acc = '';
 			owners.forEach(cur=>{
@@ -82,7 +82,7 @@ function initializer(config, client){
 	//check every file in commands directory and imports all commands
 	fs.readdirSync(config.directory).forEach(item => {
 		//Add command group to help file
-		let category = {name:`${item}`, inline: false, value: ''};
+		let category = {name:`${item}\n\n`, value: ''};
 		//checks that it's going into a directory
 		if(!fs.lstatSync(`${config.directory}/${item}`).isDirectory())return;
 		//reads every file
@@ -114,7 +114,7 @@ function initializer(config, client){
 					);
 				}
 				//adds to help command list
-				category.value += `${command.name}: ${command.description}\n\n`;
+				category.value += `**${command.name}:** ${command.description}\n\n`;
 			}
 		});
 		//Only push folders with commands to help command display
