@@ -16,6 +16,14 @@ module.exports = {
 			message.channel.bulkDelete(2);
 		} else {
 			const num = parseInt(args[1]);
+			if (isNaN(num))
+			{
+				return message.channel.send('', {
+					embed: {
+						title: 'Please enter a valid number.',
+						color: 0xFF0000
+					}})
+			}
 			if (num > 99) {
 				message.channel.send('', {
 					embed: {
@@ -30,11 +38,12 @@ module.exports = {
 							description: `Bulk deleted ${messages.size} messages`,
 							color: 0xFF8000
 						}
-					})
+					}).then(msg => msg.delete({timeout: 3500})).catch(e => {})
 				);
 			}
 		}
 	},
+	aliases: ['p'],
 	description: 'Purges Messages',
 	detailed: 'Purges Messages',
 	examples: prefix => `${prefix}purge <number of message to delete>`,
