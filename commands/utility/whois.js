@@ -106,10 +106,16 @@ module.exports = {
 			embed: {
 				author: {
 					name: member.user.tag,
-					iconURL: member.user.avatarURL()
+					iconURL: member.user.displayAvatarURL({
+						format: "png",
+						dynamic: true
+					})
 				},
 				thumbnail: {
-					url: member.user.avatarURL()
+					url: member.user.displayAvatarURL({
+						format: "png",
+						dynamic: true
+					})
 				},
 				description: member.user.toString(),
 				fields: [
