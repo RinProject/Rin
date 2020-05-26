@@ -52,7 +52,7 @@ client.on('messageDelete', (message)=>{
 					},
 					color: 0xcc1020,
 					title: `Message deleted in ${message.channel.name}`,
-					description: message.content,
+					description: `${message.channel.toString()}\n${message.content}`,
 					footer: {
 						text: `uid: ${message.author.id}`
 					}
