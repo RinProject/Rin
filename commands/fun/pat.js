@@ -1,4 +1,4 @@
-const images = require('../JSONStorage/pat.js.json')
+const images = require('../../JSONStorage/pat.js.json')
 module.exports = {
 	run: async function (message){
 		if(message.mentions.users.first())
