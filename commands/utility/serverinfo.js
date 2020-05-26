@@ -46,11 +46,17 @@ module.exports = {
 				title: `Info for ${message.guild.name}`,
 				color: 0xFF80CC,
 				thumbnail: {
-					url: message.guild.iconURL()
+					url: message.guild.iconURL({
+						format: "png",
+						dynamic: true
+					})
 				},
 				author: {
 					name: message.guild.name,
-					iconURL: message.guild.iconURL()
+					iconURL: message.guild.iconURL({
+						format: "png",
+						dynamic: true
+					})
 				},
 				fields: [
 					{
