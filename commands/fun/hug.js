@@ -1,4 +1,4 @@
-const images = require('../../JSONStorage/hug.js.json')
+const images = require('../../JSONStorage/hug.json')
 module.exports = {
 	run: async function (message){
 		if(message.mentions.users.first())
