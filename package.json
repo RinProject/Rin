@@ -1,7 +1,7 @@
 {
   "name": "rin",
   "version": "0.0.1",
-  "description": "asdf",
+  "description": "A multi-purpose Discord bot",
   "main": "main.js",
   "scripts": {
     "test": "nodemon .",
@@ -11,7 +11,7 @@
     "type": "git",
     "url": "git+https://github.com/vAnomali378/Rin.git"
   },
-  "author": "",
+  "author": "Jihyo#3301, Tarren#9722, & Soze#0040",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/vAnomali378/Rin/issues"
