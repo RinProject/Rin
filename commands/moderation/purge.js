@@ -38,7 +38,7 @@ module.exports = {
 							description: `Bulk deleted ${messages.size} messages`,
 							color: 0xFF8000
 						}
-					}).then(msg => msg.delete({timeout: 3500}))
+					}).then(msg => msg.delete({timeout: 3500})).catch(e => {})
 				);
 			}
 		}
