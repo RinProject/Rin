@@ -1,16 +1,4 @@
-const options = {
-	weekday: 'short',
-	year: 'numeric',
-	month: 'short',
-	day: 'numeric',
-	hour: 'numeric',
-	minute: 'numeric',
-	second: 'numeric',
-	timeZone: 'UTC',
-	timeZoneName: 'short',
-	hour12: false
-};
-
+const options = require('../../JSONStorage/timeFormatOptions.json');
 const formatter = new Intl.DateTimeFormat('en-GB', options);
 module.exports = {
 	async run(message, args) {
@@ -23,21 +11,21 @@ module.exports = {
 		let roles = 0;
 
 		message.guild.channels.cache.each(channel => {
-			if (channel.type == 'voice')
+			if(channel.type == 'voice')
 				voiceChannels++;
-			if (channel.type == 'text')
+			if(channel.type == 'text')
 				textChannels++;
 		});
 
 		message.guild.members.cache.each(member => {
-			if (member.user.bot)
+			if(member.user.bot)
 				bots++;
 			else
 				people++;
 		});
 
 		message.guild.roles.cache.each(role => {
-			if (role)
+			if(role)
 				roles++;
 		});
 

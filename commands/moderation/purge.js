@@ -2,7 +2,7 @@ module.exports = {
 	async run(message, args) {
 
 		// Check for sufficent permissions
-		if (!message.guild.me.hasPermission('MANAGE_MESSAGES')) {
+		if(!message.guild.me.hasPermission('MANAGE_MESSAGES')) {
 			return message.channel.send('', {
 				embed: {
 					title: "Insufficient permissions.",
@@ -12,19 +12,20 @@ module.exports = {
 			});
 		}
 
-		if (args.length == 1) {
+		if(args.length == 1)
 			message.channel.bulkDelete(2);
-		} else {
+		else {
 			const num = parseInt(args[1]);
-			if (isNaN(num))
+			if(isNaN(num))
 			{
 				return message.channel.send('', {
 					embed: {
 						title: 'Please enter a valid number.',
 						color: 0xFF0000
-					}})
+					}
+				});
 			}
-			if (num > 99) {
+			if(num > 99) {
 				message.channel.send('', {
 					embed: {
 						title: 'Please enter a smaller number.',
@@ -33,12 +34,15 @@ module.exports = {
 				});
 			} else {
 				return message.channel.bulkDelete(num+1, true)
-				.then(messages => message.channel.send({
+				.then(messages => 
+					message.channel.send({
 						embed: {
 							description: `Bulk deleted ${messages.size} messages`,
 							color: 0xFF8000
 						}
-					}).then(msg => msg.delete({timeout: 3500})).catch(e => {})
+					})
+					.then(msg => msg.delete({timeout: 3500}))
+					.catch()
 				);
 			}
 		}

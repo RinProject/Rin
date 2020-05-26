@@ -1,6 +1,6 @@
 module.exports = {
 	async run(message, args) {
-		if (args[1] == undefined || args[2] == undefined) {
+		if(args[1] == undefined || args[2] == undefined) {
 			return message.channel.send('', {
 				embed: {
 					title: 'Invalid number of inputs',

@@ -1,17 +1,17 @@
 module.exports = {
 	async run(message, args) {
-		if (args[1] == undefined) {
+		if(args[1] == undefined) {
 			return message.channel.send('', {
 				embed: {
-					"title": `Please follow the format: ${prefix}createrole @rolename #hexcolor`,
-					"color": 0xFF0000
+					title: `Please follow the format: ${prefix}createrole @rolename #hexcolor`,
+					color: 0xFF0000
 				}
 			});
-		} else if (args[2] == undefined) {
+		} else if(args[2] == undefined) {
 			return message.channel.send('', {
 				embed: {
-					"title": `Please follow the format: ${prefix}createrole @rolename #hexcolor`,
-					"color": 0xFF0000
+					title: `Please follow the format: ${prefix}createrole @rolename #hexcolor`,
+					color: 0xFF0000
 				}
 			});
 		} else {

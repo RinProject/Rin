@@ -16,7 +16,7 @@ module.exports = {
 					width: 512
 				}
 			}
-		})
+		});
 	},
 	aliases: ['avi'],
 	description: 'Provides a users avatar',

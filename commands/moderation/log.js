@@ -1,6 +1,6 @@
 let sqlite3 = require('sqlite3').verbose();
 let db = new sqlite3.Database('./logs.db', (err) => {
-	if (err) {
+	if(err) {
 		return console.error(err.message);
 	}
 	console.log('Connected to logs.db.');

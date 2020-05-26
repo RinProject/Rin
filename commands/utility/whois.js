@@ -1,16 +1,4 @@
-const options = {
-	weekday: 'short',
-	year: 'numeric',
-	month: 'short',
-	day: 'numeric',
-	hour: 'numeric',
-	minute: 'numeric',
-	second: 'numeric',
-	timeZone: 'UTC',
-	timeZoneName: 'short',
-	hour12: false
-};
-
+const options = require('../../JSONStorage/timeFormatOptions.json');
 const formatter = new Intl.DateTimeFormat('en-GB', options);
 
 const importantPerms = [

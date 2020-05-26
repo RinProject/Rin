@@ -1,6 +1,6 @@
 module.exports = {
 	async run(message, args) {
-		if (!message.guild.me.hasPermission('BAN_MEMBERS')) {
+		if(!message.guild.me.hasPermission('BAN_MEMBERS')) {
 			return message.channel.send('', {
 				embed: {
 					title: 'An error occurred.',
@@ -11,17 +11,15 @@ module.exports = {
 		}
 		let user = message.mentions.users.first() || await message.client.users.fetch(args[1])
 		.catch(e => {
-			if (e) {
-				message.channel.send('', {
-					embed: {
-						title: 'Please provide a user to ban.',
-						color: 0xCC1020
-					}
-				})
-			}
+			message.channel.send('', {
+				embed: {
+					title: 'Please provide a user to ban.',
+					color: 0xCC1020
+				}
+			});
 		});
 
-		if (user == undefined) {
+		if(user == undefined) {
 			return;
 		}
 

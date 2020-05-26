@@ -4,20 +4,20 @@ module.exports = {
 		let bannedPerson = bans.get(args[1]);
 
 		console.log(bannedPerson)
-		if (bannedPerson == undefined) {
+		if(bannedPerson == undefined) {
 			return message.channel.send('', {
 				embed: {
-					"title": "Please provide a user ID to unban",
-					"color": 0xFF0000
+					title: 'Please provide a user ID to unban',
+					color: 0xFF0000
 				}
 			});
 		}
 		let reason = args.slice(1).join(" ");
-		if (!reason) {
+		if(!reason) {
 			reason = "No reason provided";
 		}
 		try {
-			message.guild.members.unban(bannedPerson.user.id, { Reason: reason })
+			message.guild.members.unban(bannedPerson.user.id, { Reason: reason });
 			message.channel.send('', {
 				embed: {
 					title: 'User successfully unbanned',
@@ -27,7 +27,7 @@ module.exports = {
 						text: `id: ${bannedPerson.user.id}`
 					}
 				}
-			})
+			});
 		} catch (e) {
 			console.log(e.message);
 		}

@@ -1,6 +1,6 @@
 module.exports = {
 	async run(message, args) {
-		if (args[1] != 'off') {
+		if(args[1] != 'off') {
 			message.channel.overwritePermissions([{
 					id: message.guild.id,
 					deny: ['SEND_MESSAGES']
@@ -15,7 +15,7 @@ module.exports = {
 		} else {
 			message.channel.overwritePermissions([{
 				id: message.guild.id,
-				'SEND_MESSAGES': null
+				SEND_MESSAGES: null
 			}]).then(channel => {
 				message.channel.send('', {
 					embed: {
