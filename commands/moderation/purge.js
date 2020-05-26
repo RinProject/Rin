@@ -32,7 +32,7 @@ module.exports = {
 					}
 				});
 			} else {
-				return message.channel.bulkDelete(num+1)
+				return message.channel.bulkDelete(num+1, true)
 				.then(messages => message.channel.send({
 						embed: {
 							description: `Bulk deleted ${messages.size} messages`,
