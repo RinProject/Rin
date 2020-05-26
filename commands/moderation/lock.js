@@ -15,7 +15,7 @@ module.exports = {
 		} else {
 			message.channel.overwritePermissions([{
 				id: message.guild.id,
-				allow: ['SEND_MESSAGES']
+				'SEND_MESSAGES': null
 			}]).then(channel => {
 				message.channel.send('', {
 					embed: {
