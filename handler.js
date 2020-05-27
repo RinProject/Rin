@@ -135,7 +135,7 @@ function handle(message){
 	if(!message.content.startsWith(prefix)){
 		if(message.guild) return false;
 		//split into arguments
-		args = message.content.split(/\s/);
+		args = message.content.split(/\s+/g);
 	}else{
 		//split into arguments and remove prefix
 		args = message.content.slice(prefix.length).split(/\s/);
@@ -145,14 +145,48 @@ function handle(message){
 	if(!commandAliases[args[0].toLowerCase()]) return false;
 	let command = commands[commandAliases[args[0].toLowerCase()]];
 	//check permission
-	if(command.perms){
+	if(command.perms[0]){
 		let lacking = [];
 		command.perms.forEach(perm => {
 			if(!message.member.hasPermission(perm))
 				lacking.push(perm);
 		});
 		if(lacking[0]){
-			message.channel.send('', {embed: {title: 'You lack the necessary permissions to use this command!', description: `You are lacking the following permission(s): ${lacking.join('\n')}`}});
+			message.channel.send('', {embed: {
+				title: 'You lack the necessary permissions to use this command',
+				color: 0xcc1020,
+				fields: [{
+					name: 'Missing permission(s)',
+					inline: false,
+					value: lacking.reduce(
+						(accumulator, currentValue) => `${accumulator}, ${currentValue}`
+					).toLowerCase().replace(/_/g, ' ')
+				}]
+			}});
+			return true;
+		}
+	}
+	if(command.botPerms[0]){
+		let lacking = [];
+		command.botPerms.forEach(perm => {
+			if(!message.guild.me.hasPermission(perm))
+				lacking.push(perm);
+		});
+		if(lacking[0]){
+			message.channel.send('', {embed: {
+				title: 'I am lacking the necessary permissions to use this command',
+				color: 0xcc1020,
+				fields: [{
+					name: 'Missing permission(s)',
+					inline: false,
+					value: lacking.reduce(
+						(accumulator, currentValue) => `${accumulator}, ${currentValue}`
+					).toLowerCase().replace(/_/g, ' ')
+				}],
+				footer: {
+					text: 'Please contact the server owner or admins to use this command'
+				},
+			}});
 			return true;
 		}
 	}

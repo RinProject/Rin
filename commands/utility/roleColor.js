@@ -44,5 +44,6 @@ module.exports = {
 	detailed: 'Changes the colour of a preexisting role',
 	examples: prefix => `${prefix}rolecolor @rolename #hexcolor`,
 	name: 'rolecolor',
-	perms: ['MANAGE_ROLES']
+	perms: ['MANAGE_ROLES'],
+	botPerms: ['MANAGE_ROLES']
 }

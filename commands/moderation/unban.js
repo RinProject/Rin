@@ -36,5 +36,6 @@ module.exports = {
 	detailed: 'Unbans mentioned user',
 	examples: prefix => `${prefix}unban <user id>`,
 	name: 'unban',
-	perms: [`BAN_MEMBERS`]
+	perms: ['BAN_MEMBERS'],
+	botPerms: ['BAN_MEMBERS']
 }
