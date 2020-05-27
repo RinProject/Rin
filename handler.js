@@ -145,7 +145,7 @@ function handle(message){
 	if(!commandAliases[args[0].toLowerCase()]) return false;
 	let command = commands[commandAliases[args[0].toLowerCase()]];
 	//check permission
-	if(command.perms[0]){
+	if(command.perms){
 		let lacking = [];
 		command.perms.forEach(perm => {
 			if(!message.member.hasPermission(perm))
@@ -166,7 +166,7 @@ function handle(message){
 			return true;
 		}
 	}
-	if(command.botPerms[0]){
+	if(command.botPerms){
 		let lacking = [];
 		command.botPerms.forEach(perm => {
 			if(!message.guild.me.hasPermission(perm))
