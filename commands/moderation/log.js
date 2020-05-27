@@ -256,8 +256,8 @@ module.exports = {
 			});
 		}
 	},
-	description: 'Sets, clears, and displays your log settings',
-	detailed: 'Lets you set, display, modify, and clear your senpai to your hearts content',
+	description: 'Sets, clears, and displays your log settings.',
+	detailed: 'Lets you set and modify: your log channel and what you log to your hearts content.',
 	examples: prefix => `${prefix}log channel #logs, ${prefix}log enable all`,
 	name: 'log',
 	perms: ["ADMINISTRATOR"]
