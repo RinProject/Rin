@@ -40,8 +40,8 @@ module.exports = {
 			});
 		}
 	},
-	description: 'Changes a Roles Colour',
-	detailed: 'Changes the colour of a preexisting role',
+	description: 'Changes a Roles Color',
+	detailed: 'Changes the color of a preexisting role',
 	examples: prefix => `${prefix}rolecolor @rolename #hexcolor`,
 	name: 'rolecolor',
 	perms: ['MANAGE_ROLES']
