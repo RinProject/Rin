@@ -74,8 +74,7 @@ const settings = [
 module.exports = {
 	run: async function (message, args) {
 		if(args[1]=='channel'){
-			let logType = args[2].toLowerCase();
-			if(logType=='mod')
+			if(args[2]=='mod')
 				db.run(`SELECT * FROM logs WHERE guild = ${message.guild.id}`, (err, column)=>{
 					if(err)
 						throw err;
@@ -89,7 +88,7 @@ module.exports = {
 						message.channel.send(`Logging channel set to: <#${message.channels.mentions.first().id}>`);
 					});
 				});
-			else if(logType=='message')
+			else if(args[2]=='message')
 				db.run(`SELECT * FROM logs WHERE guild = ${message.guild.id}`, (err, column)=>{
 					if(err)
 						throw err;
@@ -103,7 +102,7 @@ module.exports = {
 						message.channel.send(`Logging channel set to: <#${message.channels.mentions.first().id}>`);
 					});
 				});
-			else if(logType=='server')
+			else if(args[2]=='server')
 				db.run(`SELECT * FROM logs WHERE guild = ${message.guild.id}`, (err, column)=>{
 					if(err)
 						throw err;
@@ -257,9 +256,8 @@ module.exports = {
 			});
 		}
 	},
-	aliases: ['logs'],
-	description: 'Sets, clears, and displays your log settings',
-	detailed: 'Lets you set, display, modify, and clear your senpai to your hearts content',
+	description: 'Sets, clears, and displays your log settings.',
+	detailed: 'Lets you set and modify: your log channel and what you log to your hearts content.',
 	examples: prefix => `${prefix}log channel #logs, ${prefix}log enable all`,
 	name: 'log',
 	perms: ["ADMINISTRATOR"]

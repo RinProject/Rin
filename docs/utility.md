@@ -38,15 +38,19 @@ Example:
 
 ---
 
-## Rolecolor
+## Rolecolour
 Changes the color of a preexisting role.
 ### Required Permissions
 * Manage Roles
 
 Example: 
 ```
+;rolecolour @uwu #80CCFF
 ;rolecolor @Cutie #FF8b00
 ```
+
+### Aliases
+* rolecolor
 
 ---
 

@@ -28,5 +28,5 @@ module.exports = {
 	detailed: `Gets a given role's info`,
 	examples: prefix => `${prefix}roleinfo @role, ${prefix}roleinfo <role id>, ${prefix}roleinfo <role name>`,
 	name: 'roleinfo',
-	perms: [null]
+	perms: null
 }

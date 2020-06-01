@@ -1,14 +1,5 @@
 module.exports = {
 	async run(message, args) {
-		if(!message.guild.me.hasPermission('BAN_MEMBERS')) {
-			return message.channel.send('', {
-				embed: {
-					title: 'An error occurred.',
-					description: 'I require the **ban members** permission to ban users.',
-					color: 0xCC1020
-				}
-			})
-		}
 		let user = message.mentions.users.first() || await message.client.users.fetch(args[1])
 		.catch(e => {
 			message.channel.send('', {
@@ -47,5 +38,6 @@ module.exports = {
 	detailed: 'Bans all users mentioned',
 	examples: prefix => `${prefix}ban @someone, ${prefix}ban <id>`,
 	name: 'ban',
-	perms: [`BAN_MEMBERS`]
+	perms: ['BAN_MEMBERS'],
+	botPerms: ['BAN_MEMBERS']
 }

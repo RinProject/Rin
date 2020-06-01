@@ -35,5 +35,6 @@ module.exports = {
 	detailed: 'Creates a role: Takes in name and color',
 	examples: prefix => `${prefix}createrole @rolename #hexcolor`,
 	name: 'createrole',
-	perms: ['MANAGE_ROLES']
+	perms: ['MANAGE_ROLES'],
+	botPerms: ['MANAGE_ROLES']
 }

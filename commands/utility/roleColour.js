@@ -33,7 +33,7 @@ module.exports = {
 			});
 			return message.channel.send('', {
 				embed: {
-					title: `Role ${args[1]} colour updated`,
+					title: `Role ${role.name} colour updated`,
 					description: `Colour changed from ${oldColor} to ${color}`,
 					color: color
 				}
@@ -42,7 +42,9 @@ module.exports = {
 	},
 	description: 'Changes a Roles Color',
 	detailed: 'Changes the color of a preexisting role',
-	examples: prefix => `${prefix}rolecolor @rolename #hexcolor`,
-	name: 'rolecolor',
-	perms: ['MANAGE_ROLES']
+	examples: prefix => `${prefix}rolecolour @rolename #hexcolor`,
+	name: 'rolecolour',
+	aliases: ['rolecolor'],
+	perms: ['MANAGE_ROLES'],
+	botPerms: ['MANAGE_ROLES']
 }
