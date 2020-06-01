@@ -28,7 +28,7 @@ module.exports = {
 	},
 	description: 'Locks a channel',
 	detailed: 'Overwrites permissions to speak in channel it is called in',
-	examples: prefix => `${prefix} lock, prefix => $prefix} lock off`,
+	examples: prefix => `${prefix} lock, prefix => ${prefix} lock off`,
 	name: 'lock',
 	perms: ['MANAGE_CHANNELS'],
 	botPerms: ['MANAGE_CHANNELS']
