@@ -92,7 +92,7 @@ client.on('messageDeleteBulk', (messages)=>{
 client.on('messageUpdate', (oldMessage, newMessage)=>{
 	if(!newMessage.guild) return;
 	db.all(`SELECT messageUpdate, messageLogChannel FROM logs WHERE guild = "${newMessage.channel.guild.id}"`, (err, rows)=>{
-		if(rows[0] && rows[0]['messageUpdate'])
+		if(rows[0] && rows[0]['messageUpdate'] && (oldMessage.content || newMessage.content))
 			client.channels.cache.get(rows[0]['messageLogChannel']).send({
 				embed:{
 					author:{
@@ -738,11 +738,6 @@ client.on('guildMemberUpdate', (oldMember, newMember)=>{
 		if(err)
 			errorLog(err);
 	});
-});
-
-process.on('unhandledRejection', error => {
-	if(error.name!='RangeError [EMBED_FIELD_VALUE]')
-		console.error('Unhandled promise rejection:', error);
 });
 
 client.login(config.token);
