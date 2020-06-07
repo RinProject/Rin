@@ -53,5 +53,6 @@ module.exports = {
 	examples: prefix => `${prefix}purge <number of message to delete>`,
 	name: 'purge',
 	perms: ['MANAGE_MESSAGES'],
-	botPerms: ['MANAGE_MESSAGES']
+	botPerms: ['MANAGE_MESSAGES'],
+	guildOnly: true
 }

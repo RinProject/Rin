@@ -53,5 +53,6 @@ module.exports = {
 	examples: prefix => `${prefix}exp, ${prefix}exp top, ${prefix}exp top 2`,
 	name: 'experience',
 	aliases: ['exp', 'xp'],
-	perms: null
+	perms: null,
+	guildOnly: true
 }

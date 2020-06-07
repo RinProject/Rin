@@ -31,5 +31,6 @@ module.exports = {
 	examples: prefix => `${prefix} lock, prefix => ${prefix} lock off`,
 	name: 'lock',
 	perms: ['MANAGE_CHANNELS'],
-	botPerms: ['MANAGE_CHANNELS']
+	botPerms: ['MANAGE_CHANNELS'],
+	guildOnly: true
 }
