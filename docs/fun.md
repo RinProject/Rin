@@ -1,5 +1,20 @@
 # Fun Commands
 
+## Experience
+Displays users exp, can also display top exp in guild.
+
+Examples: 
+```
+;xp
+;exp top
+```
+
+### Aliases
+* exp
+* xp
+
+---
+
 ## Hug
 Hugs a mentioned user with a cute image or gif.
 
