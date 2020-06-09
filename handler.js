@@ -129,21 +129,22 @@ function initializer(config, client){
  * @returns {boolean} wheter a command was triggered
  */
 function handle(message){
-	if(message.author.bot)return false;
-	let args;
-	//check if it's a command or sent in dms
-	if(!message.content.startsWith(prefix)){
-		if(message.guild) return false;
-		//split into arguments
-		args = message.content.split(/\s+/g);
-	}else{
-		//split into arguments and remove prefix
-		args = message.content.slice(prefix.length).split(/\s/);
-	}
-	args = args.filter(str => str);
+	if(message.author.bot || !message.content.startsWith(prefix)) return false;
+	//split into arguments and remove prefix
+	let args = message.content.slice(prefix.length).split(/\s+/);
 	//check existance of command
 	if(!commandAliases[args[0].toLowerCase()]) return false;
 	let command = commands[commandAliases[args[0].toLowerCase()]];
+	if(command.guildOnly&&!message.guild){
+		message.channel.send({
+			embed: {
+				title: 'You may not use that command here',
+				description: 'Command restricted to guilds, apologies for any inconvenience.',
+				color: 0xcc1020
+			}
+		})
+		return true;
+	}
 	//check permission
 	if(command.perms){
 		let lacking = [];

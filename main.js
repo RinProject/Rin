@@ -1,5 +1,13 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
+const sqlite3 = require('sqlite3').verbose();
+
+let expDB = new sqlite3.Database('./exp.db', (err) => {
+	if(err) {
+		return console.error(err.message);
+	}
+	console.log('Connected main process to exp.db.');
+});
 
 //load config file
 const config = (()=>{let configuration = require("./config.json"); configuration.directory = `${__dirname}\\${configuration.directory}`;return configuration})();
@@ -7,6 +15,9 @@ client.prefix = config.prefix;
 
 client.on('ready', () => {
 	//print some information about the bot
+	client.guilds.cache.each(guild=>{
+		expDB.run(`CREATE TABLE IF NOT EXISTS exp${guild.id}(user TEXT UNIQUE NOT NULL, exp INTEGER DEFAULT 0 NOT NULL, lastMessage INTEGER DEFAULT 0 NOT NULL);`);
+	});
 	console.log(`logged in as ${client.user.username}#${client.user.discriminator} with ${client.guilds.cache.array().length} guilds! Using the prefix ${config.prefix}`);
 	init(config, client);
 });
@@ -14,11 +25,30 @@ client.on('ready', () => {
 const {handler, init, errorLog} = require('./handler');
 
 client.on('message', message => {
-	handler(message);
+	if(message.author.bot) return;
+	if(!handler(message)&&message.guild)
+	{
+		let expGain = 10;
+		let time = +new Date;
+		expDB.run(`INSERT INTO exp${message.guild.id} (user, exp, lastMessage) 
+		VALUES(${message.author.id}, ${expGain}, ${time}) 
+		ON CONFLICT(user) 
+		DO UPDATE SET exp = CASE WHEN lastMessage < ${time-60000} THEN (exp + ${expGain}) ELSE exp END,
+		lastMessage = CASE WHEN lastMessage < ${time-60000} THEN ${time} ELSE lastMessage END`)
+		//DO UPDATE SET exp = CASE WHEN lastMessage < ${+new Date-60000} THEN (exp + ${expGain}) ELSE exp END`)
+		//DO UPDATE SET  exp=exp+${expGain};`)
+	}
 });
 
-let sqlite3 = require('sqlite3').verbose();
-let db = new sqlite3.Database('./logs.db', (err) => {
+client.on('guildCreate', guild=> {
+	expDB.run(`CREATE TABLE IF NOT EXISTS exp${guild.id}(user TEXT UNIQUE NOT NULL, exp INTEGER DEFAULT 0 NOT NULL );`);
+});
+
+client.on('guildDelete', guild => {
+	expDB.run(`DROP TABLE IF EXISTS exp${guild.id};`);
+});
+
+let logDB = new sqlite3.Database('./logs.db', (err) => {
 	if(err) {
 		return console.error(err.message);
 	}
@@ -28,7 +58,7 @@ let db = new sqlite3.Database('./logs.db', (err) => {
 //Message change logs
 client.on('channelPinsUpdate', (channel, time)=>{
 	if(!channel.guild) return;
-	db.all(`SELECT channelPinsUpdate, messageLogChannel FROM logs WHERE guild = "${channel.guild.id}"`, (err, rows)=>{
+	logDB.all(`SELECT channelPinsUpdate, messageLogChannel FROM logs WHERE guild = "${channel.guild.id}"`, (err, rows)=>{
 		client.channels.cache.get(rows[0]['messageLogChannel']).send({
 			embed:{
 				title: 'Channel pin update',
@@ -42,7 +72,7 @@ client.on('channelPinsUpdate', (channel, time)=>{
 
 client.on('messageDelete', (message)=>{
 	if(!message.guild) return;
-	db.all(`SELECT messageDelete, messageLogChannel FROM logs WHERE guild = "${message.channel.guild.id}"`, (err, rows)=>{
+	logDB.all(`SELECT messageDelete, messageLogChannel FROM logs WHERE guild = "${message.channel.guild.id}"`, (err, rows)=>{
 		if(rows[0] && rows[0]['messageDelete'])
 			client.channels.cache.get(rows[0]['messageLogChannel']).send({
 				embed:{
@@ -65,7 +95,7 @@ client.on('messageDelete', (message)=>{
 
 client.on('messageDeleteBulk', (messages)=>{
 	if(!messages.first().guild) return;
-	db.all(`SELECT messageDelete, messageLogChannel FROM logs WHERE guild = "${messages.first().guild.id}"`, (err, rows)=>{
+	logDB.all(`SELECT messageDelete, messageLogChannel FROM logs WHERE guild = "${messages.first().guild.id}"`, (err, rows)=>{
 		if(rows[0] && rows[0]['messageDelete']){
 			let fields = [];
 			messages.each(message=>{
@@ -91,8 +121,8 @@ client.on('messageDeleteBulk', (messages)=>{
 
 client.on('messageUpdate', (oldMessage, newMessage)=>{
 	if(!newMessage.guild) return;
-	db.all(`SELECT messageUpdate, messageLogChannel FROM logs WHERE guild = "${newMessage.channel.guild.id}"`, (err, rows)=>{
-		if(rows[0] && rows[0]['messageUpdate'])
+	logDB.all(`SELECT messageUpdate, messageLogChannel FROM logs WHERE guild = "${newMessage.channel.guild.id}"`, (err, rows)=>{
+		if(rows[0] && rows[0]['messageUpdate'] && (oldMessage.content || newMessage.content))
 			client.channels.cache.get(rows[0]['messageLogChannel']).send({
 				embed:{
 					author:{
@@ -127,7 +157,7 @@ client.on('messageUpdate', (oldMessage, newMessage)=>{
 //Message reaction logs
 client.on('messageReactionAdd', (messageReaction, user)=>{
 	if(!messageReaction.message.guild) return;
-	db.all(`SELECT messageReactionAdd, messageLogChannel FROM logs WHERE guild = "${messageReaction.message.channel.guild.id}"`, (err, rows)=>{
+	logDB.all(`SELECT messageReactionAdd, messageLogChannel FROM logs WHERE guild = "${messageReaction.message.channel.guild.id}"`, (err, rows)=>{
 		if(rows[0] && rows[0]['messageReactionAdd'])
 			client.channels.cache.get(rows[0]['messageLogChannel']).send({
 				embed:{
@@ -150,7 +180,7 @@ client.on('messageReactionAdd', (messageReaction, user)=>{
 
 client.on('messageReactionRemove', (messageReaction, user)=>{
 	if(!messageReaction.message.guild) return;
-	db.all(`SELECT messageReactionRemove, messageLogChannel FROM logs WHERE guild = "${messageReaction.message.channel.guild.id}"`, (err, rows)=>{
+	logDB.all(`SELECT messageReactionRemove, messageLogChannel FROM logs WHERE guild = "${messageReaction.message.channel.guild.id}"`, (err, rows)=>{
 		if(rows[0] && rows[0]['messageReactionRemove'])
 			client.channels.cache.get(rows[0]['messageLogChannel']).send({
 				embed:{
@@ -173,7 +203,7 @@ client.on('messageReactionRemove', (messageReaction, user)=>{
 
 client.on('messageReactionRemoveAll', (message)=>{
 	if(!message.guild) return;
-	db.all(`SELECT messageReactionRemoveAll, messageLogChannel FROM logs WHERE guild = "${message.channel.guild.id}"`, (err, rows)=>{
+	logDB.all(`SELECT messageReactionRemoveAll, messageLogChannel FROM logs WHERE guild = "${message.channel.guild.id}"`, (err, rows)=>{
 		if(rows[0] && rows[0]['messageReactionRemoveAll'])
 			client.channels.cache.get(rows[0]['messageLogChannel']).send({
 				embed:{
@@ -196,7 +226,7 @@ client.on('messageReactionRemoveAll', (message)=>{
 
 client.on('messageReactionRemoveEmoji', (messageReaction)=>{
 	if(!messageReaction.message.guild) return;
-	db.all(`SELECT messageReactionRemoveEmoji, messageLogChannel FROM logs WHERE guild = "${messageReaction.message.channel.guild.id}"`, (err, rows)=>{
+	logDB.all(`SELECT messageReactionRemoveEmoji, messageLogChannel FROM logs WHERE guild = "${messageReaction.message.channel.guild.id}"`, (err, rows)=>{
 		if(rows[0] && rows[0]['messageReactionRemoveEmoji'])
 			client.channels.cache.get(rows[0]['messageLogChannel']).send({
 				embed:{
@@ -219,7 +249,7 @@ client.on('messageReactionRemoveEmoji', (messageReaction)=>{
 
 //Message miscellaneous
 client.on('inviteCreate', invite=>{
-	db.all(`SELECT inviteCreate, messageLogChannel FROM logs WHERE guild = "${invite.guild.id}"`, (err, rows)=>{
+	logDB.all(`SELECT inviteCreate, messageLogChannel FROM logs WHERE guild = "${invite.guild.id}"`, (err, rows)=>{
 		if(rows[0] && rows[0]['inviteCreate'])
 			client.channels.cache.get(rows[0]['messageLogChannel']).send({
 				embed:{
@@ -257,7 +287,7 @@ client.on('inviteCreate', invite=>{
 });
 
 client.on('inviteDelete', invite=>{
-	db.all(`SELECT inviteDelete, messageLogChannel FROM logs WHERE guild = "${invite.guild.id}"`, (err, rows)=>{
+	logDB.all(`SELECT inviteDelete, messageLogChannel FROM logs WHERE guild = "${invite.guild.id}"`, (err, rows)=>{
 		if(rows[0] && rows[0]['inviteDelete'])
 			client.channels.cache.get(rows[0]['messageLogChannel']).send({
 				embed:{
@@ -292,7 +322,7 @@ client.on('inviteDelete', invite=>{
 //Server channel
 client.on('channelCreate', channel=>{
 	if(!channel.guild) return;
-	db.all(`SELECT channelCreate, serverLogChannel FROM logs WHERE guild = "${channel.guild.id}"`, (err, rows)=>{
+	logDB.all(`SELECT channelCreate, serverLogChannel FROM logs WHERE guild = "${channel.guild.id}"`, (err, rows)=>{
 		if(rows[0] && rows[0]['channelCreate'])
 			client.channels.cache.get(rows[0]['serverLogChannel']).send({
 				embed:{
@@ -322,7 +352,7 @@ client.on('channelCreate', channel=>{
 
 client.on('channelDelete', channel=>{
 	if(!channel.guild) return;
-	db.all(`SELECT channelDelete, serverLogChannel FROM logs WHERE guild = "${channel.guild.id}"`, (err, rows)=>{
+	logDB.all(`SELECT channelDelete, serverLogChannel FROM logs WHERE guild = "${channel.guild.id}"`, (err, rows)=>{
 		if(rows[0] && rows[0]['channelDelete'])
 			client.channels.cache.get(rows[0]['serverLogChannel']).send({
 				embed:{
@@ -359,7 +389,7 @@ const channelPropertiesToCheck = [
 ];
 client.on('channelUpdate', (oldChannel, newChannel)=>{
 	if(!newChannel.guild) return;
-	db.all(`SELECT channelUpdate, serverLogChannel FROM logs WHERE guild = "${newChannel.guild.id}"`, (err, rows)=>{
+	logDB.all(`SELECT channelUpdate, serverLogChannel FROM logs WHERE guild = "${newChannel.guild.id}"`, (err, rows)=>{
 		if(rows[0] && rows[0]['channelUpdate']){
 			let embed = {
 				author:{
@@ -394,7 +424,7 @@ client.on('channelUpdate', (oldChannel, newChannel)=>{
 });
 
 client.on('webhookUpdate', (channel)=>{
-	db.all(`SELECT webhookUpdate, serverLogChannel FROM logs WHERE guild = "${channel.guild.id}"`, (err, rows)=>{
+	logDB.all(`SELECT webhookUpdate, serverLogChannel FROM logs WHERE guild = "${channel.guild.id}"`, (err, rows)=>{
 		if(rows[0] && rows[0]['webhookUpdate']){
 			client.channels.cache.get(rows[0]['serverLogChannel']).send({
 				embed: {
@@ -418,7 +448,7 @@ client.on('webhookUpdate', (channel)=>{
 
 //Server emote events
 client.on('emojiCreate', emoji => {
-	db.all(`SELECT emojiCreate, serverLogChannel FROM logs WHERE guild = "${emoji.guild.id}"`, (err, rows)=>{
+	logDB.all(`SELECT emojiCreate, serverLogChannel FROM logs WHERE guild = "${emoji.guild.id}"`, (err, rows)=>{
 		if(rows[0] && rows[0]['emojiCreate'])
 			client.channels.cache.get(rows[0]['serverLogChannel']).send({
 				embed: {
@@ -441,7 +471,7 @@ client.on('emojiCreate', emoji => {
 });
 
 client.on('emojiDelete', emoji => {
-	db.all(`SELECT emojiDelete, serverLogChannel FROM logs WHERE guild = "${emoji.guild.id}"`, (err, rows)=>{
+	logDB.all(`SELECT emojiDelete, serverLogChannel FROM logs WHERE guild = "${emoji.guild.id}"`, (err, rows)=>{
 		if(rows[0] && rows[0]['emojiDelete'])
 			client.channels.cache.get(rows[0]['serverLogChannel']).send({
 				embed: {
@@ -464,7 +494,7 @@ client.on('emojiDelete', emoji => {
 });
 
 client.on('emojiUpdate', (oldEmoji, newEmoji) => {
-	db.all(`SELECT emojiUpdate, serverLogChannel FROM logs WHERE guild = "${newEmoji.guild.id}"`, (err, rows)=>{
+	logDB.all(`SELECT emojiUpdate, serverLogChannel FROM logs WHERE guild = "${newEmoji.guild.id}"`, (err, rows)=>{
 		if(rows[0] && rows[0]['emojiUpdate']){
 			client.channels.cache.get(rows[0]['serverLogChannel']).send({
 				embed: {
@@ -530,7 +560,7 @@ const guildPorperties = [
 	'widgetEnabled'
 ];
 client.on('guildUpdate', (oldGuild, newGuild)=>{
-	db.all(`SELECT guildUpdate, serverLogChannel FROM logs WHERE guild = "${newGuild.id}"`, (err, rows)=>{
+	logDB.all(`SELECT guildUpdate, serverLogChannel FROM logs WHERE guild = "${newGuild.id}"`, (err, rows)=>{
 		if(rows[0] && rows[0]['guildUpdate']){
 			let embed = {
 				author:{
@@ -564,7 +594,7 @@ client.on('guildUpdate', (oldGuild, newGuild)=>{
 });
 
 client.on('guildIntegrationsUpdate', guild=>{
-	db.all(`SELECT guildIntegrationsUpdate, serverLogChannel FROM logs WHERE guild = "${guild.id}"`, (err, rows)=>{
+	logDB.all(`SELECT guildIntegrationsUpdate, serverLogChannel FROM logs WHERE guild = "${guild.id}"`, (err, rows)=>{
 		if(rows[0] && rows[0]['guildIntegrationsUpdate']){
 			client.channels.cache.get(rows[0]['serverLogChannel']).send({
 				embed: {
@@ -588,7 +618,7 @@ client.on('guildIntegrationsUpdate', guild=>{
 //moderation bans
 
 client.on('guildBanAdd', (guild, user)=>{
-	db.all(`SELECT guildBanAdd, modLogChannel FROM logs WHERE guild = "${guild.id}"`, (err, rows)=>{
+	logDB.all(`SELECT guildBanAdd, modLogChannel FROM logs WHERE guild = "${guild.id}"`, (err, rows)=>{
 		if(rows[0] && rows[0]['guildBanAdd']){
 			client.channels.cache.get(rows[0]['modLogChannel']).send({
 				embed: {
@@ -610,7 +640,7 @@ client.on('guildBanAdd', (guild, user)=>{
 });
 
 client.on('guildBanRemove', (guild, user)=>{
-	db.all(`SELECT guildBanRemove, modLogChannel FROM logs WHERE guild = "${guild.id}"`, (err, rows)=>{
+	logDB.all(`SELECT guildBanRemove, modLogChannel FROM logs WHERE guild = "${guild.id}"`, (err, rows)=>{
 		if(rows[0] && rows[0]['guildBanRemove']){
 			client.channels.cache.get(rows[0]['modLogChannel']).send({
 				embed: {
@@ -634,7 +664,7 @@ client.on('guildBanRemove', (guild, user)=>{
 //join/leave
 
 client.on('guildMemberAdd', (member)=>{
-	db.all(`SELECT guildMemberAdd, modLogChannel FROM logs WHERE guild = "${member.guild.id}"`, (err, rows)=>{
+	logDB.all(`SELECT guildMemberAdd, modLogChannel FROM logs WHERE guild = "${member.guild.id}"`, (err, rows)=>{
 		if(rows[0] && rows[0]['guildMemberAdd']){
 			client.channels.cache.get(rows[0]['modLogChannel']).send({
 				embed: {
@@ -656,7 +686,7 @@ client.on('guildMemberAdd', (member)=>{
 });
 
 client.on('guildMemberRemove', (member)=>{
-	db.all(`SELECT guildMemberRemove, modLogChannel FROM logs WHERE guild = "${member.guild.id}"`, (err, rows)=>{
+	logDB.all(`SELECT guildMemberRemove, modLogChannel FROM logs WHERE guild = "${member.guild.id}"`, (err, rows)=>{
 		if(rows[0] && rows[0]['guildMemberRemove']){
 			client.channels.cache.get(rows[0]['modLogChannel']).send({
 				embed: {
@@ -685,7 +715,7 @@ const memberProperties = [
 	'nickname'
 ]
 client.on('guildMemberUpdate', (oldMember, newMember)=>{
-	db.all(`SELECT guildMemberUpdate, modLogChannel FROM logs WHERE guild = "${newMember.guild.id}"`, (err, rows)=>{
+	logDB.all(`SELECT guildMemberUpdate, modLogChannel FROM logs WHERE guild = "${newMember.guild.id}"`, (err, rows)=>{
 		if(rows[0] && rows[0]['guildMemberUpdate']){
 			let embed = {
 				author:{
@@ -738,11 +768,6 @@ client.on('guildMemberUpdate', (oldMember, newMember)=>{
 		if(err)
 			errorLog(err);
 	});
-});
-
-process.on('unhandledRejection', error => {
-	if(error.name!='RangeError [EMBED_FIELD_VALUE]')
-		console.error('Unhandled promise rejection:', error);
 });
 
 client.login(config.token);

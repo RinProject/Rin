@@ -129,5 +129,6 @@ module.exports = {
 	detailed: 'Returns info about the server',
 	examples: prefix => `${prefix}serverinfo`,
 	name: 'serverinfo',
-	perms: null
+	perms: null,
+	guildOnly: true
 }

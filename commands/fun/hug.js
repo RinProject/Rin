@@ -25,4 +25,5 @@ module.exports = {
 	examples: prefix => `${prefix}hug @someone`,
 	name: 'hug',
 	perms: null,
+	guildOnly: true
 };

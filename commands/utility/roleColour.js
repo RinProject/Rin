@@ -46,5 +46,6 @@ module.exports = {
 	name: 'rolecolour',
 	aliases: ['rolecolor'],
 	perms: ['MANAGE_ROLES'],
-	botPerms: ['MANAGE_ROLES']
+	botPerms: ['MANAGE_ROLES'],
+	guildOnly: true
 }

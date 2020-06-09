@@ -37,5 +37,6 @@ module.exports = {
 	examples: prefix => `${prefix}unban <user id>`,
 	name: 'unban',
 	perms: ['BAN_MEMBERS'],
-	botPerms: ['BAN_MEMBERS']
+	botPerms: ['BAN_MEMBERS'],
+	guildOnly: true
 }
