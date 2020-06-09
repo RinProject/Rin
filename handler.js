@@ -39,14 +39,7 @@ function initializer(config, client){
 	//add help command if wanted
 	if(config.help || config.help === undefined){
 		help.push({name: 'system', value: 'help: Help command, gets a list of commands or specific info about a command.\n\n'});
-		const footerText = 'Created by: ' + (()=>{
-			let acc = '';
-			owners.forEach(cur=>{
-				const owner = client.users.cache.get(cur);
-				acc+=`${owner.username}#${owner.discriminator}, `;
-			});
-			return acc.replace(/, $/, '');
-		})();
+		const footerText = `Created by: ${packageJSON.author}`;
 		commands.help = {
 			run: async function (message, args){
 				if(commands[args[1]])//return command specific info if available
