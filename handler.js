@@ -1,6 +1,7 @@
 'use strict';
 const fs = require('fs');
 const https = require('https');
+const packageJSON = require('./package.json');
 
 let commands;
 let commandAliases;
