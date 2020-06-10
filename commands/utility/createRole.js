@@ -1,16 +1,18 @@
+const config = require('../../config.json')
+
 module.exports = {
 	async run(message, args) {
 		if(args[1] == undefined) {
 			return message.channel.send('', {
 				embed: {
-					title: `Please follow the format: ${prefix}createrole @rolename #hexcolor`,
+					title: `Please follow the format: ${config.prefix}createrole @rolename #hexcolor`,
 					color: 0xFF0000
 				}
 			});
 		} else if(args[2] == undefined) {
 			return message.channel.send('', {
 				embed: {
-					title: `Please follow the format: ${prefix}createrole @rolename #hexcolor`,
+					title: `Please follow the format: ${config.prefix}createrole @rolename #hexcolor`,
 					color: 0xFF0000
 				}
 			});
