@@ -11,12 +11,12 @@ let webhook;
 let owners;
 
 /** 
- * Intializes command handler
+ * Initialize command handler
  * 
  * @param {object} config options
  * @param {string} config.prefix bot prefix
  * @param {string} config.directory command top level directory
- * @param {boolean} [config.help=true] wheter to include help command
+ * @param {boolean} [config.help=true] whether to include help command
  * @param {string[]} config.owners an array of owners
  * @param {string} config.webhook webhook url for login errors
  * @param {object} client the active discord.js client
@@ -45,7 +45,7 @@ function initializer(config, client){
 			run: async function (message, args){
 				if(commands[args[1]])//return command specific info if available
 					return message.channel.send('', {embed: {description:  `**${commands[args[1].toLowerCase()].name}**\nDescription:\n${commands[args[1].toLowerCase()].detailed}\nExample(s): \`${commands[args[1].toLowerCase()].examples}\``}});
-				//send a message to the user with all commands and desriptions
+				//send a message to the user with all commands and descriptions
 				message.author.send({embed:
 					{
 						title: '**Command list**',
@@ -120,13 +120,13 @@ function initializer(config, client){
 /**
  * Runs message through command handler.
  * @param {object} message
- * @returns {boolean} wheter a command was triggered
+ * @returns {boolean} whether a command was triggered
  */
 function handle(message){
 	if(message.author.bot || !message.content.startsWith(prefix)) return false;
 	//split into arguments and remove prefix
 	let args = message.content.slice(prefix.length).split(/\s+/);
-	//check existance of command
+	//check existence of command
 	if(!commandAliases[args[0].toLowerCase()]) return false;
 	let command = commands[commandAliases[args[0].toLowerCase()]];
 	if(command.guildOnly&&!message.guild){
@@ -192,9 +192,9 @@ function handle(message){
 
 function handleError(error, message){
 	if(message)
-		message.channel.send("`You shouldn't see this, an error has occured and any output is like corrupted, devs have been informed`");
+		message.channel.send("`You shouldn't see this, an error has occurred and any output is like corrupted, developers have been informed`");
 	const data = JSON.stringify({
-		text:"An error has occured",
+		text:"An error has occurred",
 		attachments:
 		[{
 			title:"Error report",
