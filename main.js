@@ -12,6 +12,7 @@ let expDB = new sqlite3.Database('./exp.db', (err) => {
 //load config file
 const config = (()=>{let configuration = require("./config.json"); configuration.directory = `${__dirname}\\${configuration.directory}`;return configuration})();
 client.prefix = config.prefix;
+client.owners = config.owners;
 
 client.on('ready', () => {
 	//print some information about the bot
