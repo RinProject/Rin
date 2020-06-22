@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 const sqlite3 = require('sqlite3').verbose();
 
-let expDB = new sqlite3.Database('./exp.db', (err) => {
+let expDB = new sqlite3.Database('./databases/exp.db', (err) => {
 	if(err) {
 		return console.error(err.message);
 	}
@@ -49,7 +49,7 @@ client.on('guildDelete', guild => {
 	expDB.run(`DROP TABLE IF EXISTS exp${guild.id};`);
 });
 
-let logDB = new sqlite3.Database('./logs.db', (err) => {
+let logDB = new sqlite3.Database('./databases/logs.db', (err) => {
 	if(err) {
 		return console.error(err.message);
 	}
