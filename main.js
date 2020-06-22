@@ -12,6 +12,7 @@ let expDB = new sqlite3.Database('./exp.db', (err) => {
 //load config file
 const config = (()=>{let configuration = require("./config.json"); configuration.directory = `${__dirname}\\${configuration.directory}`;return configuration})();
 client.prefix = config.prefix;
+client.owners = config.owners;
 
 client.on('ready', () => {
 	//print some information about the bot
@@ -434,7 +435,7 @@ client.on('webhookUpdate', (channel)=>{
 					},
 					color: 0x1080cc,
 					title: 'Channel updated',
-					description: `Webhook changes have occured in ${channel.toString()}`,
+					description: `Webhook changes have occurred in ${channel.toString()}`,
 					footer: {
 						text: `Channel id: ${channel.id}`
 					}
@@ -526,7 +527,7 @@ client.on('emojiUpdate', (oldEmoji, newEmoji) => {
 
 
 //server guild event
-const guildPorperties = [
+const guildProperties = [
 	'afkChannel',
 	'afkChannelID',
 	'afkTimeout',
@@ -574,7 +575,7 @@ client.on('guildUpdate', (oldGuild, newGuild)=>{
 					text: `Guild id: ${newGuild.id}`
 				}
 			}
-			guildPorperties.forEach(property=>{
+			guildProperties.forEach(property=>{
 				if(oldGuild[property]!=newGuild[property])
 					embed.fields.push({
 						name: property,
