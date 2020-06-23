@@ -169,7 +169,7 @@ function handle(message){
 		});
 		if(lacking[0]){
 			message.channel.send('', {embed: {
-				title: 'I am lacking the necessary permissions to use this command',
+				title: 'I lack the necessary permissions to use this command.',
 				color: 0xcc1020,
 				fields: [{
 					name: 'Missing permission(s)',
@@ -179,7 +179,7 @@ function handle(message){
 					).toLowerCase().replace(/_/g, ' ')
 				}],
 				footer: {
-					text: 'Please contact the server owner or admins to use this command'
+					text: 'Please contact the server owner or admins to use this command.'
 				},
 			}});
 			return true;
@@ -192,7 +192,7 @@ function handle(message){
 
 function handleError(error, message){	function handleError(error, message){
 	if(message)		console.log(error);
-		message.channel.send("`You shouldn't see this, an error has occurred and any output is like corrupted, developers have been informed`");	
+		message.channel.send("`You shouldn't see this, an error has occurred and any output is likely corrupted, developers have been informed.`");	
 	const data = JSON.stringify({	
 		text:"An error has occurred",	
 		attachments:	
