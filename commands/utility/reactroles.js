@@ -12,10 +12,6 @@ db.run(`CREATE TABLE IF NOT EXISTS reactroles(
     roleid TEXT NOT NULL
 );`);
 
-let messageId;
-let emojiId;
-let roleId; 
-
 module.exports = {
     run: async function (message, args) {
         if (args[1] == undefined) {
@@ -35,29 +31,23 @@ module.exports = {
                     }
                 });
             } else {
-                messageId = message.guild.fetch(args[2]);
-                emojiId = message.guild.emojis.resolveID(args[3]);
-                roleId = message.guild.roles.fetch(args[4]);
+                // IDs put in by user, used for later
+                let messageId = args[2];
+                let emojiId = args[3];
+                let roleId = args[4];
+
+                // Fetches message, emoji, and role by given IDs.
+                let fetchedMessage = message.channel.messages.fetch(args[2]).then(m => {fetchedMessage = m});
+                let fetchedEmoji = message.guild.emojis.cache.get(emojiId);
+                let fetchedRole = message.guild.roles.cache.get(roleId);
             }
-            if (messageId.guild.id != message.guild.id) {
+            if (fetchedMessage == undefined || fetchedEmoji == undefined || fetchedRole == undefined) return;
+            
+            if (fetchedMessage != message.guild.id) {
                 return message.channel.send('', {
                     embed: {
                         color: 0xFF0000,
                         description: "You can only add a react role to messages in this server."
-                    }
-                });
-            } else if (emojiId.guild.id != message.guild.id) {
-                return message.channel.send('', {
-                    embed: {
-                        color: 0xFF0000,
-                        description: "You can only use emojis that are in this server."
-                    }
-                });
-            } else if (roleId.guild.id != message.guild.id) {
-                return message.channel.send('', {
-                    embed: {
-                        color: 0xFF0000,
-                        description: "You can only add a react role with a role that is in this server."
                     }
                 });
             } else { 
