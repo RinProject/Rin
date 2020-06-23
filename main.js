@@ -19,11 +19,17 @@ client.on('ready', () => {
 	client.guilds.cache.each(guild=>{
 		expDB.run(`CREATE TABLE IF NOT EXISTS exp${guild.id}(user TEXT UNIQUE NOT NULL, exp INTEGER DEFAULT 0 NOT NULL, lastMessage INTEGER DEFAULT 0 NOT NULL);`);
 	});
+	reactrolesDB.each(`SELECT * FROM reactroles;`, async (err, row)=> {
+		let channel = await client.channels.fetch(row.messagechannelid);
+		channel.messages.fetch(row.messageid)
+
+	});
 	console.log(`logged in as ${client.user.username}#${client.user.discriminator} with ${client.guilds.cache.array().length} guilds! Using the prefix ${config.prefix}`);
 	init(config, client);
 });
 
 const {handler, init, errorLog} = require('./handler');
+const reactroles = require('./commands/utility/reactroles');
 
 client.on('message', message => {
 	if(message.author.bot) return;
@@ -155,11 +161,24 @@ client.on('messageUpdate', (oldMessage, newMessage)=>{
 	});
 });
 
+let reactrolesDB = new sqlite3.Database('./databases/reactroles.db', (err) => {
+	if(err) {
+		return console.error(err.message);
+	}
+	console.log('Connected main process to reactroles.db.');
+});
+
 //Message reaction logs
 client.on('messageReactionAdd', (messageReaction, user)=>{
 	if(!messageReaction.message.guild) return;
-	logDB.all(`SELECT messageReactionAdd, messageLogChannel FROM logs WHERE guild = "${messageReaction.message.channel.guild.id}"`, (err, rows)=>{
-		if(rows[0] && rows[0]['messageReactionAdd'])
+	reactrolesDB.all(`SELECT messageid, emojiid, roleid FROM reactroles WHERE guild = "${messageReaction.message.channel.guild.id}" AND messageid = "${messageReaction.message.id}" AND emojiid = "${messageReaction.emoji.id}"`, (err, rows) => {
+		if(rows && rows[0] && rows[0]['roleid'])
+			messageReaction.message.guild.members.cache.get(user.id).roles.add(rows[0]['roleid'], 'reactionrole');
+		if(err)
+			errorLog(err);
+	});
+	logDB.all(`SELECT messageReactionAdd, messageLogChannel FROM logs WHERE guild = "${messageReaction.message.channel.guild.id}"`, (err, rows)=> {
+		if(rows && rows[0] && rows[0]['messageReactionAdd'])
 			client.channels.cache.get(rows[0]['messageLogChannel']).send({
 				embed:{
 					author:{

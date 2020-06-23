@@ -7,9 +7,11 @@ let db = new sqlite3.Database('./databases/reactroles.db', (err) => {
 	console.log('Connected to reactroles.db.');
 });
 db.run(`CREATE TABLE IF NOT EXISTS reactroles(
+    guild TEXT NOT NULL,
     messageid TEXT NOT NULL,
     emojiid TEXT NOT NULL,
-    roleid TEXT NOT NULL
+    roleid TEXT NOT NULL,
+    messagechannelid TEXT NOT NULL
 );`);
 
 module.exports = {
@@ -42,7 +44,7 @@ module.exports = {
             message.channel.messages.fetch(messageId).then(m => {m.react(emojiId)});
             
             // Does database things
-                db.run(`INSERT OR REPLACE INTO reactroles(messageid, emojiid, roleid) VALUES (${messageId}, ${emojiId}, ${roleId})`);
+                db.run(`INSERT OR REPLACE INTO reactroles(messageid, emojiid, roleid, guild, messagechannelid) VALUES (${messageId}, ${emojiId}, ${roleId}, ${message.guild.id}, ${message.channel.id})`);
                 db.all(`SELECT * FROM reactroles WHERE messageid = ${messageId} AND emojiid = ${emojiId} AND roleid = ${roleId}`, (err, rows) => {
                     if(err)
                         console.log(err);  

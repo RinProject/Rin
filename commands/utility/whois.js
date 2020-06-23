@@ -80,8 +80,7 @@ module.exports = {
 			});
 
 		message.guild.members.cache.sort((member1, member2)=>member1.joinedTimestamp-member2.joinedTimestamp);
-		let members = message.guild.members.cache.array(),
-			joinPosition = 0;
+		let members = message.guild.members.cache.array()
 
 		for (let i = 0; i < members.length; i++) {
 			if(members[i].id==member.id){
