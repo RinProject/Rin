@@ -190,8 +190,8 @@ function handle(message){
 	return true;
 }
 
-function handleError(error, message){	function handleError(error, message){
-	if(message)		console.log(error);
+function handleError(error, message){
+	if(message)
 		message.channel.send("`You shouldn't see this, an error has occurred and any output is likely corrupted, developers have been informed.`");	
 	const data = JSON.stringify({	
 		text:"An error has occurred",	
