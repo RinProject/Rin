@@ -190,8 +190,43 @@ function handle(message){
 	return true;
 }
 
-function handleError(error, message){
-	console.log(error);
+function handleError(error, message){	function handleError(error, message){
+	if(message)		console.log(error);
+		message.channel.send("`You shouldn't see this, an error has occurred and any output is like corrupted, developers have been informed`");	
+	const data = JSON.stringify({	
+		text:"An error has occurred",	
+		attachments:	
+		[{	
+			title:"Error report",	
+			color:"#ff4040",	
+			footer:`${message.author.username}#${message.author.discriminator}`,	
+			fields:	
+			[{	
+				title:"Trigger",	
+				value:message.content,	
+				short:true	
+			},	
+			{	
+				title:"Error",	
+				value:error.stack,short:false	
+			}]	
+		}]	
+	});	
+	const options = {	
+		hostname: 'discordapp.com',	
+		path: webhook,	
+		method: 'POST',	
+		headers: {	
+		  'Content-Type': 'application/json',	
+		  'Content-Length': data.length	
+		}	
+	}	
+
+	const req = https.request(options, (res) => {});	
+
+	req.on('error', console.error);	
+	req.write(data);	
+	req.end();	
 }
 
 module.exports = {handler: handle, init: initializer, errorLog: handleError};
