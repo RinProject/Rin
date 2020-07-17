@@ -3,14 +3,30 @@ const client = new Discord.Client();
 const sqlite3 = require('sqlite3').verbose();
 
 let expDB = new sqlite3.Database('./databases/exp.db', (err) => {
-	if(err) {
+	if (err) {
 		return console.error(err.message);
 	}
 	console.log('Connected main process to exp.db.');
 });
 
+let warningDB = new sqlite3.Database('./databases/warnings.db', (err) => {
+	if (err) {
+		return console.error(err.message);
+	}
+	console.log('Connected main process to warnings.db.');
+});
+
 //load config file
-const config = (()=>{let configuration = require("./config.json"); configuration.directory = `${__dirname}\\${configuration.directory}`;return configuration})();
+const config = (() => {
+	let configuration = require("./config.json");
+	configuration.directory = `${__dirname}\\${configuration.directory}`;
+	Object.keys(configuration.colors).forEach(key => {
+		// TODO: implement usage of colours from config in commands
+		configuration.colors[key]=parseInt(configuration.colors[key], 16);
+	});
+	client.colors = configuration.colors;
+	return configuration 
+})();
 client.prefix = config.prefix;
 client.owners = config.owners;
 
@@ -19,35 +35,32 @@ client.on('ready', () => {
 	client.guilds.cache.each(guild=>{
 		expDB.run(`CREATE TABLE IF NOT EXISTS exp${guild.id}(user TEXT UNIQUE NOT NULL, exp INTEGER DEFAULT 0 NOT NULL, lastMessage INTEGER DEFAULT 0 NOT NULL);`);
 	});
-	reactrolesDB.each(`SELECT * FROM reactroles;`, async (err, row)=> {
-		let channel = await client.channels.fetch(row.messagechannelid);
-		channel.messages.fetch(row.messageid)
+	// reactrolesDB.each(`SELECT * FROM reactroles;`, async (err, row)=> {
+	// 	let channel = await client.channels.fetch(row.messagechannelid);
+	// 	channel.messages.fetch(row.messageid)
 
-	});
+	// });
 	console.log(`logged in as ${client.user.username}#${client.user.discriminator} with ${client.guilds.cache.array().length} guilds! Using the prefix ${config.prefix}`);
 	init(config, client);
 });
 
-const {handler, init, errorLog} = require('./handler');
+const { handler, init, errorLog } = require('./handler');
 const reactroles = require('./commands/utility/reactroles');
 
 client.on('message', message => {
 	if(message.author.bot) return;
-	if(!handler(message)&&message.guild)
-	{
+	if(!handler(message)&&message.guild){
 		let expGain = 10;
 		let time = +new Date;
 		expDB.run(`INSERT INTO exp${message.guild.id} (user, exp, lastMessage) 
 		VALUES(${message.author.id}, ${expGain}, ${time}) 
 		ON CONFLICT(user) 
-		DO UPDATE SET exp = CASE WHEN lastMessage < ${time-60000} THEN (exp + ${expGain}) ELSE exp END,
-		lastMessage = CASE WHEN lastMessage < ${time-60000} THEN ${time} ELSE lastMessage END`)
-		//DO UPDATE SET exp = CASE WHEN lastMessage < ${+new Date-60000} THEN (exp + ${expGain}) ELSE exp END`)
-		//DO UPDATE SET  exp=exp+${expGain};`)
+		DO UPDATE SET exp = CASE WHEN lastMessage < ${time - 60000} THEN (exp + ${expGain}) ELSE exp END,
+		lastMessage = CASE WHEN lastMessage < ${time - 60000} THEN ${time} ELSE lastMessage END`)
 	}
 });
 
-client.on('guildCreate', guild=> {
+client.on('guildCreate', guild => {
 	expDB.run(`CREATE TABLE IF NOT EXISTS exp${guild.id}(user TEXT UNIQUE NOT NULL, exp INTEGER DEFAULT 0 NOT NULL );`);
 });
 
@@ -56,34 +69,34 @@ client.on('guildDelete', guild => {
 });
 
 let logDB = new sqlite3.Database('./databases/logs.db', (err) => {
-	if(err) {
+	if (err) {
 		return console.error(err.message);
 	}
 	console.log('Connected main process to logs.db.');
 });
 
 //Message change logs
-client.on('channelPinsUpdate', (channel, time)=>{
-	if(!channel.guild) return;
-	logDB.all(`SELECT channelPinsUpdate, messageLogChannel FROM logs WHERE guild = "${channel.guild.id}"`, (err, rows)=>{
+client.on('channelPinsUpdate', (channel, time) => {
+	if (!channel.guild) return;
+	logDB.all(`SELECT channelPinsUpdate, messageLogChannel FROM logs WHERE guild = "${channel.guild.id}"`, (err, rows) => {
 		client.channels.cache.get(rows[0]['messageLogChannel']).send({
-			embed:{
+			embed: {
 				title: 'Channel pin update',
 				description: `Pins in ${channel} updated`
 			}
 		})
-		if(err)
+		if (err)
 			errorLog(err);
 	});
 });
 
-client.on('messageDelete', (message)=>{
-	if(!message.guild) return;
-	logDB.all(`SELECT messageDelete, messageLogChannel FROM logs WHERE guild = "${message.channel.guild.id}"`, (err, rows)=>{
-		if(rows[0] && rows[0]['messageDelete'])
+client.on('messageDelete', (message) => {
+	if (!message.guild) return;
+	logDB.all(`SELECT messageDelete, messageLogChannel FROM logs WHERE guild = "${message.channel.guild.id}"`, (err, rows) => {
+		if (rows[0] && rows[0]['messageDelete'])
 			client.channels.cache.get(rows[0]['messageLogChannel']).send({
-				embed:{
-					author:{
+				embed: {
+					author: {
 						name: message.author.tag,
 						iconURL: message.author.avatarURL()
 					},
@@ -95,17 +108,17 @@ client.on('messageDelete', (message)=>{
 					}
 				}
 			});
-		if(err)
+		if (err)
 			errorLog(err);
 	});
 });
 
-client.on('messageDeleteBulk', (messages)=>{
-	if(!messages.first().guild) return;
-	logDB.all(`SELECT messageDelete, messageLogChannel FROM logs WHERE guild = "${messages.first().guild.id}"`, (err, rows)=>{
-		if(rows[0] && rows[0]['messageDelete']){
+client.on('messageDeleteBulk', (messages) => {
+	if (!messages.first().guild) return;
+	logDB.all(`SELECT messageDelete, messageLogChannel FROM logs WHERE guild = "${messages.first().guild.id}"`, (err, rows) => {
+		if (rows[0] && rows[0]['messageDelete']) {
 			let fields = [];
-			messages.each(message=>{
+			messages.each(message => {
 				fields.push({
 					name: `${message.author.tag} | id: ${message.author.id}`,
 					inline: false,
@@ -121,18 +134,18 @@ client.on('messageDeleteBulk', (messages)=>{
 				}
 			});
 		}
-		if(err)
+		if (err)
 			errorLog(err);
 	});
 });
 
-client.on('messageUpdate', (oldMessage, newMessage)=>{
-	if(!newMessage.guild) return;
-	logDB.all(`SELECT messageUpdate, messageLogChannel FROM logs WHERE guild = "${newMessage.channel.guild.id}"`, (err, rows)=>{
-		if(rows && rows[0] && rows[0]['messageUpdate'] && (oldMessage.content || newMessage.content))
+client.on('messageUpdate', (oldMessage, newMessage) => {
+	if (!newMessage.guild) return;
+	logDB.all(`SELECT messageUpdate, messageLogChannel FROM logs WHERE guild = "${newMessage.channel.guild.id}"`, (err, rows) => {
+		if (rows && rows[0] && rows[0]['messageUpdate'] && (oldMessage.content || newMessage.content))
 			client.channels.cache.get(rows[0]['messageLogChannel']).send({
-				embed:{
-					author:{
+				embed: {
+					author: {
 						name: newMessage.author.tag,
 						iconURL: newMessage.author.avatarURL()
 					},
@@ -156,32 +169,32 @@ client.on('messageUpdate', (oldMessage, newMessage)=>{
 					}
 				}
 			});
-		if(err)
+		if (err)
 			errorLog(err);
 	});
 });
 
 let reactrolesDB = new sqlite3.Database('./databases/reactroles.db', (err) => {
-	if(err) {
+	if (err) {
 		return console.error(err.message);
 	}
 	console.log('Connected main process to reactroles.db.');
 });
 
 //Message reaction logs
-client.on('messageReactionAdd', (messageReaction, user)=>{
-	if(!messageReaction.message.guild) return;
+client.on('messageReactionAdd', (messageReaction, user) => {
+	if (!messageReaction.message.guild) return;
 	reactrolesDB.all(`SELECT messageid, emojiid, roleid FROM reactroles WHERE guild = "${messageReaction.message.channel.guild.id}" AND messageid = "${messageReaction.message.id}" AND emojiid = "${messageReaction.emoji.id}"`, (err, rows) => {
-		if(rows && rows[0] && rows[0]['roleid'])
+		if (rows && rows[0] && rows[0]['roleid'])
 			messageReaction.message.guild.members.cache.get(user.id).roles.add(rows[0]['roleid'], 'reactionrole');
-		if(err)
+		if (err)
 			errorLog(err);
 	});
-	logDB.all(`SELECT messageReactionAdd, messageLogChannel FROM logs WHERE guild = "${messageReaction.message.channel.guild.id}"`, (err, rows)=> {
-		if(rows && rows[0] && rows[0]['messageReactionAdd'])
+	logDB.all(`SELECT messageReactionAdd, messageLogChannel FROM logs WHERE guild = "${messageReaction.message.channel.guild.id}"`, (err, rows) => {
+		if (rows && rows[0] && rows[0]['messageReactionAdd'])
 			client.channels.cache.get(rows[0]['messageLogChannel']).send({
-				embed:{
-					author:{
+				embed: {
+					author: {
 						name: user.tag,
 						iconURL: user.avatarURL()
 					},
@@ -193,18 +206,18 @@ client.on('messageReactionAdd', (messageReaction, user)=>{
 					}
 				}
 			});
-		if(err)
+		if (err)
 			errorLog(err);
 	});
 });
 
-client.on('messageReactionRemove', (messageReaction, user)=>{
-	if(!messageReaction.message.guild) return;
-	logDB.all(`SELECT messageReactionRemove, messageLogChannel FROM logs WHERE guild = "${messageReaction.message.channel.guild.id}"`, (err, rows)=>{
-		if(rows[0] && rows[0]['messageReactionRemove'])
+client.on('messageReactionRemove', (messageReaction, user) => {
+	if (!messageReaction.message.guild) return;
+	logDB.all(`SELECT messageReactionRemove, messageLogChannel FROM logs WHERE guild = "${messageReaction.message.channel.guild.id}"`, (err, rows) => {
+		if (rows[0] && rows[0]['messageReactionRemove'])
 			client.channels.cache.get(rows[0]['messageLogChannel']).send({
-				embed:{
-					author:{
+				embed: {
+					author: {
 						name: user.tag,
 						iconURL: user.avatarURL()
 					},
@@ -216,18 +229,18 @@ client.on('messageReactionRemove', (messageReaction, user)=>{
 					}
 				}
 			});
-		if(err)
+		if (err)
 			errorLog(err);
 	});
 });
 
-client.on('messageReactionRemoveAll', (message)=>{
-	if(!message.guild) return;
-	logDB.all(`SELECT messageReactionRemoveAll, messageLogChannel FROM logs WHERE guild = "${message.channel.guild.id}"`, (err, rows)=>{
-		if(rows[0] && rows[0]['messageReactionRemoveAll'])
+client.on('messageReactionRemoveAll', (message) => {
+	if (!message.guild) return;
+	logDB.all(`SELECT messageReactionRemoveAll, messageLogChannel FROM logs WHERE guild = "${message.channel.guild.id}"`, (err, rows) => {
+		if (rows[0] && rows[0]['messageReactionRemoveAll'])
 			client.channels.cache.get(rows[0]['messageLogChannel']).send({
-				embed:{
-					author:{
+				embed: {
+					author: {
 						name: message.author.tag,
 						iconURL: message.author.avatarURL()
 					},
@@ -239,18 +252,18 @@ client.on('messageReactionRemoveAll', (message)=>{
 					}
 				}
 			});
-		if(err)
+		if (err)
 			errorLog(err);
 	});
 });
 
-client.on('messageReactionRemoveEmoji', (messageReaction)=>{
-	if(!messageReaction.message.guild) return;
-	logDB.all(`SELECT messageReactionRemoveEmoji, messageLogChannel FROM logs WHERE guild = "${messageReaction.message.channel.guild.id}"`, (err, rows)=>{
-		if(rows[0] && rows[0]['messageReactionRemoveEmoji'])
+client.on('messageReactionRemoveEmoji', (messageReaction) => {
+	if (!messageReaction.message.guild) return;
+	logDB.all(`SELECT messageReactionRemoveEmoji, messageLogChannel FROM logs WHERE guild = "${messageReaction.message.channel.guild.id}"`, (err, rows) => {
+		if (rows[0] && rows[0]['messageReactionRemoveEmoji'])
 			client.channels.cache.get(rows[0]['messageLogChannel']).send({
-				embed:{
-					author:{
+				embed: {
+					author: {
 						name: message.user.tag,
 						iconURL: messageReaction.message.user.avatarURL()
 					},
@@ -262,18 +275,18 @@ client.on('messageReactionRemoveEmoji', (messageReaction)=>{
 					}
 				}
 			});
-		if(err)
+		if (err)
 			errorLog(err);
 	});
 });
 
 //Message miscellaneous
-client.on('inviteCreate', invite=>{
-	logDB.all(`SELECT inviteCreate, messageLogChannel FROM logs WHERE guild = "${invite.guild.id}"`, (err, rows)=>{
-		if(rows[0] && rows[0]['inviteCreate'])
+client.on('inviteCreate', invite => {
+	logDB.all(`SELECT inviteCreate, messageLogChannel FROM logs WHERE guild = "${invite.guild.id}"`, (err, rows) => {
+		if (rows[0] && rows[0]['inviteCreate'])
 			client.channels.cache.get(rows[0]['messageLogChannel']).send({
-				embed:{
-					author:{
+				embed: {
+					author: {
 						name: invite.inviter.tag,
 						iconURL: invite.inviter.avatarURL()
 					},
@@ -288,7 +301,7 @@ client.on('inviteCreate', invite=>{
 						{
 							name: 'Lifetime',
 							inline: true,
-							value: `${invite.maxAge/3600}hours`
+							value: `${invite.maxAge / 3600}hours`
 						},
 						{
 							name: 'Max uses',
@@ -301,17 +314,17 @@ client.on('inviteCreate', invite=>{
 					}
 				}
 			});
-		if(err)
+		if (err)
 			errorLog(err);
 	});
 });
 
-client.on('inviteDelete', invite=>{
-	logDB.all(`SELECT inviteDelete, messageLogChannel FROM logs WHERE guild = "${invite.guild.id}"`, (err, rows)=>{
-		if(rows[0] && rows[0]['inviteDelete'])
+client.on('inviteDelete', invite => {
+	logDB.all(`SELECT inviteDelete, messageLogChannel FROM logs WHERE guild = "${invite.guild.id}"`, (err, rows) => {
+		if (rows[0] && rows[0]['inviteDelete'])
 			client.channels.cache.get(rows[0]['messageLogChannel']).send({
-				embed:{
-					author:{
+				embed: {
+					author: {
 						name: invite.inviter.tag,
 						iconURL: invite.inviter.avatarURL()
 					},
@@ -334,18 +347,18 @@ client.on('inviteDelete', invite=>{
 					}
 				}
 			});
-		if(err)
+		if (err)
 			errorLog(err);
 	});
 });
 
 //Server channel
-client.on('channelCreate', channel=>{
-	if(!channel.guild) return;
-	logDB.all(`SELECT channelCreate, serverLogChannel FROM logs WHERE guild = "${channel.guild.id}"`, (err, rows)=>{
-		if(rows[0] && rows[0]['channelCreate'])
+client.on('channelCreate', channel => {
+	if (!channel.guild) return;
+	logDB.all(`SELECT channelCreate, serverLogChannel FROM logs WHERE guild = "${channel.guild.id}"`, (err, rows) => {
+		if (rows[0] && rows[0]['channelCreate'])
 			client.channels.cache.get(rows[0]['serverLogChannel']).send({
-				embed:{
+				embed: {
 					color: 0x10cc10,
 					title: 'New channel created',
 					fields: [
@@ -365,17 +378,17 @@ client.on('channelCreate', channel=>{
 					}
 				}
 			});
-		if(err)
+		if (err)
 			errorLog(err);
 	});
 });
 
-client.on('channelDelete', channel=>{
-	if(!channel.guild) return;
-	logDB.all(`SELECT channelDelete, serverLogChannel FROM logs WHERE guild = "${channel.guild.id}"`, (err, rows)=>{
-		if(rows[0] && rows[0]['channelDelete'])
+client.on('channelDelete', channel => {
+	if (!channel.guild) return;
+	logDB.all(`SELECT channelDelete, serverLogChannel FROM logs WHERE guild = "${channel.guild.id}"`, (err, rows) => {
+		if (rows[0] && rows[0]['channelDelete'])
 			client.channels.cache.get(rows[0]['serverLogChannel']).send({
-				embed:{
+				embed: {
 					color: 0xcc1020,
 					title: 'Channel deleted',
 					fields: [
@@ -395,7 +408,7 @@ client.on('channelDelete', channel=>{
 					}
 				}
 			});
-		if(err)
+		if (err)
 			errorLog(err);
 	});
 });
@@ -407,12 +420,12 @@ const channelPropertiesToCheck = [
 	['parentID', 'CategoryID'],
 	['permissionsLocked', 'Match category permissions']
 ];
-client.on('channelUpdate', (oldChannel, newChannel)=>{
-	if(!newChannel.guild) return;
-	logDB.all(`SELECT channelUpdate, serverLogChannel FROM logs WHERE guild = "${newChannel.guild.id}"`, (err, rows)=>{
-		if(rows[0] && rows[0]['channelUpdate']){
+client.on('channelUpdate', (oldChannel, newChannel) => {
+	if (!newChannel.guild) return;
+	logDB.all(`SELECT channelUpdate, serverLogChannel FROM logs WHERE guild = "${newChannel.guild.id}"`, (err, rows) => {
+		if (rows[0] && rows[0]['channelUpdate']) {
 			let embed = {
-				author:{
+				author: {
 					name: newChannel.name,
 					iconURL: newChannel.guild.iconURL()
 				},
@@ -424,8 +437,8 @@ client.on('channelUpdate', (oldChannel, newChannel)=>{
 					text: `Channel id: ${newChannel.id}`
 				}
 			}
-			channelPropertiesToCheck.forEach(property=>{
-				if(newChannel[property[0]]!=oldChannel[property[0]])
+			channelPropertiesToCheck.forEach(property => {
+				if (newChannel[property[0]] != oldChannel[property[0]])
 					embed.fields.push({
 						name: property[1],
 						inline: true,
@@ -433,22 +446,22 @@ client.on('channelUpdate', (oldChannel, newChannel)=>{
 					});
 			});
 			// TODO check permissions
-			if(embed.fields[0])
+			if (embed.fields[0])
 				client.channels.cache.get(rows[0]['serverLogChannel']).send({
 					embed: embed
 				});
 		}
-		if(err)
+		if (err)
 			errorLog(err);
 	});
 });
 
-client.on('webhookUpdate', (channel)=>{
-	logDB.all(`SELECT webhookUpdate, serverLogChannel FROM logs WHERE guild = "${channel.guild.id}"`, (err, rows)=>{
-		if(rows[0] && rows[0]['webhookUpdate']){
+client.on('webhookUpdate', (channel) => {
+	logDB.all(`SELECT webhookUpdate, serverLogChannel FROM logs WHERE guild = "${channel.guild.id}"`, (err, rows) => {
+		if (rows[0] && rows[0]['webhookUpdate']) {
 			client.channels.cache.get(rows[0]['serverLogChannel']).send({
 				embed: {
-					author:{
+					author: {
 						name: channel.name,
 						iconURL: channel.guild.iconURL()
 					},
@@ -461,18 +474,18 @@ client.on('webhookUpdate', (channel)=>{
 				}
 			});
 		}
-		if(err)
+		if (err)
 			errorLog(err);
 	});
 });
 
 //Server emote events
 client.on('emojiCreate', emoji => {
-	logDB.all(`SELECT emojiCreate, serverLogChannel FROM logs WHERE guild = "${emoji.guild.id}"`, (err, rows)=>{
-		if(rows[0] && rows[0]['emojiCreate'])
+	logDB.all(`SELECT emojiCreate, serverLogChannel FROM logs WHERE guild = "${emoji.guild.id}"`, (err, rows) => {
+		if (rows[0] && rows[0]['emojiCreate'])
 			client.channels.cache.get(rows[0]['serverLogChannel']).send({
 				embed: {
-					author:{
+					author: {
 						name: emoji.name,
 						iconURL: emoji.url
 					},
@@ -480,22 +493,22 @@ client.on('emojiCreate', emoji => {
 					description: 'Emoji created',
 					image: {
 						url: emoji.url,
-						height: 512, 
+						height: 512,
 						width: 512
 					}
 				}
 			});
-		if(err)
+		if (err)
 			errorLog(err);
 	});
 });
 
 client.on('emojiDelete', emoji => {
-	logDB.all(`SELECT emojiDelete, serverLogChannel FROM logs WHERE guild = "${emoji.guild.id}"`, (err, rows)=>{
-		if(rows[0] && rows[0]['emojiDelete'])
+	logDB.all(`SELECT emojiDelete, serverLogChannel FROM logs WHERE guild = "${emoji.guild.id}"`, (err, rows) => {
+		if (rows[0] && rows[0]['emojiDelete'])
 			client.channels.cache.get(rows[0]['serverLogChannel']).send({
 				embed: {
-					author:{
+					author: {
 						name: emoji.name,
 						iconURL: emoji.url
 					},
@@ -503,28 +516,28 @@ client.on('emojiDelete', emoji => {
 					description: 'Emoji deleted',
 					image: {
 						url: emoji.url,
-						height: 512, 
+						height: 512,
 						width: 512
 					}
 				}
 			});
-		if(err)
+		if (err)
 			errorLog(err);
 	});
 });
 
 client.on('emojiUpdate', (oldEmoji, newEmoji) => {
-	logDB.all(`SELECT emojiUpdate, serverLogChannel FROM logs WHERE guild = "${newEmoji.guild.id}"`, (err, rows)=>{
-		if(rows[0] && rows[0]['emojiUpdate']){
+	logDB.all(`SELECT emojiUpdate, serverLogChannel FROM logs WHERE guild = "${newEmoji.guild.id}"`, (err, rows) => {
+		if (rows[0] && rows[0]['emojiUpdate']) {
 			client.channels.cache.get(rows[0]['serverLogChannel']).send({
 				embed: {
-					author:{
+					author: {
 						name: newEmoji.name,
 						iconURL: newEmoji.url
 					},
 					color: 0x1080cc,
 					title: 'Emoji changed',
-					fields:[
+					fields: [
 						{
 							name: 'Old name',
 							inline: true,
@@ -539,7 +552,7 @@ client.on('emojiUpdate', (oldEmoji, newEmoji) => {
 				}
 			});
 		}
-		if(err)
+		if (err)
 			errorLog(err);
 	});
 });
@@ -579,11 +592,11 @@ const guildProperties = [
 	'widgetChannelID',
 	'widgetEnabled'
 ];
-client.on('guildUpdate', (oldGuild, newGuild)=>{
-	logDB.all(`SELECT guildUpdate, serverLogChannel FROM logs WHERE guild = "${newGuild.id}"`, (err, rows)=>{
-		if(rows[0] && rows[0]['guildUpdate']){
+client.on('guildUpdate', (oldGuild, newGuild) => {
+	logDB.all(`SELECT guildUpdate, serverLogChannel FROM logs WHERE guild = "${newGuild.id}"`, (err, rows) => {
+		if (rows[0] && rows[0]['guildUpdate']) {
 			let embed = {
-				author:{
+				author: {
 					name: newGuild.name,
 					iconURL: newGuild.iconURL()
 				},
@@ -594,8 +607,8 @@ client.on('guildUpdate', (oldGuild, newGuild)=>{
 					text: `Guild id: ${newGuild.id}`
 				}
 			}
-			guildProperties.forEach(property=>{
-				if(oldGuild[property]!=newGuild[property])
+			guildProperties.forEach(property => {
+				if (oldGuild[property] != newGuild[property])
 					embed.fields.push({
 						name: property,
 						inline: true,
@@ -603,22 +616,22 @@ client.on('guildUpdate', (oldGuild, newGuild)=>{
 					});
 			});
 			// TODO feature change
-			if(embed.fields[0])
+			if (embed.fields[0])
 				client.channels.cache.get(rows[0]['serverLogChannel']).send({
 					embed: embed
 				});
 		}
-		if(err)
+		if (err)
 			errorLog(err);
 	});
 });
 
-client.on('guildIntegrationsUpdate', guild=>{
-	logDB.all(`SELECT guildIntegrationsUpdate, serverLogChannel FROM logs WHERE guild = "${guild.id}"`, (err, rows)=>{
-		if(rows[0] && rows[0]['guildIntegrationsUpdate']){
+client.on('guildIntegrationsUpdate', guild => {
+	logDB.all(`SELECT guildIntegrationsUpdate, serverLogChannel FROM logs WHERE guild = "${guild.id}"`, (err, rows) => {
+		if (rows[0] && rows[0]['guildIntegrationsUpdate']) {
 			client.channels.cache.get(rows[0]['serverLogChannel']).send({
 				embed: {
-					author:{
+					author: {
 						name: guild.name,
 						iconURL: guild.iconURL()
 					},
@@ -630,19 +643,19 @@ client.on('guildIntegrationsUpdate', guild=>{
 				}
 			});
 		}
-		if(err)
+		if (err)
 			errorLog(err);
 	});
 });
 
 //moderation bans
 
-client.on('guildBanAdd', (guild, user)=>{
-	logDB.all(`SELECT guildBanAdd, modLogChannel FROM logs WHERE guild = "${guild.id}"`, (err, rows)=>{
-		if(rows[0] && rows[0]['guildBanAdd']){
+client.on('guildBanAdd', (guild, user) => {
+	logDB.all(`SELECT guildBanAdd, modLogChannel FROM logs WHERE guild = "${guild.id}"`, (err, rows) => {
+		if (rows[0] && rows[0]['guildBanAdd']) {
 			client.channels.cache.get(rows[0]['modLogChannel']).send({
 				embed: {
-					author:{
+					author: {
 						name: user.tag,
 						iconURL: user.displayAvatarURL()
 					},
@@ -654,17 +667,17 @@ client.on('guildBanAdd', (guild, user)=>{
 				}
 			});
 		}
-		if(err)
+		if (err)
 			errorLog(err);
 	});
 });
 
-client.on('guildBanRemove', (guild, user)=>{
-	logDB.all(`SELECT guildBanRemove, modLogChannel FROM logs WHERE guild = "${guild.id}"`, (err, rows)=>{
-		if(rows[0] && rows[0]['guildBanRemove']){
+client.on('guildBanRemove', (guild, user) => {
+	logDB.all(`SELECT guildBanRemove, modLogChannel FROM logs WHERE guild = "${guild.id}"`, (err, rows) => {
+		if (rows[0] && rows[0]['guildBanRemove']) {
 			client.channels.cache.get(rows[0]['modLogChannel']).send({
 				embed: {
-					author:{
+					author: {
 						name: user.tag,
 						iconURL: user.displayAvatarURL()
 					},
@@ -676,19 +689,19 @@ client.on('guildBanRemove', (guild, user)=>{
 				}
 			});
 		}
-		if(err)
+		if (err)
 			errorLog(err);
 	});
 });
 
 //join/leave
 
-client.on('guildMemberAdd', (member)=>{
-	logDB.all(`SELECT guildMemberAdd, modLogChannel FROM logs WHERE guild = "${member.guild.id}"`, (err, rows)=>{
-		if(rows[0] && rows[0]['guildMemberAdd']){
+client.on('guildMemberAdd', (member) => {
+	logDB.all(`SELECT guildMemberAdd, modLogChannel FROM logs WHERE guild = "${member.guild.id}"`, (err, rows) => {
+		if (rows[0] && rows[0]['guildMemberAdd']) {
 			client.channels.cache.get(rows[0]['modLogChannel']).send({
 				embed: {
-					author:{
+					author: {
 						name: member.user.tag,
 						iconURL: member.user.displayAvatarURL()
 					},
@@ -700,17 +713,17 @@ client.on('guildMemberAdd', (member)=>{
 				}
 			});
 		}
-		if(err)
+		if (err)
 			errorLog(err);
 	});
 });
 
-client.on('guildMemberRemove', (member)=>{
-	logDB.all(`SELECT guildMemberRemove, modLogChannel FROM logs WHERE guild = "${member.guild.id}"`, (err, rows)=>{
-		if(rows[0] && rows[0]['guildMemberRemove']){
+client.on('guildMemberRemove', (member) => {
+	logDB.all(`SELECT guildMemberRemove, modLogChannel FROM logs WHERE guild = "${member.guild.id}"`, (err, rows) => {
+		if (rows[0] && rows[0]['guildMemberRemove']) {
 			client.channels.cache.get(rows[0]['modLogChannel']).send({
 				embed: {
-					author:{
+					author: {
 						name: member.user.tag,
 						iconURL: member.user.displayAvatarURL()
 					},
@@ -722,7 +735,7 @@ client.on('guildMemberRemove', (member)=>{
 				}
 			});
 		}
-		if(err)
+		if (err)
 			errorLog(err);
 	});
 });
@@ -734,11 +747,11 @@ const memberProperties = [
 	'displayName',
 	'nickname'
 ]
-client.on('guildMemberUpdate', (oldMember, newMember)=>{
-	logDB.all(`SELECT guildMemberUpdate, modLogChannel FROM logs WHERE guild = "${newMember.guild.id}"`, (err, rows)=>{
-		if(rows[0] && rows[0]['guildMemberUpdate']){
+client.on('guildMemberUpdate', (oldMember, newMember) => {
+	logDB.all(`SELECT guildMemberUpdate, modLogChannel FROM logs WHERE guild = "${newMember.guild.id}"`, (err, rows) => {
+		if (rows[0] && rows[0]['guildMemberUpdate']) {
 			let embed = {
-				author:{
+				author: {
 					name: newMember.user.tag,
 					iconURL: newMember.user.displayAvatarURL()
 				},
@@ -750,44 +763,119 @@ client.on('guildMemberUpdate', (oldMember, newMember)=>{
 					text: `id: ${newMember.id}`
 				}
 			}
-			memberProperties.forEach(property=>{
-				if(oldMember[property]!=newMember[property])
+			memberProperties.forEach(property => {
+				if (oldMember[property] != newMember[property])
 					embed.fields.push({
 						name: property,
 						inline: true,
 						value: `Changed from ${oldMember[property]} to ${newMember[property]}`
 					});
 			});
-			let change = oldMember.roles.cache.array().length-newMember.roles.cache.array().length,
+			let change = oldMember.roles.cache.array().length - newMember.roles.cache.array().length,
 				editRole;
-			if(change>0) {
-				oldMember.roles.cache.each(role=>{
-					if(!newMember.roles.cache.get(role.id))
+			if (change > 0) {
+				oldMember.roles.cache.each(role => {
+					if (!newMember.roles.cache.get(role.id))
 						editRole = role;
 				});
-			} else if(change<0) {
-				newMember.roles.cache.each(role=>{
-					if(!oldMember.roles.cache.get(role.id))
+			} else if (change < 0) {
+				newMember.roles.cache.each(role => {
+					if (!oldMember.roles.cache.get(role.id))
 						editRole = role;
 				});
 			}
-			if(editRole)
+			if (editRole)
 				embed.fields.push({
-					name: change<0?'Role added':'Role removed',
+					name: change < 0 ? 'Role added' : 'Role removed',
 					inline: true,
 					value: editRole.toString()
 				});
-			
+
 			// TODO perms
-			
-			if(embed.fields[0])
+
+			if (embed.fields[0])
 				client.channels.cache.get(rows[0]['modLogChannel']).send({
 					embed: embed
 				});
 		}
-		if(err)
+		if (err)
 			errorLog(err);
 	});
 });
 
 client.login(config.token);
+if(config.enableWeb){
+	const express = require('express');
+	const app = express();
+	const port = config.port || 1337;
+	const session = require('express-session');
+	const passport = require('passport');
+	const strategy = require('./express/strategies/discord-strategy.js');
+	const crypto = require('crypto');
+	let sum = crypto.createHash('sha256');
+	sum.update(config.clientSecret);
+
+	const fs = require('fs');
+	const base = fs.readFileSync(__dirname+'/express/index.html').toString();
+
+	app.engine('html', function (path, options, callback){
+		let rendered = base
+			.replace('#auth#', options.req.user?'auth/logout':'auth')
+			.replace('#login#', options.req.user?'Logout':'Login')
+			.replace('#title#', options.title)
+			.replace('#content#', options.content);
+		return callback(null, rendered)
+	})
+	app.set('views', './express') // specify the views directory
+	app.set('view engine', 'html') // register the template engine
+
+	app.use(session({
+		secret: sum.digest('hex'),
+		cookie: {
+			maxAge: 60000 * 60 * 24
+		},
+		saveUninitialized: false,
+		resave: false,
+		name: 'discord'
+	}));
+
+	app.use(passport.initialize());
+	app.use(passport.session());
+
+	app.use(express.static(__dirname + '/express/public'))
+
+	const bodyParser = require('body-parser');
+	app.use(bodyParser.urlencoded({ extended: true }));
+	app.use(bodyParser.json());
+
+	app.get('/', (req, res) => {
+		res.render('index', {req, content: '<h1>Home page</h1>'});
+	});
+
+	app.use('/auth', require('./express/routes/auth.js'));
+
+	app.use('/dashboard', require('./express/routes/dashboard.js'));
+
+	app.get('/leaderboard', (req, res) => { res.redirect('/404/'); });
+
+	app.get('/leaderboard/:guild/:page?', (req, res) => {
+		if (req.params.guild) {
+			let page = req.params.page || 1;
+			expDB.all(`SELECT exp, user FROM exp${req.params.guild} ORDER BY exp DESC LIMIT ${0 * page}, ${10 * page - 1};`, (err, rows) => {
+				if (err || !rows)
+					return res.redirect('/404/');
+				let guild = client.guilds.cache.get(req.params.guild);
+				let leaderboard = '';
+				rows.forEach((row, index) => {
+					let name = guild.members.cache.get(row.user).user.tag;
+					leaderboard += `<div><h1># ${index + 1 + 10 * (page - 1)} ${name}</h1><h2>Level: ${row.exp}</h2><h2>Exp: ${row.exp}</h2></div>`
+				});
+				if (!leaderboard)
+					return res.redirect('/404/');
+				res.send(leaderboard);
+			});
+		}
+	});
+
+	app.listen(port, () => console.log(`Listening on http://localhost:${port}`));
+}
