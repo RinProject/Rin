@@ -53,13 +53,14 @@ module.exports = {
         } 
         if (args[1] == 'remove') {
             if (args[2] == undefined || args[3] == undefined){
-                message.channel.send('', {
+                return message.channel.send('', {
                     embed: {
                         color: 0xFF0000,
-                        description: `Please follow the format ${config.prefix}reactrole remove <messageid> <roleid>`
+                        description: `Please follow the format ${config.prefix}reactrole remove <messageid> <emojiid>`
                     }
                 })
             }
+            message.channel.messages.fetch(messageId).then(m => {m.remove(args[3])});
         }
     },
     aliases: ['rr'],
