@@ -25,7 +25,6 @@ module.exports = {
 				}
 			});
 		}).catch(e => {
-            console.log(e);
 			return message.channel.send('', {
 				embed: {
 					description: 'I am unable to remove this role. Please check this roles place in the role hierarchy.',
