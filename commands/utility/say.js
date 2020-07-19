@@ -1,6 +1,5 @@
 module.exports = {
     async run(message, args) {
-        const content = message.content.slice(' '); 
         if (args[1] == undefined) {
             return message.channel.send('', {
                 embed: {
@@ -9,6 +8,8 @@ module.exports = {
                 }
             });
         }
+	    
+        message.delete().catch(e => e)
         return message.channel.send(args.splice(1).join(' '));
     },
     description: 'Says a given message.',
