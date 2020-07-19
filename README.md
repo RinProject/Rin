@@ -4,7 +4,7 @@ A general purpose Discord bot written in JavaScript
 ## Setup
 * install [nodejs](https://nodejs.org/en/) if not already installed.
 * run `npm i`
-* run `mkdir databases` or just create a folder called 'datbases' if it does not already exist
+* run `mkdir databases` or just create a folder called 'databases' if it does not already exist
 * copy and rename config-template.json to config.json, fill in all data
 	* Token; get pre-existing bot token or create a new one through [Discord's dev portal](https://discord.com/developers/applications). **Note: discord.js will throw an error if this is not included**
 	* Pick your desired prefix for example: `;`, `!`, `r!` or something entirely different!
