@@ -3,7 +3,6 @@
 ## Avatar
 Displays a users profile picture.
 
-
 Examples:
 ```
 ;avatar
@@ -57,7 +56,6 @@ Example:
 ## Roleinfo
 Sends a given role's info.
 
-
 Examples:
 ```
 ;roleinfo @Cutie
@@ -69,7 +67,6 @@ Examples:
 
 ## Serverinfo
 Sends info about the server.
-
 
 Example: 
 ```
