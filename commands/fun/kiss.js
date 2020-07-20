@@ -15,7 +15,7 @@ module.exports = {
 			message.channel.send('', {
 				embed: {
 					title: 'An error has occurred',
-					description: 'it appears the person you have tried to kiss does not exist.',
+					description: 'It appears the person you have tried to kiss does not exist.',
 					color: 0xff0000
 				}
 			});
