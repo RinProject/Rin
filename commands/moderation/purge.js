@@ -1,17 +1,5 @@
 module.exports = {
 	async run(message, args) {
-
-		// Check for sufficent permissions
-		if(!message.guild.me.hasPermission('MANAGE_MESSAGES')) {
-			return message.channel.send('', {
-				embed: {
-					title: "Insufficient permissions.",
-					description: 'I need the ``manage messages`` permission to purge messages.',
-					color: 0xFF0000
-				}
-			});
-		}
-
 		if(args.length == 1)
 			message.channel.bulkDelete(2);
 		else {
