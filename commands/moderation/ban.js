@@ -1,5 +1,9 @@
 module.exports = {
 	async run(message, args) {
+		let reason = args.slice(2).join(" ");
+		if (!reason) reason = `No reason provided. Responsible moderator: ${message.author.tag}`;
+		
+		// TODO: implement optional message remove days functionality, logging reason/responsible moderator functionality
 		let user = message.mentions.users.first() || await message.client.users.fetch(args[1])
 		.catch(e => {
 			message.channel.send('', {
@@ -10,11 +14,9 @@ module.exports = {
 			});
 		});
 
-		if(user == undefined) {
-			return;
-		}
+		if(user == undefined) return;
 
-		message.guild.members.ban(user, 0).then(()=>{
+		message.guild.members.ban(user, {days: 0, reason: reason}).then(()=>{
 			message.channel.send('', {
 				embed: {
 					title: 'User successfully banned',
