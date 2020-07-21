@@ -11,10 +11,10 @@ module.exports = {
 				}
 			});
 		}
+
 		let reason = args.slice(2).join(" ");
-		if(!reason) {
-			reason = "No reason provided.";
-		}
+		if (!reason) reason = `No reason provided. Responsible moderator: ${message.author.tag}`;
+
 		try {
 			message.guild.members.unban(bannedPerson.user.id, reason);
 			message.channel.send('', {
@@ -28,12 +28,17 @@ module.exports = {
 				}
 			});
 		} catch (e) {
-			console.log(e.message);
+				return message.channel.send('', {
+					embed: {
+						title: 'Failed to unban user.',
+						color: 0xCC1020
+					}
+				});
 		}
 	},
 	description: 'Unbans a user',
 	detailed: 'Unbans mentioned user',
-	examples: prefix => `${prefix}unban <user id>`,
+	examples: prefix => `${prefix}unban <id>`,
 	name: 'unban',
 	perms: ['BAN_MEMBERS'],
 	botPerms: ['BAN_MEMBERS'],
