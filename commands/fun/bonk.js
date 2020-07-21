@@ -1,18 +1,36 @@
 const images = require('../../JSONStorage/bonk.json')
 module.exports = {
-	run: async function (message) {
-		if(message.mentions.users.first())
-			message.channel.send('', {
+	run: async function (message, args) {
+		let member = message.mentions.members.first() || await message.guild.members.cache.get(args[1]);
+		
+		if(member) {
+		if (message.author.id == member.user.id) {
+			return message.channel.send('', {
 				embed: {
-					title: `${message.mentions.users.first().username} has been bonked by ${message.author.username}`,
+					title: `${member.user.tag} has bonked themselves`,
+					description: `Are you a masochist?`,
 					color: 0xff80cc,
 					image: {
 						url: images[Math.floor(Math.random() * images.length)]
 					}
 				}
-			});
+			})
+		}
+
+		else {
+			return message.channel.send('', {
+				embed: {
+					title: `${member.user.tag} has been bonked by ${message.author.tag}`,
+					color: 0xff80cc,
+					image: {
+						url: images[Math.floor(Math.random() * images.length)]
+					}
+				}
+			})}
+
+		}
 		else
-			message.channel.send('', {
+			return message.channel.send('', {
 				embed: {
 					title: 'An error has occurred',
 					description: 'It appears the person you have tried to bonk does not exist.',
@@ -22,7 +40,7 @@ module.exports = {
 	},
 	description: 'Bonks a user',
 	detailed: 'Bonks first mentioned user',
-	examples: prefix => `${prefix}bonk @someone`,
+	examples: prefix => `${prefix}bonk @member`,
 	name: 'bonk',
 	perms: null,
 	guildOnly: true
