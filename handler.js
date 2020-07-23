@@ -1,8 +1,6 @@
 'use strict';
 const fs = require('fs');
 const https = require('https');
-const { cpuUsage } = require('process');
-
 const sqlite3 = require('sqlite3').verbose();
 
 let db = new sqlite3.Database('./databases/handler.db', (err) => {
