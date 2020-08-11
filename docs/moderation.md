@@ -180,3 +180,23 @@ Examples:
 ;unban @Qred#0122
 ;unban 186563462330056704
 ```
+
+ ## Warn 
+ Warns Mentioned User 
+ 
+ Examples:
+ ```
+;warn @Qred#0122 
+```
+---
+
+## Warnings 
+Displays warnings and their ids of a user, or a specific warning by using the ID  of the warning
+
+Examples:
+```
+
+;warnings @Qred#0122, ;Warnings 733773818753187840
+```
+---
+

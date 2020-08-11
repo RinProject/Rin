@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const client = new Discord.Client();
+const client = new Discord.Client({disableMentions: "everyone"});
 const sqlite3 = require('sqlite3').verbose();
 
 let expDB = new sqlite3.Database('./databases/exp.db', (err) => {
