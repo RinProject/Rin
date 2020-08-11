@@ -18,7 +18,7 @@ module.exports = {
 			}
 		});
 	},
-	aliases: ['avi'],
+	aliases: ['avi', 'pfp'],
 	description: 'Provides a users avatar',
 	detailed: 'Provides a users avatar',
 	examples: prefix => `${prefix}avatar @user, ${prefix}avatar <user id>`,
