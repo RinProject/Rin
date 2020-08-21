@@ -5,10 +5,8 @@ const sqlite3 = require('sqlite3').verbose();
 global.client = client;
 
 let expDB = new sqlite3.Database('./databases/exp.db', (err) => {
-	if (err) {
+	if (err)
 		return console.error(err.message);
-	}
-	console.log('Connected main process to exp.db.');
 });
 
 //load config file
@@ -59,10 +57,8 @@ client.on('message', async (message) => {
 // });
 
 let logDB = new sqlite3.Database('./databases/logs.db', (err) => {
-	if (err) {
+	if (err)
 		return console.error(err.message);
-	}
-	console.log('Connected main process to logs.db.');
 });
 
 //Message change logs
@@ -165,10 +161,8 @@ client.on('messageUpdate', (oldMessage, newMessage) => {
 });
 
 let reactrolesDB = new sqlite3.Database('./databases/reactroles.db', (err) => {
-	if (err) {
+	if (err)
 		return console.error(err.message);
-	}
-	console.log('Connected main process to reactroles.db.');
 });
 
 //Message reaction logs

@@ -1,10 +1,8 @@
 const sqlite3 = require('sqlite3').verbose();
 
 let expDB = new sqlite3.Database('./databases/exp.db', (err) => {
-	if(err) {
+	if(err)
 		return console.error(err.message);
-	}
-	console.log('Connected to exp.db.');
 });
 
 expDB.run('CREATE TABLE IF NOT EXISTS exp(user TEXT NOT NULL, exp INTEGER DEFAULT 0 NOT NULL, guild TEXT NOT NULL, lastMessage INTEGER DEFAULT 0 NOT NULL);')

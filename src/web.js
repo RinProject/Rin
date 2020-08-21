@@ -23,10 +23,8 @@ module.exports = function(config){
 	const sqlite3 = require('sqlite3').verbose();
 
 	let expDB = new sqlite3.Database('./databases/exp.db', (err) => {
-		if (err) {
+		if (err)
 			return console.error(err.message);
-		}
-		console.log('Connected main process to exp.db.');
 	});
 
 	app.engine('html', function (path, options, callback){

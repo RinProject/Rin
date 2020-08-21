@@ -1,9 +1,7 @@
 let sqlite3 = require('sqlite3').verbose();
 let db = new sqlite3.Database('./databases/senpai.db', (err) => {
-	if(err) {
+	if(err)
 		return console.error(err.message);
-	}
-	console.log('Connected to senpai SQlite database.');
 });
 db.run(`CREATE TABLE IF NOT EXISTS senpais(kouhai TEXT UNIQUE NOT NULL, senpai TEXT NOT NULL);`);
 module.exports = {

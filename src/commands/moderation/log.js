@@ -1,9 +1,7 @@
 let sqlite3 = require('sqlite3').verbose();
 let db = new sqlite3.Database('./databases/logs.db', (err) => {
-	if(err) {
+	if(err)
 		return console.error(err.message);
-	}
-	console.log('Connected to logs.db.');
 });
 db.run(`CREATE TABLE IF NOT EXISTS logs(
 	guild TEXT UNIQUE NOT NULL,
