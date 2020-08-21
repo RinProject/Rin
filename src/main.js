@@ -13,7 +13,7 @@ let expDB = new sqlite3.Database('./databases/exp.db', (err) => {
 
 //load config file
 const config = (() => {
-	let configuration = require("./config.json");
+	let configuration = require("../config.json");
 	configuration.directory = `${__dirname}\\${configuration.directory}`;
 	Object.keys(configuration.colors).forEach(key => {
 		// TODO: implement usage of colours from config in commands

@@ -11,7 +11,7 @@ let db = new sqlite3.Database('./databases/users.db', (err) => {
 
 db.run('CREATE TABLE IF NOT EXISTS users(discordID TEXT UNIQUE NOT NULL, token TEXT UNIQUE NOT NULL, guilds TEXT DEFAULT "");');
 
-const config = require('../../config.json');
+const config = require('../../../config.json');
 
 passport.serializeUser((user, done) => {
 	//console.log(user.id, user.guilds.length, user.accessToken)

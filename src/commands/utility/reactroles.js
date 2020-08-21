@@ -1,4 +1,4 @@
-const config = require('../../config.json')
+const config = require('../../../config.json')
 let sqlite3 = require('sqlite3').verbose();
 let db = new sqlite3.Database('./databases/reactroles.db', (err) => {
 	if(err) {

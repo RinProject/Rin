@@ -2,7 +2,7 @@
   "name": "rin",
   "version": "0.0.1",
   "description": "A multi-purpose Discord bot",
-  "main": "main.js",
+  "main": "src/main.js",
   "scripts": {
     "test": "nodemon .",
     "start": "node ."

@@ -1,6 +1,6 @@
 'use strict';
 
-const packageJSON = require('../package.json');
+const packageJSON = require('../../package.json');
 const footerText = `Created by: ${packageJSON.author}`;
 module.exports = {
 	run: async function (message, args){
