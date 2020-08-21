@@ -5,7 +5,7 @@ module.exports = {
 				embed: {
 					title: 'Invalid number of inputs',
 					description: 'Please enter a role, followed by a colour.\nExamples: `members #FF8000`, `@coolKids #FF80CC`',
-					color: 0xFF0000
+					color: colors.error
 				}
 			});
 		} else if(!args[2].match(/#?[0-9a-f]{6}/gi))
@@ -13,7 +13,7 @@ module.exports = {
 				embed: {
 					title: 'Invalid colour',
 					description: 'Please enter a colour in hex format.\nExample: #FF8000.',
-					color: 0xFF0000
+					color: colors.error
 				}
 			});
 		else {
@@ -23,7 +23,7 @@ module.exports = {
 					embed: {
 						title: "Could not find role.",
 						description: 'Please provide a valid role, either by @mention or by name.\nNote: names may not contain whitespace, in such cases us @mention',
-						color: 0xFF0000
+						color: colors.error
 					}
 				});
 			let color = args[2].startsWith('#') ? args[2] : '#' + args[2];

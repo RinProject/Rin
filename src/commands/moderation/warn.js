@@ -39,6 +39,7 @@ module.exports = {
 						message.client.channels.cache.get(rows[0]['modLogChannel']).send({
 							embed: {
 								title: `${member.displayName} has been warned`,
+								color: colors.negative,
 								thumbnail: {
 									url: member.user.displayAvatarURL()
 								},
@@ -66,6 +67,7 @@ module.exports = {
 				message.channel.send({
 					embed: {
 						title: `${member.user.tag} has been warned`,
+						color: colors.negative,
 						thumbnail: {
 							url: member.user.displayAvatarURL()
 						},
@@ -92,7 +94,7 @@ module.exports = {
 						embed: {
 							title: 'Warning removed',
 							description: `Warning ${args[2]}`,
-							color: 0xcc1020,
+							color: colors.success,
 						}
 					});
 				
@@ -110,7 +112,7 @@ module.exports = {
 						embed: {
 							title: 'Warning restored',
 							description: `Warning: ${args[2]}`,
-							color: 0xcc1020,
+							color: colors.negative,
 						}
 					});
 				
@@ -120,7 +122,7 @@ module.exports = {
 				embed: {
 					title: 'Incorrect command usage',
 					description: `Correct syntax is:\n\`${this.examples}\``,
-					color: 0xcc1020,
+					color: colors.error,
 				}
 			});
 

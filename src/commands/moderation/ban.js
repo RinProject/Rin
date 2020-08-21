@@ -9,7 +9,7 @@ module.exports = {
 			message.channel.send('', {
 				embed: {
 					title: 'Please provide a user to ban.',
-					color: 0xCC1020
+					color: colors.error
 				}
 			});
 		});
@@ -21,7 +21,7 @@ module.exports = {
 				embed: {
 					title: 'User successfully banned',
 					description: `${user.tag} has been banned by ${message.author.tag}.`,
-					color: 0x10CC10,
+					color: colors.negative,
 					footer: {
 						text: `id: ${user.id}`
 					}
@@ -31,7 +31,7 @@ module.exports = {
 			message.channel.send('', {
 				embed: {
 					title: 'Failed to ban user.',
-					color: 0xCC1020
+					color: colors.error
 				}
 			});
 		});

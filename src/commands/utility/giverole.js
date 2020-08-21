@@ -14,7 +14,7 @@ module.exports = {
             return message.channel.send('', {
                 embed: {
                     description: `I am unable to give the requested role. Please check my position in the role hierarchy.`,
-                    color: 0xFF0000
+                    color: colors.error
                 }
             });
         }
@@ -23,7 +23,7 @@ module.exports = {
             message.channel.send('', {
                 embed: {
                     description: `${member.toString()} has been given the role ${role.toString()}`,
-                    color: role.color
+                    color: role.color || colors.base
                 }
             });
         });
@@ -32,7 +32,7 @@ module.exports = {
             return message.channel.send('', {
                 embed: {
                     description: `Please follow the format ${message.client.prefix}giverole user role.`,
-                    color: 0xFF0000
+                    color: colors.error
                 }
             });
         }

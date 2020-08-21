@@ -32,7 +32,7 @@ module.exports = {
 		message.channel.send({
 			embed: {
 				title: `Info for ${message.guild.name}`,
-				color: 0xFF80CC,
+				color: colors.base,
 				thumbnail: {
 					url: message.guild.iconURL({
 						format: "png",

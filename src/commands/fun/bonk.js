@@ -9,7 +9,7 @@ module.exports = {
 				embed: {
 					title: `${member.user.tag} has bonked themselves`,
 					description: `Are you a masochist?`,
-					color: 0xff80cc,
+					color: colors.base,
 					image: {
 						url: images[Math.floor(Math.random() * images.length)]
 					}
@@ -21,7 +21,7 @@ module.exports = {
 			return message.channel.send('', {
 				embed: {
 					title: `${member.user.tag} has been bonked by ${message.author.tag}`,
-					color: 0xff80cc,
+					color: colors.base,
 					image: {
 						url: images[Math.floor(Math.random() * images.length)]
 					}
@@ -34,7 +34,7 @@ module.exports = {
 				embed: {
 					title: 'An error has occurred',
 					description: 'It appears the person you have tried to bonk does not exist.',
-					color: 0xff0000
+					color: colors.error
 				}
 			});
 	},

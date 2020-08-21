@@ -5,7 +5,7 @@ module.exports = {
 			return message.channel.send('', {
 				embed: {
 					title: 'Mention a user to kick',
-					color: 0xFF0000
+					color: colors.error
 				}
 			});
 		}
@@ -14,7 +14,7 @@ module.exports = {
 				embed: {
 					title: 'An error occurred.',
 					description: 'The bot is unable to kick the given user, please check it\'s position in the hierarchy.',
-					color: 0xFF0000
+					color: colors.error
 				}
 			});
 		}
@@ -23,7 +23,7 @@ module.exports = {
 				message.channel.send('', {
 					embed: {
 						title: `${member.user.tag} has been kicked by ${message.author.tag}.`,
-						color: 0x00FF00
+						color: colors.negative
 					}
 				});
 			});

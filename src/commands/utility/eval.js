@@ -4,7 +4,7 @@ module.exports = {
 			return message.channel.send({embed: {
 				title: 'Insufficient permissions.',
 				description:'Only owners may use this command see [Nodejs](https://nodejs.org/en/download/) if you need a js environment.',
-				color: 0xFF0000
+				color: colors.error
 			}})
 		message.channel.send(`\`${eval(args.slice(1).join(' '))}\``);
 	},

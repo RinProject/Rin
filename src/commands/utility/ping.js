@@ -2,15 +2,15 @@ module.exports = {
 	async run(message) {
 		message.channel.send('', {
 			embed: {
-				title: `Calculating ping..`,
-				color: 0xFF80CC
+				title: 'Calculating ping..',
+				color: colors.base
 			}
 		}).then(msg => {
 			msg.edit('', {
 				embed: {
-					title: `Ping`,
+					title: 'Ping',
 					description: `:hourglass: ${(msg.createdTimestamp - message.createdTimestamp)}ms\n\n :heartbeat: ${message.client.ws.ping}ms`,
-					color: 0xFF80CC
+					color: colors.base
 				}
 			});
 		});

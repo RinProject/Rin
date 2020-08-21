@@ -5,7 +5,7 @@ module.exports = {
 			embed: {
 				title: `${member.user.username}'s Avatar`,
 				description: `[Avatar URL](${member.user.displayAvatarURL({format: "png", size: 512, dynamic: true})})`,
-				color: 0xFF80CC,
+				color: colors.base,
 				image: {
 					url: member.user.displayAvatarURL({
 						format: "png",

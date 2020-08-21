@@ -7,7 +7,7 @@ module.exports = {
 			return message.channel.send('', {
 				embed: {
 					title: 'Please provide a user ID to unban.',
-					color: 0xFF0000
+					color: colors.error
 				}
 			});
 		}
@@ -21,7 +21,7 @@ module.exports = {
 				embed: {
 					title: 'User successfully unbanned',
 					description: `${bannedPerson.user.tag} is no longer banned.`,
-					color: 0x10CC10,
+					color: colors.success,
 					footer: {
 						text: `id: ${bannedPerson.user.id}`
 					}
@@ -31,7 +31,7 @@ module.exports = {
 				return message.channel.send('', {
 					embed: {
 						title: 'Failed to unban user.',
-						color: 0xCC1020
+						color: colors.error
 					}
 				});
 		}

@@ -4,7 +4,7 @@ module.exports = {
             return message.channel.send('', {
                 embed: {
                     description: 'Please mention a role to delete.',
-                    color: 0xFF0000
+                    color: colors.error
                 }
             });
         }
@@ -13,7 +13,7 @@ module.exports = {
             return message.channel.send('', {
                 embed: {
                     description: 'Please mention a role to delete.',
-                    color: 0xFF0000
+                    color: colors.error
                 }
             });
         }
@@ -28,7 +28,7 @@ module.exports = {
 			return message.channel.send('', {
 				embed: {
 					description: 'I am unable to remove this role. Please check this roles place in the role hierarchy.',
-					color: 0xFF0000
+					color: colors.error
 				}
 			});
 		});  

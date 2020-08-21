@@ -1,146 +1,111 @@
 module.exports = {
-	async run(message, args) {
-        const { MessageEmbed } = require('discord.js');
+	run: async (message, args)=>
+	{
+		const channel = message.mentions.channels.first() ? message.guild.channels.cache.get(message.mentions.channels.first().id) : message.channel;
 
-		// Get message from channel
-        if (message.mentions.channels.first())
-        {
-            const channelid = message.mentions.channels.first().id;
-            const channel = message.guild.channels.cache.get(channelid)
+		const messageId = args[message.mentions.channels.first() ? 2 : 1];
 
-            if (channel.members.get(message.author.id) == undefined || null)
-            {
-                return message.channel.send(new MessageEmbed()
-                .setTitle('An error occurred.')
-                .setColor('RED')
-                .setDescription('You do not have permission to view this channel.')
-                )
-            }
+		if (channel.members.get(message.author.id) == undefined || null)
+		{
+			return message.channel.send('', {
+				embed: {
+					title: 'An error occurred.',
+					description: 'You do not have permission to view that channel.',
+					color: colors.error
+				}
+			});
+		}
 
-            if (args[2] === undefined)
-            {
-                return message.channel.send(new MessageEmbed()
-                .setTitle('An error occurred.')
-                .setColor('RED')
-                .setDescription('Please provide a message ID.')
-                )
-            }
-    
-            channel.messages.fetch(args[2]).then(found => {
-                if (message.guild.id != found.guild.id) 
-                {
-                    return message.channel.send(new MessageEmbed()
-                    .setColor('RED')
-                    .setTitle('An error occurred.')
-                    .setDescription('You may not quote a message from another server.')
-                    )
-                }
+		if (messageId === undefined)
+		{
+			return message.channel.send('', {
+				embed: {
+					title: 'An error occurred.',
+					description: 'Please provide a message ID.',
+					color: colors.error
+				}
+			});
+		}
 
-                if (found.attachments.size >= 1)
-                {
-                const attachments = found.attachments.array();
-                const attachmentFieldBody = [];
-                found.attachments.tap(attachment => {
-                    attachmentFieldBody.push(attachment.url)
-                    })
-                    if (/\.(gif|jpg|jpeg|png)$/i.test(attachments[0].url))
-                    {
-                        const embed = new MessageEmbed()
-                        .setColor(found.member.displayColor)
-                        .setAuthor(found.author.username, found.author.avatarURL({size: 512, dynamic: true}), null)
-                        .setDescription(`${found.content}\n\n [Jump To Message](${found.url})`)
-                        .setImage(attachments[0].url)
-                        .setFooter(`#${found.channel.name}`)
-                        .setTimestamp(found.createdAt)
-                        return message.channel.send(embed);
-                    }
+		channel.messages.fetch(messageId).then(found => {
+			if (found.attachments.size >= 1)
+			{
+			const attachments = found.attachments.array();
+			const attachmentFieldBody = [];
+			found.attachments.tap(attachment => {
+				attachmentFieldBody.push(attachment.url)
+				})
+				if (/\.(gif|jpg|jpeg|png)$/i.test(attachments[0].url))
+				{
+					return message.channel.send('', {
+						embed: {
+							author: {
+								name: found.author.username,
+								iconURL: found.author.avatarURL({size: 512, dynamic: true})
+							},
+							description: `${found.content}\n\n [Jump To Message](${found.url})`,
+							color: found.member.displayColor || colors.base,
+							thumbnail: {
+								url: attachments[0].url 
+							}, 
+							footer: `#${found.channel.name}`,
+							timestamp: found.createdAt
+						}
+					});
+				}
 
-                    else 
-                    {
-                        const embed = new MessageEmbed()
-                        .setColor(found.member.displayColor)
-                        .setAuthor(found.author.username, found.author.avatarURL({size: 512, dynamic: true}), null)
-                        .setDescription(`${found.content}\n\n [Jump To Message](${found.url})`)
-                        .setFooter(`#${found.channel.name}`)
-                        .setTimestamp(found.createdAt)
-                        message.channel.send(embed)
-                        return message.channel.send('I can only embed gif, jpg, jpeg, & png attachments, you appear to have quoted an attachment outside of these categories.')
-                        .then(message => message.delete(5000))
-                    }
-                }
-    
-                const embed = new MessageEmbed()
-                .setColor(found.member.displayColor)
-                .setAuthor(found.author.username, found.author.avatarURL({size: 512, dynamic: true}), null)
-                .setDescription(`${found.content}\n\n [Jump To Message](${found.url})`)
-                .setFooter(`#${found.channel.name}`)
-                .setTimestamp(found.createdAt)
-                message.channel.send(embed)
-            }).catch(e => { return handleError(e) })
-        }
-        
-        else {
-        message.channel.messages.fetch(args[1]).then(found => {
-            if (found.attachments.size >= 1)
-                {
-                const attachments = found.attachments.array();
-                const attachmentFieldBody = [];
-                found.attachments.tap(attachment => {
-                    attachmentFieldBody.push(attachment.url)
-                    })
-                    if (/\.(gif|jpg|jpeg|png)$/i.test(attachments[0].url))
-                    {
-                        const embed = new MessageEmbed()
-                        .setColor(found.member.displayColor)
-                        .setAuthor(found.author.username, found.author.avatarURL({size: 512, dynamic: true}), null)
-                        .setDescription(`${found.content}\n\n [Jump To Message](${found.url})`)
-                        .setImage(attachments[0].url)
-                        .setFooter(`#${found.channel.name}`)
-                        .setTimestamp(found.createdAt)
-                        return message.channel.send(embed);
-                    }
-                    else 
-                    {
-                        const embed = new MessageEmbed()
-                        .setColor(found.member.displayColor)
-                        .setAuthor(found.author.username, found.author.avatarURL({size: 512, dynamic: true}), null)
-                        .setDescription(`${found.content}\n\n [Jump To Message](${found.url})`)
-                        .setFooter(`#${found.channel.name}`)
-                        .setTimestamp(found.createdAt)
-                        message.channel.send(embed)
-                        return message.channel.send('I can only embed gif, jpg, jpeg, & png attachments, you appear to have quoted an attachment outside of these categories.')
-                        .then(message => message.delete(5000))
-                    }
-                }
-    
-            const embed = new MessageEmbed()
-            .setColor(found.member.displayColor)
-            .setAuthor(found.author.username, found.author.avatarURL({size: 512, dynamic: true}), null)
-            .setDescription(`${found.content}\n\n [Jump To Message](${found.url})`)
-            .setFooter(`#${found.channel.name}`)
-            .setTimestamp(found.createdAt)
-            message.channel.send(embed)
-        }).catch(e => { return handleError(e) })
-    }
+				else 
+				{
+					message.channel.send('', {
+						embed: {
+							author: {
+								name: found.author.username,
+								iconURL: found.author.avatarURL({size: 512, dynamic: true})
+							},
+							description: `${found.content}\n\n [Jump To Message](${found.url})`,
+							color: found.member.displayColor || colors.base,
+							footer: `#${found.channel.name}`,
+							timestamp: found.createdAt
+						}
+					});
+					return message.channel.send('I can only embed gif, jpg, jpeg, & png attachments, you appear to have quoted an attachment outside of these categories.')
+					.then(message => message.delete(5000))
+				}
+			}
+			message.channel.send('', {
+				embed: {
+					author: {
+						name: found.author.username,
+						iconURL: found.author.avatarURL({size: 512, dynamic: true})
+					},
+					description: `${found.content}\n\n [Jump To Message](${found.url})`,
+					color: found.member.displayColor || colors.base,
+					footer: `#${found.channel.name}`,
+					timestamp: found.createdAt
+				}
+			});
+		}).catch(e => { return handleError(e) })
 
-    function handleError(e) {
-        if (e)
-            { 
-        if (e.message == 'Missing Access')
-        {
-            return message.channel.send(new MessageEmbed()
-                .setColor('RED')
-                .setTitle('An unknown error occurred.')
-                .setDescription('Please make sure I can view the given channel.')
-                )
-        }  
-                return message.channel.send(new MessageEmbed()
-                .setColor('RED')
-                .setTitle('An unknown error occurred.')
-                .setDescription('Please make sure a valid message ID was entered.')
-                )
-            }
-        }
+			function handleError(e) {
+				if(!e)return;
+
+				if (e.message == 'Missing Access')
+					return message.channel.send('', {
+						embed: {
+							title: 'An error occurred.',
+							description: 'Please make sure I can view the given channel.',
+							color: colors.error
+						}
+					});
+
+				message.channel.send('', {
+					embed: {
+						title: 'An error occurred.',
+						description: 'Please make sure a valid message ID was entered.',
+						color: colors.error
+					}
+				});
+			}
     },
     aliases: ['q'],
 	description: 'Quotes a message.',

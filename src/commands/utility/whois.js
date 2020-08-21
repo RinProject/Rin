@@ -98,6 +98,7 @@ module.exports = {
 						dynamic: true
 					})
 				},
+				color: member.displayColor || colors.base,
 				thumbnail: {
 					url: member.user.displayAvatarURL({
 						format: "png",

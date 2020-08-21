@@ -159,7 +159,7 @@ module.exports = {
 				let messageEmbed = {
 					embed: {
 						title: 'Message log status',
-						color: 0xFF8000,
+						color: colors.base,
 						fields: [
 							{
 								name: 'Message change',
@@ -189,7 +189,7 @@ module.exports = {
 				let serverEmbed = {
 					embed: {
 						title: 'Server log status',
-						color: 0xFF8000,
+						color: colors.base,
 						fields: [
 							{
 								name: 'Channel',
@@ -225,7 +225,7 @@ module.exports = {
 				let moderationEmbed = {
 					embed: {
 						title: 'Moderation log status',
-						color: 0xFF8000,
+						color: colors.base,
 						fields: [
 							{
 								name: 'Bans',

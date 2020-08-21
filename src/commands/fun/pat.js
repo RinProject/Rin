@@ -9,7 +9,7 @@ module.exports = {
 				embed: {
 					title: `${member.user.tag} has been patted by ${message.client.user.tag}`,
 					description: `I patted you because I felt bad, there's nothing more to this.`,
-					color: 0xff80cc,
+					color: colors.base,
 					image: {
 						url: images[Math.floor(Math.random() * images.length)]
 					}
@@ -21,7 +21,7 @@ module.exports = {
 			return message.channel.send('', {
 				embed: {
 					title: `${member.user.tag} has been patted by ${message.author.tag}`,
-					color: 0xff80cc,
+					color: colors.base,
 					image: {
 						url: images[Math.floor(Math.random() * images.length)]
 					}
@@ -34,7 +34,7 @@ module.exports = {
 				embed: {
 					title: 'An error has occurred',
 					description: 'It appears the person you have tried to pat does not exist.',
-					color: 0xff0000
+					color: colors.error
 				}
 			});
 	},

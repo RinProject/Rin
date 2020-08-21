@@ -5,7 +5,7 @@ module.exports = {
 		message.channel.send('', {
             embed: {
                 title: `Server icon for ${message.guild.name}`,description: `[Server Icon URL](${message.guild.iconURL({format: "png", size: 512, dynamic: true})})`,
-				color: 0xFF80CC,
+				color: colors.base,
 				image: {
 					url: message.guild.iconURL({
 						format: "png",

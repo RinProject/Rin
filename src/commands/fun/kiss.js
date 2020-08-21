@@ -9,7 +9,7 @@ module.exports = {
 				embed: {
 					title: `I can't help you kiss yourself.`,
 					description: `Sorry to break it to you, but I don't have a mirror for you to kiss yourself in. Kiss someone else.`,
-					color: 0xff0000
+					color: colors.error
 				}
 			});
 		}
@@ -18,7 +18,7 @@ module.exports = {
 			return message.channel.send('', {
 				embed: {
 					title: `${member.user.tag} has been kissed by ${message.author.tag}`,
-					color: 0xff80cc,
+					color: colors.base,
 					image: {
 						url: images[Math.floor(Math.random() * images.length)]
 					}
@@ -31,7 +31,7 @@ module.exports = {
 				embed: {
 					title: 'An error has occurred',
 					description: 'It appears the person you have tried to kiss does not exist.',
-					color: 0xff0000
+					color: colors.error
 				}
 			});
 	},

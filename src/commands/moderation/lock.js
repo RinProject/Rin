@@ -8,7 +8,7 @@ module.exports = {
 				message.channel.send('', {
 					embed: {
 						title: 'Channel Locked',
-						color: 0xFF0000
+						color: colors.negative
 					}
 				});
 			});
@@ -20,7 +20,7 @@ module.exports = {
 				message.channel.send('', {
 					embed: {
 						title: 'Channel Unlocked',
-						color: 0x00FF00
+						color: colors.success
 					}
 				});
 			});

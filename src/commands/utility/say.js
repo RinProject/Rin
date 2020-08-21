@@ -4,7 +4,7 @@ module.exports = {
             return message.channel.send('', {
                 embed: {
                     description: 'Please provide a message for the bot to say.',
-					color: 0xff0000
+					color: colors.error
                 }
             });
         }

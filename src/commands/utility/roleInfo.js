@@ -8,7 +8,7 @@ module.exports = {
 			return message.channel.send('', {
 				embed: {
 					title: `Please provide a valid role.`,
-					color: 0xFF0000
+					color: colors.error
 				}
 			});
 		} else {

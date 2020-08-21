@@ -32,18 +32,18 @@ module.exports = {
 						},
 						title: message.guild.name,
 						description: leaderboard,
-						color: 0xFF80CC
+						color: colors.base
 					}
 				});	
 			});
 		else
-			expDB.get('SELECT exp FROM exp WHERE user = (?) AND guild = (?);', [message.author.id, message.guild.id], (err, row)=>{
+			expDB.get('SELECT exp FROM exp WHERE user = (?) AND guild = (?);', [(message.mentions.users.first()||{}).id||message.author.id, message.guild.id], (err, row)=>{
 				if(err)
 					throw err;
 				message.channel.send('', {
 					embed: {
 						description: `Your exp is: ${row?row.exp:'none'}`,
-						color: 0xFF80CC
+						color: colors.base
 					}
 				});	
 			});

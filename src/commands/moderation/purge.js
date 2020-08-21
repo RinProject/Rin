@@ -9,7 +9,7 @@ module.exports = {
 				return message.channel.send('', {
 					embed: {
 						title: 'Please enter a valid number.',
-						color: 0xFF0000
+						color: colors.error
 					}
 				});
 			}
@@ -17,7 +17,7 @@ module.exports = {
 				message.channel.send('', {
 					embed: {
 						title: 'Please enter a smaller number.',
-						color: 0xFF0000
+						color: colors.error
 					}
 				});
 			} else {
@@ -26,7 +26,7 @@ module.exports = {
 					message.channel.send({
 						embed: {
 							description: `Bulk deleted ${messages.size} messages`,
-							color: 0xFF8000
+							color: colors.success
 						}
 					})
 					.then(msg => msg.delete({timeout: 3500}))

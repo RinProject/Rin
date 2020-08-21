@@ -6,21 +6,21 @@ module.exports = {
 			return message.channel.send('', {
 				embed: {
 					title: `Please follow the format: ${config.prefix}createrole @rolename #hexcolor`,
-					color: 0xFF0000
+					color: colors.error
 				}
 			});
 		} else if(args[2] == undefined) {
 			return message.channel.send('', {
 				embed: {
 					title: `Please follow the format: ${config.prefix}createrole @rolename #hexcolor`,
-					color: 0xFF0000
+					color: colors.error
 				}
 			});
 		} else {
 			let role = await message.member.guild.roles.create({
 				data: {
 					name: args[1],
-					color: parseInt(args[2].replace('#', ''), 16) || 0x0000ff
+					color: parseInt(args[2].replace('#', ''), 16) || colors.base
 				},
 				reason: `Creation requested by: ${message.author.tag}, id: ${message.author.id}`
 			});
@@ -28,7 +28,7 @@ module.exports = {
 				embed: {
 					title: 'New role created',
 					description: role.toString(),
-					color: args[2]
+					color: parseInt(args[2].replace('#', ''), 16) || colors.base
 				}
 			});
 		}

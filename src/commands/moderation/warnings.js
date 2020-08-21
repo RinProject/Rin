@@ -21,13 +21,15 @@ module.exports = {
 						return message.channel.send({
 							embed: {
 								title: 'An error has occurred',
-								description: 'Fetching warnings caused an internal error'
+								description: 'Fetching warnings caused an internal error',
+								color: colors.error
 							}
 						});
 					if(!rows)
 						return message.channel.send({
 							embed: {
 								title: 'No warnings found',
+								color: colors.success,
 								description: 'It seems the provided user has no warnings'
 							}
 					});
@@ -46,6 +48,7 @@ module.exports = {
 					message.channel.send({
 						embed: {
 							title: `${member.displayName} has ${warnings} active warning${warnings===1?'':'s'}`,
+							color: colors.negative,
 							thumbnail: {
 								url: member.user.displayAvatarURL()
 							},
@@ -60,14 +63,16 @@ module.exports = {
 						return message.channel.send({
 							embed: {
 								title: 'An error has occurred',
-								description: 'Fetching warnings caused an internal error'+err
+								description: 'Fetching warnings caused an internal error',
+								color: colors.error
 							}
 						});
 					if(!row)
 						return message.channel.send({
 							embed: {
 								title: 'No warning found',
-								description: 'It seems the provided user has no warnings'
+								description: 'It seems the provided user has no warnings',
+								color: colors.success
 							}
 					});
 					let member = message.guild.members.cache.get(row.user);
@@ -78,6 +83,7 @@ module.exports = {
 							thumbnail: {
 								url: member.user.displayAvatarURL()
 							},
+							color: colors.negative,
 							description: `**Reason:** ${row.reason}`,
 							fields: [
 								{

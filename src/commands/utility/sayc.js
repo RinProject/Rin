@@ -6,7 +6,7 @@ module.exports = {
             return message.channel.send('', {
                 embed: {
                     description: `Please follow this format: ${message.client.prefix}sayc #channel text`,
-                    color: 0xFF0000
+                    color: colors.error
                 }
             });
         }
@@ -17,7 +17,7 @@ module.exports = {
                 return message.channel.send('', {
                     embed: {
                         description: `Unable to send message. Please ensure I have the sufficent permission to send messages to the given channel.`,
-                        color: 0xFF0000
+                        color: colors.error
                     }
                 });
             })
