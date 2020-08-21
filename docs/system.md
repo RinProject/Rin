@@ -1,4 +1,4 @@
-# Built in Commands
+# System
 
 ## Help
 Gets a list of commands or info about a specific command.

@@ -18,11 +18,13 @@
   },
   "homepage": "https://github.com/vAnomali378/Rin#readme",
   "dependencies": {
+    "connect-sqlite3": "^0.9.11",
     "discord.js": "^12.2.0",
     "express": "^4.17.1",
     "express-session": "^1.17.1",
     "passport": "^0.4.1",
     "passport-discord": "^0.1.4",
+    "showdown": "^1.9.1",
     "sqlite3": "^4.2.0"
   }
 }

@@ -7,7 +7,7 @@ let db = new sqlite3.Database('./databases/handler.db', (err) => {
 	}
 });
 
-db.run('CREATE TABLE IF NOT EXISTS disabledCommands(guild TEXT UNIQUE NOT NULL, command TEXT NOT NULL)');
+db.run('CREATE TABLE IF NOT EXISTS disabledCommands(guild TEXT NOT NULL, command TEXT NOT NULL)');
 
 function toggle(message, command, disable){
 	if(disable == undefined)
@@ -17,13 +17,13 @@ function toggle(message, command, disable){
 			toggle(message, command, !row);
 		});
 	else if(disable)
-		db.run('INSERT OR REPLACE INTO disabledCommands(guild, command) VALUES((?), (?));', [message.guild.id, command], (err, row)=> {
+		db.run('INSERT INTO disabledCommands(guild, command) VALUES((?), (?));', [message.guild.id, command], (err, row)=> {
 			if (err)
 				throw(err);
 			message.channel.send(`\`Disabled ${command}\``);
 		});
 	else
-		db.run('DELETE FROM disabledCommands WHERE guild = (?);', [message.guild.id], (err, row)=> {
+		db.run('DELETE FROM disabledCommands WHERE guild = (?) AND command = (?);', [message.guild.id, command], (err, row)=> {
 			if (err)
 				throw(err);
 			message.channel.send(`\`Enabled ${command}\``);

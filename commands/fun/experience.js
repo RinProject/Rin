@@ -7,10 +7,12 @@ let expDB = new sqlite3.Database('./databases/exp.db', (err) => {
 	console.log('Connected to exp.db.');
 });
 
+expDB.run('CREATE TABLE IF NOT EXISTS exp(user TEXT NOT NULL, exp INTEGER DEFAULT 0 NOT NULL, guild TEXT NOT NULL, lastMessage INTEGER DEFAULT 0 NOT NULL);')
+
 module.exports = {
 	async run(message, args) {
 		if(args[1]&&args[1].toLowerCase()=='top')
-			expDB.all(`SELECT exp, user FROM exp${message.guild.id} ORDER BY exp DESC LIMIT 0, 10;`, [], (err, rows)=>{
+			expDB.all(`SELECT exp, user FROM exp WHERE guild = (?) ORDER BY exp DESC LIMIT 0, 10;`, [message.guild.id], (err, rows)=>{
 				if(err)
 					throw err;
 				let leaderboard = '';
@@ -37,7 +39,7 @@ module.exports = {
 				});	
 			});
 		else
-			expDB.get(`SELECT exp FROM exp${message.guild.id} WHERE user = ${message.author.id}`, [], (err, row)=>{
+			expDB.get('SELECT exp FROM exp WHERE user = (?) AND guild = (?);', [message.author.id, message.guild.id], (err, row)=>{
 				if(err)
 					throw err;
 				message.channel.send('', {

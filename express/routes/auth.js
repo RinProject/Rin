@@ -7,7 +7,7 @@ router.get('/', (req, res)=>{res.redirect(config.redirect);});
 router.get('/redirect', passport.authenticate('discord', {
 	failureRedirect: '/fail'
 }), (req, res)=>{
-	res.send('uwu');
+	res.redirect('/');
 });
 
 router.get('/info', (req, res)=>{

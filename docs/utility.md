@@ -1,4 +1,4 @@
-# Utility Commands
+# Utility
 
 ## Avatar
 Displays a users profile picture.

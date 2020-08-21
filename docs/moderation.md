@@ -1,4 +1,4 @@
-# Moderation Commands
+# Moderation
 
 ## Ban
 Bans a mentioned user.
@@ -181,22 +181,32 @@ Examples:
 ;unban 186563462330056704
 ```
 
- ## Warn 
- Warns Mentioned User 
- 
- Examples:
- ```
-;warn @Qred#0122 
+## Warn 
+Warns mentioned user and can also remove/restore warnings
+### Required Permissions
+* Ban members
+
+Examples:
+```
+;warn @Jihyo#2423 Being a chuckle fuck
+;warn 571487483016118292 writing bad code
+;warn remove 6a6169c312
+;warn restore 6a6169c312
 ```
 ---
 
 ## Warnings 
 Displays warnings and their ids of a user, or a specific warning by using the ID  of the warning
+### Required Permissions
+* Ban members
 
 Examples:
 ```
-
-;warnings @Qred#0122, ;Warnings 733773818753187840
+;warnings @Qred#0122
+;warnings 157101769858613248
+;warning 6a6169c312
 ```
+### Aliases
+* warning
 ---
 

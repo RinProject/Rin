@@ -22,8 +22,10 @@ passport.deserializeUser(async (id, done) => {
 	db.get(`SELECT * FROM users WHERE discordID = ${id};`, (err, user)=>{
 		if(err)
 			console.log(err);
-		else
-			done(null, user)
+		else{
+			user.guilds = JSON.parse(user.guilds||'{}');
+			done(null, user);
+		}
 	});
 });
 

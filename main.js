@@ -2,18 +2,13 @@ const Discord = require('discord.js');
 const client = new Discord.Client({disableMentions: "everyone"});
 const sqlite3 = require('sqlite3').verbose();
 
+global.client = client;
+
 let expDB = new sqlite3.Database('./databases/exp.db', (err) => {
 	if (err) {
 		return console.error(err.message);
 	}
 	console.log('Connected main process to exp.db.');
-});
-
-let warningDB = new sqlite3.Database('./databases/warnings.db', (err) => {
-	if (err) {
-		return console.error(err.message);
-	}
-	console.log('Connected main process to warnings.db.');
 });
 
 //load config file
@@ -32,41 +27,36 @@ client.owners = config.owners;
 
 client.on('ready', () => {
 	//print some information about the bot
-	client.guilds.cache.each(guild=>{
-		expDB.run(`CREATE TABLE IF NOT EXISTS exp${guild.id}(user TEXT UNIQUE NOT NULL, exp INTEGER DEFAULT 0 NOT NULL, lastMessage INTEGER DEFAULT 0 NOT NULL);`);
-	});
-	// reactrolesDB.each(`SELECT * FROM reactroles;`, async (err, row)=> {
-	// 	let channel = await client.channels.fetch(row.messagechannelid);
-	// 	channel.messages.fetch(row.messageid)
-
-	// });
 	console.log(`logged in as ${client.user.username}#${client.user.discriminator} with ${client.guilds.cache.array().length} guilds! Using the prefix ${config.prefix}`);
 	init(config, client);
+	if(config.enableWeb)
+		require('./web')({port: config.port, clientSecret: config.clientSecret});
 });
 
 const { handler, init, errorLog } = require('./handler');
-const reactroles = require('./commands/utility/reactroles');
 
-client.on('message', message => {
+const { get, all, run } = require('./utils').asyncDB;
+
+client.on('message', async (message) => {
 	if(message.author.bot) return;
-	if(!handler(message)&&message.guild){
+	if(!await handler(message)&&message.guild){
 		let expGain = 10;
 		let time = +new Date;
-		expDB.run(`INSERT INTO exp${message.guild.id} (user, exp, lastMessage) 
-		VALUES(${message.author.id}, ${expGain}, ${time}) 
-		ON CONFLICT(user) 
-		DO UPDATE SET exp = CASE WHEN lastMessage < ${time - 60000} THEN (exp + ${expGain}) ELSE exp END,
-		lastMessage = CASE WHEN lastMessage < ${time - 60000} THEN ${time} ELSE lastMessage END`)
+		let xp = await get(expDB, 'SELECT * FROM exp WHERE user = (?) AND guild = (?)', [message.author.id, message.guild.id]);
+		if(xp && xp.exp){
+			if(xp.lastMessage < time - 60000){
+				run(expDB, 'UPDATE exp SET exp = (?), lastMessage = (?) WHERE user = (?) AND guild = (?)', [xp.exp + expGain, time, message.author.id, message.guild.id]);
+			}
+		}
+		else{
+			run(expDB, 'INSERT INTO exp(user, exp, lastMessage, guild) VALUES((?), (?), (?), (?))', [message.author.id, expGain, time, message.guild.id]);
+		}
 	}
 });
 
-client.on('guildCreate', guild => {
-	expDB.run(`CREATE TABLE IF NOT EXISTS exp${guild.id}(user TEXT UNIQUE NOT NULL, exp INTEGER DEFAULT 0 NOT NULL );`);
-});
+// client.on('guildCreate', guild => {
 
-client.on('guildDelete', guild => {
-	expDB.run(`DROP TABLE IF EXISTS exp${guild.id};`);
-});
+// });
 
 let logDB = new sqlite3.Database('./databases/logs.db', (err) => {
 	if (err) {
@@ -804,78 +794,3 @@ client.on('guildMemberUpdate', (oldMember, newMember) => {
 });
 
 client.login(config.token);
-if(config.enableWeb){
-	const express = require('express');
-	const app = express();
-	const port = config.port || 1337;
-	const session = require('express-session');
-	const passport = require('passport');
-	const strategy = require('./express/strategies/discord-strategy.js');
-	const crypto = require('crypto');
-	let sum = crypto.createHash('sha256');
-	sum.update(config.clientSecret);
-
-	const fs = require('fs');
-	const base = fs.readFileSync(__dirname+'/express/index.html').toString();
-
-	app.engine('html', function (path, options, callback){
-		let rendered = base
-			.replace('#auth#', options.req.user?'auth/logout':'auth')
-			.replace('#login#', options.req.user?'Logout':'Login')
-			.replace('#title#', options.title)
-			.replace('#content#', options.content);
-		return callback(null, rendered)
-	})
-	app.set('views', './express') // specify the views directory
-	app.set('view engine', 'html') // register the template engine
-
-	app.use(session({
-		secret: sum.digest('hex'),
-		cookie: {
-			maxAge: 60000 * 60 * 24
-		},
-		saveUninitialized: false,
-		resave: false,
-		name: 'discord'
-	}));
-
-	app.use(passport.initialize());
-	app.use(passport.session());
-
-	app.use(express.static(__dirname + '/express/public'))
-
-	const bodyParser = require('body-parser');
-	app.use(bodyParser.urlencoded({ extended: true }));
-	app.use(bodyParser.json());
-
-	app.get('/', (req, res) => {
-		res.render('index', {req, content: '<h1>Home page</h1>'});
-	});
-
-	app.use('/auth', require('./express/routes/auth.js'));
-
-	app.use('/dashboard', require('./express/routes/dashboard.js'));
-
-	app.get('/leaderboard', (req, res) => { res.redirect('/404/'); });
-
-	app.get('/leaderboard/:guild/:page?', (req, res) => {
-		if (req.params.guild) {
-			let page = req.params.page || 1;
-			expDB.all(`SELECT exp, user FROM exp${req.params.guild} ORDER BY exp DESC LIMIT ${0 * page}, ${10 * page - 1};`, (err, rows) => {
-				if (err || !rows)
-					return res.redirect('/404/');
-				let guild = client.guilds.cache.get(req.params.guild);
-				let leaderboard = '';
-				rows.forEach((row, index) => {
-					let name = guild.members.cache.get(row.user).user.tag;
-					leaderboard += `<div><h1># ${index + 1 + 10 * (page - 1)} ${name}</h1><h2>Level: ${row.exp}</h2><h2>Exp: ${row.exp}</h2></div>`
-				});
-				if (!leaderboard)
-					return res.redirect('/404/');
-				res.send(leaderboard);
-			});
-		}
-	});
-
-	app.listen(port, () => console.log(`Listening on http://localhost:${port}`));
-}

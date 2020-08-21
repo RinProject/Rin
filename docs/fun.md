@@ -1,4 +1,4 @@
-# Fun Commands
+# Fun
 
 ## Experience
 Displays users exp, can also display top exp in guild.
@@ -25,7 +25,7 @@ Example:
 
 ---
 
-## Kiss - Unimplemented (Ask Pad For This)
+## Kiss
 Kisses a mentioned user with a cute image or gif.
 
 Example: 
