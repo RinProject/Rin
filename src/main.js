@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const client = new Discord.Client({disableMentions: "everyone"});
+const client = new Discord.Client({disableMentions: "everyone", partials: ['MESSAGE', 'REACTION']});
 const sqlite3 = require('sqlite3').verbose();
 
 global.client = client;
@@ -22,6 +22,8 @@ const config = (() => {
 })();
 client.prefix = config.prefix;
 client.owners = config.owners;
+
+global.colors = config.colors;
 
 client.on('ready', () => {
 	//print some information about the bot
@@ -160,21 +162,29 @@ client.on('messageUpdate', (oldMessage, newMessage) => {
 	});
 });
 
-let reactrolesDB = new sqlite3.Database('./databases/reactroles.db', (err) => {
+let reactRolesDB = new sqlite3.Database('./databases/reactroles.db', (err) => {
 	if (err)
 		return console.error(err.message);
 });
 
 //Message reaction logs
-client.on('messageReactionAdd', (messageReaction, user) => {
-	if (!messageReaction.message.guild) return;
-	reactrolesDB.all(`SELECT messageid, emojiid, roleid FROM reactroles WHERE guild = "${messageReaction.message.channel.guild.id}" AND messageid = "${messageReaction.message.id}" AND emojiid = "${messageReaction.emoji.id}"`, (err, rows) => {
-		if (rows && rows[0] && rows[0]['roleid'])
-			messageReaction.message.guild.members.cache.get(user.id).roles.add(rows[0]['roleid'], 'reactionrole');
+client.on('messageReactionAdd', async (reaction, user) => {
+	if(reaction.partial)
+		try{
+			reaction.fetch();
+		}catch(e){
+			console.error(e);
+			return;
+		}
+	if (!reaction.message.guild) return;
+	reactRolesDB.all(`SELECT roleID FROM reactRoles WHERE messageID = (?) AND emojiID = (?);`, [reaction.message.id, reaction.emoji.id], (err, rows) => {
 		if (err)
-			errorLog(err);
+			console.error(err);
+		if (rows && rows[0] && rows[0].roleid)
+			reaction.message.guild.members.cache.get(user.id).roles.add(rows[0].roleid, 'Reaction role')
+			.catch(e=>{});
 	});
-	logDB.all(`SELECT messageReactionAdd, messageLogChannel FROM logs WHERE guild = "${messageReaction.message.channel.guild.id}"`, (err, rows) => {
+	logDB.all(`SELECT messageReactionAdd, messageLogChannel FROM logs WHERE guild = "${reaction.message.channel.guild.id}"`, (err, rows) => {
 		if (rows && rows[0] && rows[0]['messageReactionAdd'])
 			client.channels.cache.get(rows[0]['messageLogChannel']).send({
 				embed: {
@@ -184,7 +194,7 @@ client.on('messageReactionAdd', (messageReaction, user) => {
 					},
 					color: 0x10cc10,
 					title: `Reaction added`,
-					description: `${user.tag} reacted with ${messageReaction.emoji.toString()}\n[Message](${messageReaction.message.url})`,
+					description: `${user.tag} reacted with ${reaction.emoji.toString()}\n[Message](${reaction.message.url})`,
 					footer: {
 						text: `uid: ${user.id}`
 					}
@@ -195,9 +205,23 @@ client.on('messageReactionAdd', (messageReaction, user) => {
 	});
 });
 
-client.on('messageReactionRemove', (messageReaction, user) => {
-	if (!messageReaction.message.guild) return;
-	logDB.all(`SELECT messageReactionRemove, messageLogChannel FROM logs WHERE guild = "${messageReaction.message.channel.guild.id}"`, (err, rows) => {
+client.on('messageReactionRemove', (reaction, user) => {
+	if(reaction.partial)
+		try{
+			reaction.fetch();
+		}catch(e){
+			console.error(e);
+			return;
+		}
+	if (!reaction.message.guild) return;
+	reactRolesDB.all(`SELECT roleID FROM reactRoles WHERE messageID = (?) AND emojiID = (?);`, [reaction.message.id, reaction.emoji.id], (err, rows) => {
+		if (err)
+			console.error(err);
+		if (rows && rows[0] && rows[0].roleid)
+			reaction.message.guild.members.cache.get(user.id).roles.remove(rows[0].roleid, 'Reaction role')
+			.catch(e=>{});
+	});
+	logDB.all(`SELECT messageReactionRemove, messageLogChannel FROM logs WHERE guild = "${reaction.message.channel.guild.id}"`, (err, rows) => {
 		if (rows[0] && rows[0]['messageReactionRemove'])
 			client.channels.cache.get(rows[0]['messageLogChannel']).send({
 				embed: {
@@ -207,7 +231,7 @@ client.on('messageReactionRemove', (messageReaction, user) => {
 					},
 					color: 0xcc1020,
 					title: `Reaction removed`,
-					description: `${user.tag} removed reaction ${messageReaction.emoji.toString()}\n[Message](${messageReaction.message.url})`,
+					description: `${user.tag} removed reaction ${reaction.emoji.toString()}\n[Message](${reaction.message.url})`,
 					footer: {
 						text: `uid: ${user.id}`
 					}
