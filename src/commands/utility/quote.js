@@ -1,7 +1,7 @@
 module.exports = {
 	run: async (message, args)=>
 	{
-		const channel = message.mentions.channels.first() ? message.guild.channels.cache.get(message.mentions.channels.first().id) : message.channel;
+		const channel = message.mentions.channels.first() || message.channel;
 
 		const messageId = args[message.mentions.channels.first() ? 2 : 1];
 
