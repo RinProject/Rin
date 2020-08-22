@@ -25,6 +25,31 @@ Example:
 
 ---
 
+## Deleterole
+Deletes a given role
+### Required Permissions
+* Manage Roles
+
+Example: 
+```
+;deleterole @Cutie
+```
+
+---
+
+## Giverole
+Gives a given role to a given user
+### Required Permissions
+* Manage Roles
+
+Example: 
+```
+;giverole @Jihyo#2423 @Cutie
+```
+
+---
+
+
 ## Ping
 Provides API latency and WebSocket ping for the bot.
 ### Required Permissions 
@@ -33,6 +58,28 @@ Provides API latency and WebSocket ping for the bot.
 Example: 
 ```
 ;ping
+```
+
+---
+
+## Quote
+Quotes a previous message sent in the channel
+
+Example: 
+```
+;quote 746619763463028828
+```
+
+---
+
+## Removerole
+Removes a given role from a given person
+### Required Permissions
+* Managa Roles
+
+Example: 
+```
+;removerole @Jihyo@2423 @Cutie
 ```
 
 ---
@@ -62,6 +109,50 @@ Examples:
 ;roleinfo 676144532303380482
 ;roleinfo Cutie
 ```
+
+---
+
+## Say
+Has the bot say a message in the same channel
+
+Examples: 
+```
+;say Soze is an epic gamer!
+```
+
+---
+
+## Sayc
+Has the bot say a message in a given channel
+
+Examples: 
+```
+;sayc 676143854365310980 Tarren is an epic gamer!
+```
+
+---
+
+## Serverbanner
+Displays the banner of a server
+
+Examples: 
+```
+;Serverbanner
+```
+### Aliases 
+* Banner
+
+---
+
+## Servericon
+Displays the icon of a server
+
+Examples: 
+```
+;servericon
+```
+### Aliases
+* Icon
 
 ---
 

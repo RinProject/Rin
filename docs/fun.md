@@ -1,5 +1,30 @@
 # Fun
 
+## Airing
+Shows a list of airing anime or a specific anime and when the next episode airs. 
+
+Examples: 
+```
+;airing
+;next Haikyuu
+```
+
+### Aliases
+* next
+
+---
+
+## Bonk
+Bonks a mentioned user with an image or gif. 
+
+Examples:
+```
+;bonk @soze#0040
+;bonk 169631518896029698
+```
+
+---
+
 ## Experience
 Displays users exp, can also display top exp in guild.
 
@@ -70,8 +95,6 @@ Examples:
 
 ## Soze
 Wozey Gay!
-### Required Permissions
-* None
 
 Example: 
 ```
