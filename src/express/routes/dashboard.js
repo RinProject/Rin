@@ -19,18 +19,22 @@ let handlerDB = new sqlite3.Database('./databases/handler.db', (err) => {
 		throw err;
 });
 
+async function fetchPerms(guild, user){
+	//console.log((guild.members.cache.get(user) || await guild.members.fetch(user)))
+	return guild.members.cache.get(user).permissions.bitfield||0;
+}
+
 const {run, get, all} = require('../../utils').asyncDB;
 
 let permsCheck = perms.kick_members | perms.ban_members | perms.administrator | perms.manage_guild | perms.manage_messages;
 
-router.get('/', (req, res)=>{
+router.get('/', async (req, res)=>{
 	if(!req.user)
 		return res.render('error', {req: req, title: '403', content: 'You must be logged in to see this, you can login at the top right.'});
 	let guilds = '';
 	req.user.guilds.forEach(g=>{
-		if(!g.permission&permsCheck) return;
 		let guild = client.guilds.cache.get(g.id);
-		if(!guild) return;
+		if(!guild||fetchPerms(req.user.discordID)&permsCheck) return;
 		const icon = guild.iconURL({size: 128});
 		guilds+=`<li>${icon?`<img src="${icon}" />`:''}<a href="/dashboard/${guild.id}/">${guild.name}</a></li>`
 	});
@@ -45,7 +49,9 @@ router.get('/:guild/', (req, res)=>{
 });
 
 router.get('/:guild/:page/', (req, res)=>{
-	if(!req.user||!(((req.user.guilds.find(guild => guild.id==req.params.guild)||{}).permissions||0)&permsCheck))
+	let guild = client.guilds.cache.get(req.params.guild);
+	if(!guild) return res.render('error', {req: req, title: '404', content: 'Guild not found'});
+	if(!req.user||!fetchPerms(guild, req.user.discordID)&permsCheck)
 		return res.render('error', {req: req, title: '403', content: ' forbidden'});
 	switch(req.params.page){
 		case 'warnings': case 'logs': case 'settings':
@@ -53,18 +59,16 @@ router.get('/:guild/:page/', (req, res)=>{
 		default:
 			return res.render('error', {req: req, title: '404', content: 'Page not found'});
 	}
-	let guild = client.guilds.cache.get(req.params.guild);
-	if(!guild) return res.render('error', {req: req, title: '404', content: 'Guild not found'});
 	res.render('index', {req: req, content: dashboard, title: `Guild ${guild.name}`});
 });
 
 router.get('/:guild/get/:type/', async(req, res)=>{
-	if(!req.user||!(((req.user.guilds.find(guild => guild.id==req.params.guild)||{}).permissions||0)&(perms.administrator|perms.manage_guild))){
+	let guild = client.guilds.cache.get(req.params.guild);
+	if(!req.user||!fetchPerms(guild, req.user.discordID)&(perms.administrator|perms.manage_guild)){
 		console.log(err);
 		res.status(403);
 		return res.send();
 	}
-	let guild = client.guilds.cache.get(req.params.guild);
 	switch (req.params.type){
 		case 'warnings':
 			warningsDB.all('SELECT id, user, moderator, reason, time, active FROM warnings WHERE guild = (?) ORDER BY time DESC;', [req.params.guild], async (err, rows)=>{
@@ -111,7 +115,7 @@ router.post('/:guild/save/:type/', async(req, res)=>{
 	let guild = client.guilds.cache.get(req.params.guild);
 	switch (req.params.type){
 		case 'logs':
-			if(!req.user||!(((req.user.guilds.find(guild => guild.id==req.params.guild)||{}).permissions||0)&(perms.administrator|perms.manage_guild))){
+			if(!req.user||!fetchPerms(guild, req.user.discordID)&(perms.administrator|perms.manage_guild)){
 				return res.sendStatus(403);
 			}
 			let args = [];
@@ -132,7 +136,7 @@ router.post('/:guild/save/:type/', async(req, res)=>{
 			});	
 			break;
 		case 'prefix':
-			if(!req.user||!(((req.user.guilds.find(guild => guild.id==req.params.guild)||{}).permissions||0)&(perms.administrator|perms.manage_guild))){
+			if(!req.user||!fetchPerms(guild, req.user.discordID)&(perms.administrator|perms.manage_guild)){
 				return res.sendStatus(403);
 			}
 			if(!req.body.prefix&&typeof(prefix)=='string')

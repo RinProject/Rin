@@ -14,7 +14,7 @@ A general purpose Discord bot written in JavaScript
 	* Owners; an array of ids of the bot maintainers/owners, provide ids as strings (within double quotes) or their values will end up corrupted. If you do not know how to get a users id read [this Discord article](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID-). **Note: including this is mandatory!**
 	* colors; change these to change up your colour scheme, stored as hex colours should be a string starting with '0x' meaning `0xFF80CC` and not `#FF80CC`
 	* enableWeb; whether or not to run web components
-	* Set a under oauth2 redirect to be; `localhost:[port]/auth/redirect`
+	* Set a redirect under oauth2 redirect to be, `https://localhost:[port]/auth/redirect` with your configured port, example `https://localhost:1337/auth/redirect`
 	![Screenshot of dashboard](https://i.imgur.com/anqMFOF.png)
 	* Client secret and client id from the panel developer panel
 	* Redirect, **do not touch**

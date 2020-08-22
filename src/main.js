@@ -180,9 +180,9 @@ client.on('messageReactionAdd', async (reaction, user) => {
 	reactRolesDB.all(`SELECT roleID FROM reactRoles WHERE messageID = (?) AND emojiID = (?);`, [reaction.message.id, reaction.emoji.id], (err, rows) => {
 		if (err)
 			console.error(err);
-		if (rows && rows[0] && rows[0].roleid)
-			reaction.message.guild.members.cache.get(user.id).roles.add(rows[0].roleid, 'Reaction role')
-			.catch(e=>{});
+		if (rows && rows[0] && rows[0].roleID)
+			reaction.message.guild.members.cache.get(user.id).roles.add(rows[0].roleID, 'Reaction role')
+			// .catch(e=>{});
 	});
 	logDB.all(`SELECT messageReactionAdd, messageLogChannel FROM logs WHERE guild = "${reaction.message.channel.guild.id}"`, (err, rows) => {
 		if (rows && rows[0] && rows[0]['messageReactionAdd'])
@@ -217,8 +217,8 @@ client.on('messageReactionRemove', (reaction, user) => {
 	reactRolesDB.all(`SELECT roleID FROM reactRoles WHERE messageID = (?) AND emojiID = (?);`, [reaction.message.id, reaction.emoji.id], (err, rows) => {
 		if (err)
 			console.error(err);
-		if (rows && rows[0] && rows[0].roleid)
-			reaction.message.guild.members.cache.get(user.id).roles.remove(rows[0].roleid, 'Reaction role')
+		if (rows && rows[0] && rows[0].roleID)
+			reaction.message.guild.members.cache.get(user.id).roles.remove(rows[0].roleID, 'Reaction role')
 			.catch(e=>{});
 	});
 	logDB.all(`SELECT messageReactionRemove, messageLogChannel FROM logs WHERE guild = "${reaction.message.channel.guild.id}"`, (err, rows) => {
