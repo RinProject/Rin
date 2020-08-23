@@ -12,12 +12,22 @@ Examples:
 ---
 
 ## Prefix
-Displays or changes the guild prefix
+Displays or changes the guild prefix.
 
 Examples: 
 ```
 ;prefix
 ;prefix ?:
+```
+
+---
+
+## Reload
+Reloads a command.
+
+Examples:
+```
+;reload hug
 ```
 
 ---

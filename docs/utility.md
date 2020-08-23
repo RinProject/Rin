@@ -26,7 +26,7 @@ Example:
 ---
 
 ## Deleterole
-Deletes a given role
+Deletes a given role from the server.
 ### Required Permissions
 * Manage Roles
 
@@ -38,7 +38,7 @@ Example:
 ---
 
 ## Giverole
-Gives a given role to a given user
+Gives a given role to a given user.
 ### Required Permissions
 * Manage Roles
 
@@ -63,7 +63,7 @@ Example:
 ---
 
 ## Quote
-Quotes a previous message sent in the channel
+Quotes a previous message sent in the channel.
 
 Example: 
 ```
@@ -73,7 +73,7 @@ Example:
 ---
 
 ## Removerole
-Removes a given role from a given person
+Removes a given role from a given person.
 ### Required Permissions
 * Managa Roles
 
@@ -113,7 +113,7 @@ Examples:
 ---
 
 ## Say
-Has the bot say a message in the same channel
+Has the bot say a message in the same channel.
 
 Examples: 
 ```
@@ -123,7 +123,7 @@ Examples:
 ---
 
 ## Sayc
-Has the bot say a message in a given channel
+Has the bot say a message in a given channel.
 
 Examples: 
 ```
@@ -133,7 +133,7 @@ Examples:
 ---
 
 ## Serverbanner
-Displays the banner of a server
+Displays the banner of a server.
 
 Examples: 
 ```
@@ -145,7 +145,7 @@ Examples:
 ---
 
 ## Servericon
-Displays the icon of a server
+Displays the icon of a server.
 
 Examples: 
 ```
@@ -167,7 +167,7 @@ Example:
 ---
 
 ## Whois
-Sends info about a user
+Sends info about a user.
 
 Examples: 
 ```
