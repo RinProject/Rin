@@ -4,11 +4,11 @@ const url = 'https://graphql.anilist.co';
 
 const query = `
 query($search:String){
-  Media (type: ANIME, search: $search) {
+  Media (type: ANIME, search: $search, sort:START_DATE_DESC, status: RELEASING) {
     id
     siteUrl
     coverImage {
-      extraLarge
+      large
       color
     }
     title {
@@ -23,63 +23,75 @@ query($search:String){
   }
 }
 `
-const queryAll = {
-
-};
-`query ($page: Int, $perPage: Int) {
-  Page(page: $page, perPage: $perPage){
-    pageInfo {
-      total
-    }
-    media(status:RELEASING, type: ANIME, sort:POPULARITY_DESC){
-      id
-      title {
-        romaji
-      }
-      nextAiringEpisode{
-        timeUntilAiring
-      }
-    }
-  }
-}`;
+function secondsToHuman(seconds){
+	if(typeof(seconds)!=='number') return null;
+	var d = Math.floor((seconds % 31536000) / 86400); 
+	var h = Math.floor(((seconds % 31536000) % 86400) / 3600);
+	var m = Math.floor((((seconds % 31536000) % 86400) % 3600) / 60);
+	var s = (((seconds % 31536000) % 86400) % 3600) % 60;
+	return `${d} days ${h} hours ${m} minutes ${s} seconds`;
+}
 module.exports = {
-	run: async function (message) {
-		const data = JSON.stringify({
-			query: query,
-			variables: {search: message.content.replace(/^.+?\s/, '')}
-		});
-		const options = {	
-			hostname: 'graphql.anilist.co',	
-			path: '/',	
-			method: 'POST',	
-			headers: {	
-			  'Content-Type': 'application/json',	
-			  'Content-Length': data.length	
-			}	
-		}	
-	
-		const req = https.request(options, (res) => {
-			let str = '';
-			res.on('data', (chunk)=>{str += chunk;});
-			res.on('error', err=>{throw err;})
-			res.on('end', ()=>{
-				let result = JSON.parse(str).data;
-				message.channel.send({
-					embed: {
-						title: result.Media.title.romanji||result.Media.title.english||result.Media.title.native,
-						url: result.Media.siteUrl,
-						description: `**Episode ${result.Media.nextAiringEpisode.episode}**\nAiring in ${result.Media.nextAiringEpisode.timeUntilAiring}`,
-						thumbnail: {
-							url: result.Media.coverImage.extraLarge
-						},
-						color: result.Media.coverImage.color
-					}
-				})
+	run: async function (message, args) {
+		if(args[1]){
+			const data = JSON.stringify({
+				query: query,
+				variables: {search: message.content.replace(/^.+?\s/, '')}
 			});
-		});	
-		req.on('error', err=>{throw err;});	
-		req.write(data);
-		req.end();
+			const options = {	
+				hostname: 'graphql.anilist.co',	
+				path: '/',	
+				method: 'POST',	
+				headers: {	
+				'Content-Type': 'application/json',	
+				'Content-Length': data.length	
+				}	
+			}	
+		
+			const req = https.request(options, (res) => {
+				let str = '';
+				res.on('data', (chunk)=>{str += chunk;});
+				res.on('error', err=>{throw err;})
+				res.on('end', ()=>{
+					let anime = JSON.parse(str).data.Media;
+					if(!anime)
+						return message.channel.send({
+							embed: {
+								title: 'Error 404',
+								description: 'No such airing anime found',
+								color: colors.error
+							}
+						});
+					let embed = {
+						title: anime.title.romanji||anime.title.english||anime.title.native,
+						url: anime.siteUrl,
+						description: `**Episode ${(anime.nextAiringEpisode||{}).episode||'Unknown'}**\nAiring in ${secondsToHuman((anime.nextAiringEpisode||{}).timeUntilAiring)||'Unknown'}`,
+						thumbnail: {
+							url: anime.coverImage.large
+						},
+						color: anime.coverImage.color||colors.base
+					};
+					if(anime.nextAiringEpisode||anime.nextAiringEpisode.timeUntilAiring){
+						embed.timestamp = +new Date + anime.nextAiringEpisode.timeUntilAiring*1000;
+						embed.footer = {text: 'Airing'};
+					}
+					message.channel.send({
+						embed
+					});
+				});
+			});	
+			req.on('error', err=>{throw err;});	
+			req.write(data);
+			req.end();
+		} else {
+			message.channel.send({
+				embed: {
+					title: 'Feature unavailable',
+					description: 'Currently only support for specific series air date is available.',
+					color: colors.negative
+				}
+			});
+		}
 	},
 	description: 'Shows airing anime',
 	detailed: 'Shows a list of airing anime or a specific title, queried from https://anilist.co',
