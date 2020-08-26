@@ -60,19 +60,6 @@ Example:
 
 ---
 
-## Padoru 
-Sends a randomly generated quote from padoru. Use the command ";pad who" to figure out who that is.
-
-Examples:
-```
-;padoru
-;pad who
-```
-### Aliases
-* Pad
-
----
-
 ## Pat
 Pats a mentioned user with a cute image or gif.
 
@@ -92,15 +79,3 @@ Examples:
 ;senpai @Tarren#9722
 ;senpai del
 ```
-
-## Soze
-Wozey Gay!
-
-Example: 
-```
-;soze
-```
-### Aliases
-* Wozey
-
----
