@@ -2,7 +2,7 @@
 A general purpose Discord bot written in JavaScript
 
 ## Setup
-* Install [Nodejs](https://nodejs.org/en/) if not already installed.
+* Install [Nodejs](https://nodejs.org/en/) if not already installed. **Version 12.0.0 or newer is required.** You can check your Nodejs version with `node -v`.
 * Run `npm i`
 * Copy and rename config-template.json to config.json, fill in all data
 	* Token; get pre-existing bot token or create a new one through [Discord's Dev Portal](https://discord.com/developers/applications). **Note: discord.js will throw an error if this is not included**
