@@ -1,9 +1,7 @@
 module.exports = {
 	async run(message, args) {
-		let reason = args.slice(2).join(" ");
-		if (!reason) reason = `No reason provided. Responsible moderator: ${message.author.tag}`;
-		
-		// TODO: implement optional message remove days functionality, logging reason/responsible moderator functionality
+		let reason = "";
+		let days = 0;
 		let user = message.mentions.users.first() || await message.client.users.fetch(args[1])
 		.catch(e => {
 			message.channel.send('', {
@@ -15,8 +13,20 @@ module.exports = {
 		});
 
 		if(user == undefined) return;
+		
+		if (isNaN(args[2])) {
+			reason = args.slice(2).join(" ");
+			if (!reason) reason = `No reason provided. Responsible moderator: ${message.author.tag}`;
+		}
+		
+		else {
+			days = parseInt(args[2]);
+			if (days > 7) days = 7;
+			reason = args.slice(3).join(" ");
+			if (!reason) reason = `No reason provided. Responsible moderator: ${message.author.tag}`;
+		}
 
-		message.guild.members.ban(user, {days: 0, reason: reason}).then(()=>{
+		message.guild.members.ban(user, {days: days, reason: reason}).then(()=>{
 			message.channel.send('', {
 				embed: {
 					title: 'User successfully banned',
@@ -37,8 +47,8 @@ module.exports = {
 		});
 	},
 	description: 'Bans a user',
-	detailed: 'Bans all users mentioned',
-	examples: prefix => `${prefix}ban @someone, ${prefix}ban <id>`,
+	detailed: 'Bans given user, with options to erase messages from the past given amount of days, and a reason.',
+	examples: prefix => `${prefix}ban @someone days reason, ${prefix}ban <id> days reason`,
 	name: 'ban',
 	perms: ['BAN_MEMBERS'],
 	botPerms: ['BAN_MEMBERS'],
