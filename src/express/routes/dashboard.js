@@ -20,8 +20,10 @@ let handlerDB = new sqlite3.Database('./databases/handler.db', (err) => {
 });
 
 async function fetchPerms(guild, user){
-	//console.log((guild.members.cache.get(user) || await guild.members.fetch(user)))
-	return guild.members.cache.get(user).permissions.bitfield||0;
+	if(guild&&guild.members)
+		return guild.members.cache.get(user).permissions.bitfield||0;
+	else
+		return 0;
 }
 
 const {run, get, all} = require('../../utils').asyncDB;
@@ -48,23 +50,29 @@ router.get('/:guild/', (req, res)=>{
 	res.redirect(`/dashboard/${req.params.guild}/settings`);
 });
 
+const pages = [
+	'warnings',
+	'logs',
+	'settings',
+	'embed'
+]
+
 router.get('/:guild/:page/', (req, res)=>{
 	let guild = client.guilds.cache.get(req.params.guild);
 	if(!guild) return res.render('error', {req: req, title: '404', content: 'Guild not found'});
 	if(!req.user||!fetchPerms(guild, req.user.discordID)&permsCheck)
 		return res.render('error', {req: req, title: '403', content: ' forbidden'});
-	switch(req.params.page){
-		case 'warnings': case 'logs': case 'settings':
-			break;
-		default:
-			return res.render('error', {req: req, title: '404', content: 'Page not found'});
-	}
-	res.render('index', {req: req, content: dashboard, title: `Guild ${guild.name}`});
+	
+	if(pages.includes(req.params.page))
+		res.render('index', {req: req, content: dashboard, title: `Dashboard for ${guild.name}`});
+	else
+		res.render('error', {req: req, title: '404', content: 'Page not found'});
 });
 
 router.get('/:guild/get/:type/', async(req, res)=>{
 	let guild = client.guilds.cache.get(req.params.guild);
-	if(!req.user||!fetchPerms(guild, req.user.discordID)&(perms.administrator|perms.manage_guild)){
+	let userPerms = await fetchPerms(guild, req.user.discordID);
+	if(!req.user||!userPerms&(perms.administrator|perms.manage_guild)){
 		console.log(err);
 		res.status(403);
 		return res.send();
@@ -104,11 +112,33 @@ router.get('/:guild/get/:type/', async(req, res)=>{
 				disabled: commands
 			})}}`);
 			break;
+		case 'embed':
+			if(!(userPerms&(perms.administrator|perms.manage_guild)))
+				return res.sendStatus(404);
+			let user = client.users.cache.get(req.user.discordID);
+			let channels = [];
+			guild.channels.cache.each(channel=>{
+				if(channel.type == 'text')
+					channels.push({id: channel.id, name: channel.name});
+			});
+			res.send(JSON.stringify({name:guild.name, data:
+				{
+					channels: channels,
+					user: {
+						tag: user.tag,
+						pfp: user.displayAvatarURL(),
+					}
+				}
+			}));
+			break;
+		default:
+			res.sendStatus(404);
 	}
 });
 
 const logProperties = require('../../JSONStorage/logProperties.json');
 const prefix = require('../../handler/prefix');
+const { isArray } = require('util');
 const logSQL = `UPDATE logs SET ${logProperties.join('=(?),')}=(?) WHERE guild=(?);`;
 
 router.post('/:guild/save/:type/', async(req, res)=>{
@@ -150,6 +180,71 @@ router.post('/:guild/save/:type/', async(req, res)=>{
 			});	
 			break;
 	}
+});
+
+const embedProperties = [
+	'author',
+	'author_url',
+	'author_icon',
+	'message_title',
+	'description',
+	'colour',
+	'thumbnail',
+	'image',
+	'footer',
+	'footer_icon'
+];
+
+router.post('/:guild/send/embed/', async(req, res)=>{
+	let guild = client.guilds.cache.get(req.params.guild);
+	if(!req.user||!fetchPerms(guild, req.user.discordID)&(perms.administrator|perms.manage_guild)){
+		return res.sendStatus(403);
+	}
+	if(!req.body)
+		return res.sendStatus(400);
+
+	const input = req.body;
+	let embed = {author: {}, footer:{}, thumbnail: {}, image: {}, fields: []};
+
+	if(input.author&&typeof(input.author)=='string')
+		embed.author.name = input.author;
+	if(input.author_url&&typeof(input.author_url)=='string')
+		embed.author.url = input.author_url;
+	if(input.author_icon&&typeof(input.author_icon)=='string')
+		embed.author.iconURL = input.author_icon;
+	if(input.message_title&&typeof(input.message_title)=='string')
+		embed.title = input.message_title;
+	if(input.description&&typeof(input.description)=='string')
+		embed.description = input.description;
+	if(input.colour&&typeof(input.colour)=='string')
+		embed.color = parseInt(input.colour.replace('#', ''), 16);
+	if(input.thumbnail&&typeof(input.thumbnail)=='string')
+		embed.thumbnail.url = input.thumbnail;
+	if(input.image&&typeof(input.image)=='string')
+		embed.image.url = input.image;
+	if(input.footer&&typeof(input.footer)=='string')
+		embed.footer.text = input.footer;
+	if(input.footer_icon&&typeof(input.footer_icon)=='string')
+		embed.footer.iconURL = input.footer_icon;
+
+	if(input.fields&&isArray(input.fields)){
+		let len = Math.min(input.fields.length, 25);
+		for (let i = 0; i < len; i++) {
+			const field = input.fields[i];
+			if(isArray(field))
+				embed.fields.push({
+					name: field[0],
+					value: field[1],
+					short: field[2]
+				});
+		}
+	}
+	let channel = guild.channels.cache.get(req.body.channel);
+	if(!channel)
+		return res.sendStatus(404);
+	channel.send({embed})
+	.then(()=>res.sendStatus(200))
+	.catch(()=>res.sendStatus(500));
 });
 
 module.exports = router;

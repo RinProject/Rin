@@ -15,6 +15,7 @@ function notification(message){
 
 function generateLogs(settings){
 	let parent = document.getElementById('content');
+	parent.innerHTML='';
 	logProperties.forEach(category => {
 		let div = document.createElement('div');
 		let title = document.createElement('h1');
@@ -76,6 +77,7 @@ function createWarning(warning){
 }
 
 function generateWarnings(warnings){
+	document.getElementById('content').innerHTML='';
 	if(warnings[0])
 		warnings.forEach((warning)=>{
 			content.appendChild(createWarning(warning));
@@ -86,7 +88,7 @@ function generateWarnings(warnings){
 
 function generateSettings(settings){
 	let div = document.getElementById('content');
-	div.innerHTML = `<label for="prefix">prefix</label><input style="width: 4rem;" type="text" name="prefix" id="prefix" value="${settings.prefix}"><button onclick="setPrefix()">save</button><br /><h1>Disabled commands</h1><p style="opacity: .5;">Commands can currently only be disabled in client, see <a href="/commands/#togglecommand">toggleCommand</a></p>`
+	div.innerHTML = `<label for="prefix">Prefix</label><input style="width: 4rem;margin-right:0.3rem;" type="text" name="prefix" id="prefix" value="${settings.prefix}"><button onclick="setPrefix()">save</button><br /><h1>Disabled commands</h1><p style="opacity: .5;">Commands can currently only be disabled in client, see <a href="/commands/#togglecommand">toggleCommand</a></p>`
 	+ settings.disabled.reduce((acc, command)=>{return acc + `<div class="warning"><h3>${command}</h3></div>`}, '') || '<div class="warning"><h3>none</h3></div>';
 }
 
@@ -100,11 +102,76 @@ function setPrefix(){
 	}).then(res=>res.ok?notification('Prefix saved'):notification(res.status+' '+res.statusText))
 	.catch(console.log);
 }
+const text = [
+	'Author',
+	'Author URL',
+	'Author Icon',
+	'Message Title',
+	'Description',
+	'Colour',
+	'Thumbnail',
+	'Image',
+	'Footer',
+	'Footer Icon'
+]
+async function embedBuilderBuilder(info){
+	console.log(info)
+	let div = document.getElementById('content');
+	div.innerHTML = `<label>Channel</label><select id="channel">${info.channels.reduce((acc, curr)=>acc+`<option value="${curr.id}">${curr.name}</option>`, '')}</select><br><br>`
+	div.innerHTML += '<button onclick="sendEmbed()">Send</button>';
+	text.forEach(field => {
+		let id=field.toLowerCase().replace(/\s+/g, '_');
+		div.innerHTML+=`<label for="${id}">${field}</label><input type="text" name="${id}" id="${id}">`;
+	});
+	div.innerHTML+=`<label>Fields</label><br><div id="fields"></div><button onclick="addField()">Add field</button><br><br><button onclick="sendEmbed()">Send</button>`
+	document.getElementById('author').value = info.user.tag;
+	document.getElementById('author_icon').value = info.user.pfp;
+	let textarea = document.createElement('textarea');
+	textarea.id = 'description';
+	div.replaceChild(textarea, document.getElementById('description'));
+}
+
+function addField(){
+	let fields = document.getElementById('fields')
+	if(fields.children.length>24)
+		return notification('No more fields can be created');
+	let field = document.createElement('div');
+	field.innerHTML = '<div class="short"><label>Short</label><input type="checkbox"></div><label>Title</label><input type="text"><label>Description</label><textarea></textarea>'
+	fields.appendChild(field);
+}
+
+function sendEmbed(){
+	let message = {
+		channel: document.getElementById('channel').value,
+		fields: []
+	};
+	text.forEach(field => {
+		let id=field.toLowerCase().replace(/\s+/g, '_');
+		message[id] = document.getElementById(id).value;
+	});
+	let fields = document.getElementById('fields');
+	for (let i = 0; i < fields.children.length; i++) {
+		const field = fields.children[i].children;
+		console.log(field)
+		message.fields.push([
+			field[2].value,
+			field[4].value,
+			field[0].children[1].checked
+		]);
+	}
+	fetch(base+'send/embed',{
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(message)
+	}).then(res=>res.ok?notification('Message sent'):notification(res.status+' '+res.statusText))
+	.catch(console.log);
+}
 
 let settings;
 let content = document.getElementById('content');
 async function load(path){
-	content.innerHTML='';
 	let title = '';
 	switch (path||document.URL.split(/\/+/g)[4]){
 		case 'logs':
@@ -126,6 +193,15 @@ async function load(path){
 			})
 			.catch(console.error);
 			break;
+		case 'embed':
+			await fetch(base+'get/embed')
+			.then(response => response.json())
+			.then(data => {
+				title = 'Embed builder for '+data.name;
+				embedBuilderBuilder(data.data);
+			})
+			.catch(console.error);
+			break;
 		case 'settings': default:
 			await fetch(base+'get/settings')
 			.then(response => response.json())
@@ -136,6 +212,8 @@ async function load(path){
 			.catch(console.error);
 			break;
 	}
+	if(!title)
+		throw 403;
 	document.getElementById('title').innerText = title;
 	document.title=title;
 }
@@ -144,8 +222,9 @@ function pageShift(e, path){
     e = e || window.event;
 	e.preventDefault();
 	(async ()=>{
-		await load(path);
-		window.history.pushState({"pageTitle":document.getElementById('title').innerText},"", `${base}${path}/`);
+		await load(path)
+		.then(()=>window.history.pushState({"pageTitle":document.getElementById('title').innerText},"", `${base}${path}/`))
+		.catch(()=>{notification('Cannot access that page.')});
 	})();
 }
 
