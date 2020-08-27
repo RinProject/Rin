@@ -102,33 +102,38 @@ function setPrefix(){
 	}).then(res=>res.ok?notification('Prefix saved'):notification(res.status+' '+res.statusText))
 	.catch(console.log);
 }
+async function embedSenderBuilder(info){
+	let div = document.getElementById('content');
+	div.innerHTML = `<label>Channel</label><select id="channel">${info.channels.reduce((acc, curr)=>acc+`<option value="${curr.id}">${curr.name}</option>`, '')}</select><br>`
+	await embedBuilderBuilder(info, div);
+	div.innerHTML += '<br><button onclick="sendEmbed()">Send</button>';
+	document.getElementById('author').value = info.user.tag;
+	document.getElementById('author_icon').value = info.user.pfp;
+}
 const text = [
 	'Author',
 	'Author URL',
 	'Author Icon',
-	'Message Title',
-	'Description',
-	'Colour',
 	'Thumbnail',
+	'Message Title',
+	'Colour',
+	'Description',
 	'Image',
 	'Footer',
 	'Footer Icon'
 ]
-async function embedBuilderBuilder(info){
-	console.log(info)
-	let div = document.getElementById('content');
-	div.innerHTML = `<label>Channel</label><select id="channel">${info.channels.reduce((acc, curr)=>acc+`<option value="${curr.id}">${curr.name}</option>`, '')}</select><br><br>`
-	div.innerHTML += '<button onclick="sendEmbed()">Send</button>';
+async function embedBuilderBuilder(info, parent){
+	let html = ''
+	html += '<div class="embedBuilder">';
 	text.forEach(field => {
 		let id=field.toLowerCase().replace(/\s+/g, '_');
-		div.innerHTML+=`<label for="${id}">${field}</label><input type="text" name="${id}" id="${id}">`;
+		html+=`<input type="text" name="${id}" id="${id}" placeholder="${field}">`;
 	});
-	div.innerHTML+=`<label>Fields</label><br><div id="fields"></div><button onclick="addField()">Add field</button><br><br><button onclick="sendEmbed()">Send</button>`
-	document.getElementById('author').value = info.user.tag;
-	document.getElementById('author_icon').value = info.user.pfp;
+	parent.innerHTML += html+`<div id="fields"></div><button id="add_field" onclick="addField()">Add field</button></div>`
 	let textarea = document.createElement('textarea');
 	textarea.id = 'description';
-	div.replaceChild(textarea, document.getElementById('description'));
+	textarea.placeholder = 'Description';
+	document.querySelector('.embedBuilder').replaceChild(textarea, document.getElementById('description'));
 }
 
 function addField(){
@@ -136,29 +141,31 @@ function addField(){
 	if(fields.children.length>24)
 		return notification('No more fields can be created');
 	let field = document.createElement('div');
-	field.innerHTML = '<div class="short"><label>Short</label><input type="checkbox"></div><label>Title</label><input type="text"><label>Description</label><textarea></textarea>'
+	field.innerHTML = '<input type="text" placeholder="Title"><div><label>Short</label><input type="checkbox"></div><textarea placeholder="Content"></textarea>'
 	fields.appendChild(field);
 }
 
-function sendEmbed(){
-	let message = {
-		channel: document.getElementById('channel').value,
-		fields: []
-	};
-	text.forEach(field => {
+function fetchEmbed(parent){
+	let message = {fields: []};
+	text.forEach((field, i) => {
 		let id=field.toLowerCase().replace(/\s+/g, '_');
-		message[id] = document.getElementById(id).value;
+		message[id] = parent.children[i].value;
 	});
-	let fields = document.getElementById('fields');
+	let fields = parent.children[text.length];
 	for (let i = 0; i < fields.children.length; i++) {
 		const field = fields.children[i].children;
-		console.log(field)
 		message.fields.push([
+			field[0].value,
 			field[2].value,
-			field[4].value,
-			field[0].children[1].checked
+			field[1].children[1].checked
 		]);
 	}
+	return message;
+}
+
+function sendEmbed(){
+	let message = fetchEmbed(document.querySelector('.embedBuilder'));
+	message.channel = document.getElementById('channel').value;
 	fetch(base+'send/embed',{
 		method: 'POST',
 		headers: {
@@ -198,7 +205,7 @@ async function load(path){
 			.then(response => response.json())
 			.then(data => {
 				title = 'Embed builder for '+data.name;
-				embedBuilderBuilder(data.data);
+				embedSenderBuilder(data.data);
 			})
 			.catch(console.error);
 			break;

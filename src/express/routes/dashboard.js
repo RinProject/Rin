@@ -182,19 +182,6 @@ router.post('/:guild/save/:type/', async(req, res)=>{
 	}
 });
 
-const embedProperties = [
-	'author',
-	'author_url',
-	'author_icon',
-	'message_title',
-	'description',
-	'colour',
-	'thumbnail',
-	'image',
-	'footer',
-	'footer_icon'
-];
-
 router.post('/:guild/send/embed/', async(req, res)=>{
 	let guild = client.guilds.cache.get(req.params.guild);
 	if(!req.user||!fetchPerms(guild, req.user.discordID)&(perms.administrator|perms.manage_guild)){
@@ -235,7 +222,7 @@ router.post('/:guild/send/embed/', async(req, res)=>{
 				embed.fields.push({
 					name: field[0],
 					value: field[1],
-					short: field[2]
+					inline: field[2]
 				});
 		}
 	}
