@@ -155,6 +155,20 @@ Examples:
 
 ---
 
+## Mute
+Mutes given member with the option to add a reason for the mute. Mutes are checked twice a minute meaning that an automatic unmute can be up to half a minute late.
+### Required Permissions
+* Manage Roles
+
+Examples: 
+```
+;mute @Jihyo#2423 1d Being lazy
+;mute 157101769858613248 1h
+;mute @Tarren#9722 30m Too tardy
+```
+
+---
+
 ## Purge
 Purges a given number of messages.
 ### Required Permissions
@@ -180,6 +194,19 @@ Examples:
 ;unban @Qred#0122
 ;unban 186563462330056704
 ```
+
+## Unmute
+unmutes given member.
+### Required Permissions
+* Manage Roles
+
+Examples: 
+```
+;mute @Jihyo#2423
+;mute 157101769858613248
+```
+
+---
 
 ## Warn 
 Warns mentioned user and can also remove/restore warnings

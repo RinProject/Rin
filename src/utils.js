@@ -84,6 +84,103 @@ const permissionsFlags = {
 	manage_roles: 0x10000000,
 	manage_webhooks: 0x20000000,
 	manage_emojis: 0x40000000
+};
+
+const sqlite3 = require('sqlite3').verbose();
+
+let db = new sqlite3.Database('./databases/database.db', (err) => {
+	if (err) {
+		return console.error(err.message);
+	}
+});
+
+db.run('CREATE TABLE IF NOT EXISTS mutes(guild TEXT NOT NULL, member TEXT NOT NULL, ends TEXT NOT NULL, reason TEXT NOT NULL, moderator TEXT NOT NULL);');
+
+db.run('CREATE TABLE IF NOT EXISTS muteRole(guild TEXT UNIQUE NOT NULL, role TEXT NOT NULL);');
+
+function convertTime(time){
+	if(!time)
+		return NaN;
+	switch(time.slice(-1).toLowerCase()){
+		case 's':
+			return Math.floor(parseFloat(time) * 1000 + +new Date);
+		case 'm':
+			return Math.floor(parseFloat(time) * 60000 + +new Date);
+		case 'h':
+			return Math.floor(parseFloat(time) * 3600000 + +new Date);
+		case 'd':
+			return Math.floor(parseFloat(time) * 86400000 + +new Date);
+	}
 }
 
-module.exports = {asyncDB, permissionsFlags};
+let checkingMutes = false;
+
+const mute = {
+	mute: async function (guild, member, time, reason, moderator, channel){
+		let mute = await asyncDB.get(db, 'SELECT member FROM mutes WHERE guild = (?) AND member = (?);', [guild.id, member.id]);
+		if(mute&&mute.member)
+			throw 'User Already Muted';
+			//return channel.send({embed: {title: 'Cannot mute user', description: 'User already muted.', color: colors.error}}), undefined;
+		let role = await asyncDB.get(db, 'SELECT role FROM muteRole WHERE guild = (?);', [guild.id]);
+		if(role)
+			role = guild.roles.resolveID(role.role);
+		
+		if(!role){
+			role = await guild.roles.create({
+				data: {
+					name: 'Muted',
+					color: 'GREY',
+					permissions: 0
+				},
+				reason: 'Auto generated mute role'
+			});
+			await guild.channels.cache.each(async(channel) => {
+				if(channel.type==='text')
+					await channel.createOverwrite(role, {
+						SEND_MESSAGES: false
+					}).catch();
+				else if(channel.type==='voice')
+					await channel.createOverwrite(role, {
+						SPEAK: false
+					}).catch();
+			});
+			await asyncDB.run(db, 'INSERT OR REPLACE INTO muteRole(guild, role) VALUES((?), (?));', [guild.id, role.id]);
+		}
+		if(!reason)
+			reason = 'No reason provided.';
+		asyncDB.run(
+			db,
+			'INSERT OR REPLACE INTO mutes(member, guild, reason, ends, moderator) VALUES((?), (?), (?), (?), (?));',
+			[member.id, guild.id, reason, time, moderator.id]
+		);
+		member.roles.add(role, `Muted by ${moderator.tag}(id: ${moderator.id}) for "${reason}"`);
+		return;
+	},
+	unmute: async function(guild, member){
+		let role = await asyncDB.get(db, 'SELECT role FROM muteRole WHERE guild = (?);', [guild.id]);
+		if(!member.roles.cache.get(role.role))
+			throw 'User not muted';
+		member.roles.remove(role.role, 'Mute time over');
+		asyncDB.run(db, 'DELETE FROM mutes WHERE guild = (?) AND member = (?);', [guild.id, member.id]);
+	},
+	startMuteCheck: function(){
+		if(!checkingMutes){
+			setInterval(checkMutes, 30000);
+		}
+	}
+};
+async function checkMutes(){
+	const toUnmute = await asyncDB.all(db, 'SELECT * FROM mutes WHERE ends < (?);', [+new Date]);
+	toUnmute.forEach(async (currentMute) =>{
+		let guild = client.guilds.resolve(currentMute.guild);
+		let member;
+		try {
+			member = guild.members.resolve(currentMute.member);
+		} catch (e) {}
+		if(!guild || !member)
+			return asyncDB.run(db, 'DELETE FROM mutes WHERE guild = (?) AND member = (?);', [currentMute.guild, currentMute.member]);
+		mute.unmute(guild, member);
+	});
+}
+
+module.exports = {asyncDB, permissionsFlags, mute, convertTime};
