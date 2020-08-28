@@ -10,8 +10,9 @@ router.get('/redirect', passport.authenticate('discord', {
 	res.redirect('/');
 });
 
-router.get('/info', (req, res)=>{
-	res.send(req.user||'None');
+router.get('/logout', (req, res)=>{
+	req.logout();
+	res.redirect('/');
 });
 
 module.exports = router;
