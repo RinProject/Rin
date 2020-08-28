@@ -206,6 +206,7 @@ async function commandDisabled(guild, command) {
  * @param {object} message
  * @returns {boolean} whether a command was triggered
  */
+const { permissionsFlags } = require('./utils');
 async function handle(message){
 	let localPrefix = message.guild ? await fetchPrefix(message.guild.id)||prefix:prefix;
 	if(message.author.bot || !message.content.startsWith(localPrefix)) return false;
@@ -229,6 +230,22 @@ async function handle(message){
 		})
 		return true;
 	}
+
+	if(message.guild &&!(message.channel.permissionsFor(message.guild.me).bitfield & permissionsFlags.embed_links)){
+			message.channel.send('`I need embed links permissions to work, please contact server owner`')
+			.catch(()=>
+				message.author.send({embed: {
+					title: 'I need embed links and send messages permissions to work, please contact server owner or admins',
+					description: `Error occured in [${message.channel.name}](https://discordapp.com/channels/${message.guild.id}/${message.channel.id}/)`,
+					color: colors.error,
+					footer: {
+						text: `Guild: ${message.guild.name}`
+					}
+				}})
+			);
+		return true;
+	}
+
 	//check permission
 	if(command.perms){
 		let lacking = [];
