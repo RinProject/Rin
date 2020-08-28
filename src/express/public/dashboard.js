@@ -15,6 +15,8 @@ function notification(message){
 
 function generateLogs(settings){
 	let parent = document.getElementById('content');
+	if(!settings)
+		return parent.innerHTML = '<h1>No logging set up, see <a href="/commands/#log">log command</a></h1>';
 	parent.innerHTML='';
 	logProperties.forEach(category => {
 		let div = document.createElement('div');

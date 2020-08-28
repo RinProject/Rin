@@ -7,6 +7,12 @@ let db = new sqlite3.Database('./databases/database.db', (err) => {
 		throw err;
 });
 
+let handlerDB = new sqlite3.Database('./databases/handler.db', (err) => {
+	if (err) {
+		return console.error(err.message);
+	}
+});
+
 const perms = require('../../utils').permissionsFlags;
 
 async function fetchPerms(guild, user){
@@ -89,18 +95,20 @@ router.get('/:guild/get/:type/', async(req, res)=>{
 			db.get('SELECT * FROM logs WHERE guild = (?);', [req.params.guild], (err, row)=>{
 				if(err)
 					console.log(err);
-				if(!guild || !row) return res.sendStatus(404);
-				res.send(`{"name":"${guild.name.replace(/'/g, '\'')}","settings":${JSON.stringify(row)}}`);
+				if(!guild) return res.sendStatus(404);
+				res.send(JSON.stringify({name:guild.name.replace(/'/g, '\''),settings:row}));
 			});
 			break;
 		case 'settings':
-			let prefix = (await get(handlerDB, 'SELECT * FROM prefixes WHERE guild = (?);', [req.params.guild])||{}).prefix||client.prefix;
 			let commands = (await all(handlerDB, 'SELECT command FROM disabledCommands WHERE guild = (?);', [req.params.guild])||{})
 			commands.forEach((c,i)=>commands[i] = c.command);
-			res.send(`{"name":"${guild.name.replace(/'/g, '\'')}","settings":${JSON.stringify({
-				prefix: prefix,
-				disabled: commands
-			})}}`);
+			res.send(JSON.stringify({
+				name:guild.name.replace(/'/g, '\''),
+				settings:{
+					prefix: (await get(handlerDB, 'SELECT * FROM prefixes WHERE guild = (?);', [req.params.guild])||{}).prefix||client.prefix,
+					disabled: commands
+				}
+			}));
 			break;
 		case 'embed':
 			if(!(userPerms&(perms.administrator|perms.manage_guild)))
