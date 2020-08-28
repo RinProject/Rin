@@ -73,7 +73,7 @@ module.exports = function(config){
 	.replace('#avatar#', `<img src="${client.user.avatarURL({size: 1024})}">`);
 
 	app.get('/', (req, res) => {
-		res.render('index', {req, content: home});
+		res.render('index', {req, content: home, title: 'Home - Rin'});
 	});
 
 	app.use('/auth', require('./express/routes/auth.js'));
