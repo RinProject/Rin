@@ -22,7 +22,7 @@ module.exports = function(config){
 	const baseError = fs.readFileSync(__dirname+'/express/error.html').toString();
 	const sqlite3 = require('sqlite3').verbose();
 
-	let expDB = new sqlite3.Database('./databases/exp.db', (err) => {
+	let db = new sqlite3.Database('./databases/database.db', (err) => {
 		if (err)
 			return console.error(err.message);
 	});
@@ -53,7 +53,7 @@ module.exports = function(config){
 		saveUninitialized: false,
 		store: new SQLiteStore({
 			dir: './databases/',
-			db: 'session.db'
+			db: 'express.db'
 		}),
 		resave: false,
 		name: 'discord'
@@ -85,7 +85,7 @@ module.exports = function(config){
 	app.get('/leaderboard/:guild/:page?', (req, res) => {
 		if (req.params.guild) {
 			let page = req.params.page || 1;
-			expDB.all(`SELECT exp, user FROM exp WHERE guild = (?) ORDER BY exp DESC LIMIT ${0 * page}, ${10 * page - 1};`, [req.params.guild], (err, rows) => {
+			db.all(`SELECT exp, user FROM exp WHERE guild = (?) ORDER BY exp DESC LIMIT ${0 * page}, ${10 * page - 1};`, [req.params.guild], (err, rows) => {
 				if (err)
 					return res.render('error', {req: req, title: '500', content: 'Internal server error'});
 				if(!rows)

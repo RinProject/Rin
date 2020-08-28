@@ -1,5 +1,5 @@
 let sqlite3 = require('sqlite3').verbose();
-let db = new sqlite3.Database('./databases/warnings.db', (err) => {
+let db = new sqlite3.Database('./databases/database.db', (err) => {
 	if(err)
 		return console.error(err.message);
 });
@@ -16,11 +16,6 @@ db.run(
 );`
 );
 
-let logDB = new sqlite3.Database('./databases/logs.db', (err) => {
-	if(err)
-		return console.error(err.message);
-});
-
 const sql = `INSERT INTO warnings(id, user, moderator, reason, guild, time) VALUES((?), (?), (?), (?), (?), (?));`
 const crypto = require('crypto');
 module.exports = {
@@ -34,7 +29,7 @@ module.exports = {
 			db.run(sql, [id, member.id, message.author.id, reason, message.guild.id, timestamp.toString()], (err)=>{
 				if(err)
 					throw err;
-				logDB.all(`SELECT modLogChannel FROM logs WHERE guild = "${message.guild.id}"`, (err, rows) =>{
+				db.all(`SELECT modLogChannel FROM logs WHERE guild = "${message.guild.id}"`, (err, rows) =>{
 					if (rows && rows[0] && rows[0]['modLogChannel']) {
 						message.client.channels.cache.get(rows[0]['modLogChannel']).send({
 							embed: {

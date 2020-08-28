@@ -2,22 +2,12 @@ const router = require('express').Router();
 const fs = require('fs');
 const dashboard = fs.readFileSync(__dirname+'/dashboard.html');
 const sqlite3 = require('sqlite3').verbose();
-let logDB = new sqlite3.Database('./databases/logs.db', (err) => {
+let db = new sqlite3.Database('./databases/database.db', (err) => {
 	if(err)
 		throw err;
 });
 
 const perms = require('../../utils').permissionsFlags;
-
-let warningsDB = new sqlite3.Database('./databases/warnings.db', (err) => {
-	if(err)
-		throw err;
-});
-
-let handlerDB = new sqlite3.Database('./databases/handler.db', (err) => {
-	if(err)
-		throw err;
-});
 
 async function fetchPerms(guild, user){
 	if(guild&&guild.members)
@@ -79,7 +69,7 @@ router.get('/:guild/get/:type/', async(req, res)=>{
 	}
 	switch (req.params.type){
 		case 'warnings':
-			warningsDB.all('SELECT id, user, moderator, reason, time, active FROM warnings WHERE guild = (?) ORDER BY time DESC;', [req.params.guild], async (err, rows)=>{
+			db.all('SELECT id, user, moderator, reason, time, active FROM warnings WHERE guild = (?) ORDER BY time DESC;', [req.params.guild], async (err, rows)=>{
 				if(err){
 					console.log(err);
 					res.status(500);
@@ -96,7 +86,7 @@ router.get('/:guild/get/:type/', async(req, res)=>{
 			});
 			break;
 		case 'logs':
-			logDB.get('SELECT * FROM logs WHERE guild = (?);', [req.params.guild], (err, row)=>{
+			db.get('SELECT * FROM logs WHERE guild = (?);', [req.params.guild], (err, row)=>{
 				if(err)
 					console.log(err);
 				if(!guild || !row) return res.sendStatus(404);
@@ -157,7 +147,7 @@ router.post('/:guild/save/:type/', async(req, res)=>{
 			}catch{
 				return res.sendStatus(400);
 			}
-			logDB.get(logSQL, args, (err, row)=>{
+			db.get(logSQL, args, (err, row)=>{
 				if(err){
 					console.log(err);
 					return res.sendStatus(500);

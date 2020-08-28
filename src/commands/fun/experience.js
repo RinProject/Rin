@@ -1,6 +1,6 @@
 const sqlite3 = require('sqlite3').verbose();
 
-let expDB = new sqlite3.Database('./databases/exp.db', (err) => {
+let expDB = new sqlite3.Database('./databases/database.db', (err) => {
 	if(err)
 		return console.error(err.message);
 });

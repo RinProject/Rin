@@ -1,13 +1,15 @@
 const config = require('../../../config.json')
 let sqlite3 = require('sqlite3').verbose();
-let db = new sqlite3.Database('./databases/reactroles.db', (err) => {
+let db = new sqlite3.Database('./databases/database.db', (err) => {
 	if (err)
 		return console.error(err.message);
 });
 db.run(`CREATE TABLE IF NOT EXISTS reactRoles(
 	messageID TEXT NOT NULL,
 	emojiID TEXT NOT NULL,
-	roleID TEXT NOT NULL
+	roleID TEXT NOT NULL,
+	channelID TEXT NOT NULL,
+	guildID TEXT NOT NULL
 );`);
 
 module.exports = {
@@ -45,7 +47,7 @@ module.exports = {
 				})
 			);
 
-			db.run('INSERT OR REPLACE INTO reactRoles(messageID, emojiID, roleID) VALUES ((?), (?), (?))', [messageId, emojiId, roleId]);
+			db.run('INSERT OR REPLACE INTO reactRoles(messageID, emojiID, roleID, guildID, channelID) VALUES ((?), (?), (?), (?), (?))', [messageId, emojiId, roleId, message.guild.id, message.channel.id]);
 		}
 		if (args[1] == 'remove') {
 			if (args[2] == undefined || args[3] == undefined) {

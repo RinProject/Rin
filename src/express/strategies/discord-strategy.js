@@ -2,7 +2,7 @@ const DiscordStrategy = require('passport-discord').Strategy;
 const passport = require('passport');
 const sqlite3 = require('sqlite3').verbose();
 
-let db = new sqlite3.Database('./databases/users.db', (err) => {
+let db = new sqlite3.Database('./databases/express.db', (err) => {
 	if (err)
 		return console.error(err.message);
 });
