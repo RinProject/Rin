@@ -151,17 +151,38 @@ const mute = {
 		asyncDB.run(
 			db,
 			'INSERT OR REPLACE INTO mutes(member, guild, reason, ends, moderator) VALUES((?), (?), (?), (?), (?));',
-			[member.id, guild.id, reason, time, moderator.id]
+			[member.id, guild.id, reason, time||'inf', moderator.id]
 		);
 		member.roles.add(role, `Muted by ${moderator.tag}(id: ${moderator.id}) for "${reason}"`);
-		return;
+
+		let logChannel = await asyncDB.get(db, 'SELECT modLogChannel FROM logs WHERE guild = (?)', [guild.id])
+		if (logChannel && logChannel.modLogChannel)
+			guild.channels.resolve(logChannel.modLogChannel).send({embed:{
+				title: 'User muted',
+				description: `${member.toString()} muted by ${moderator.toString()}\n\nReason:\n${reason}`,
+				color: colors.negative,
+				footer: {
+					text: time?'Mute ending':'Mute indefinite'
+				},
+				timestamp: time
+			}});
 	},
 	unmute: async function(guild, member){
 		let role = await asyncDB.get(db, 'SELECT role FROM muteRole WHERE guild = (?);', [guild.id]);
+		await asyncDB.run(db, 'DELETE FROM mutes WHERE guild = (?) AND member = (?);', [guild.id, member.id]);
+		if(!role)
+			throw 'No muted role found';
 		if(!member.roles.cache.get(role.role))
 			throw 'User not muted';
 		member.roles.remove(role.role, 'Mute time over');
-		asyncDB.run(db, 'DELETE FROM mutes WHERE guild = (?) AND member = (?);', [guild.id, member.id]);
+
+		let logChannel = await asyncDB.get(db, 'SELECT modLogChannel FROM logs WHERE guild = (?)', [guild.id])
+		if (logChannel && logChannel.modLogChannel)
+			guild.channels.resolve(logChannel.modLogChannel).send({embed:{
+				title: 'User unmuted',
+				description: `${member.toString()} unmuted`,
+				color: colors.success
+			}});
 	},
 	startMuteCheck: function(){
 		if(!checkingMutes){
@@ -179,7 +200,7 @@ async function checkMutes(){
 		} catch (e) {}
 		if(!guild || !member)
 			return asyncDB.run(db, 'DELETE FROM mutes WHERE guild = (?) AND member = (?);', [currentMute.guild, currentMute.member]);
-		mute.unmute(guild, member);
+		mute.unmute(guild, member).catch(e=>{});
 	});
 }
 

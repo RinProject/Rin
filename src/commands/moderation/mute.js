@@ -19,11 +19,11 @@ module.exports = {
 				}
 			});
 		});
-		mute(message.guild, member, time||32503680000, reason, message.author, message.channel)
+		mute(message.guild, member, time, reason, message.author, message.channel)
 		.then(()=>
 			message.channel.send({embed:{
 				title: 'User muted',
-				description: `${member.toString()} muted by ${message.author.toString()}\n\nReason:\n${reason}`,
+				description: `${member.toString()} muted by ${message.author.toString()}`,
 				color: colors.negative,
 				footer: {
 					text: time?'Mute ending':'Mute indefinite'

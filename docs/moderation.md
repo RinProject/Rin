@@ -196,14 +196,14 @@ Examples:
 ```
 
 ## Unmute
-unmutes given member.
+Unmutes given member.
 ### Required Permissions
 * Manage Roles
 
 Examples: 
 ```
-;mute @Jihyo#2423
-;mute 157101769858613248
+;unmute @Jihyo#2423
+;unmute 157101769858613248
 ```
 
 ---
