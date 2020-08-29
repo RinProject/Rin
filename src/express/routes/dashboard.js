@@ -182,9 +182,9 @@ router.post('/:guild/save/:type/', async(req, res)=>{
 
 router.post('/:guild/send/embed/', async(req, res)=>{
 	let guild = client.guilds.cache.get(req.params.guild);
-	if(!req.user||!fetchPerms(guild, req.user.discordID)&(perms.administrator|perms.manage_guild)){
+	if(!req.user||!fetchPerms(guild, req.user.discordID)&(perms.administrator|perms.manage_guild))
 		return res.sendStatus(403);
-	}
+
 	if(!req.body)
 		return res.sendStatus(400);
 
@@ -216,7 +216,7 @@ router.post('/:guild/send/embed/', async(req, res)=>{
 		let len = Math.min(input.fields.length, 25);
 		for (let i = 0; i < len; i++) {
 			const field = input.fields[i];
-			if(isArray(field))
+			if(field && isArray(field) && field[0]||field[1])
 				embed.fields.push({
 					name: field[0],
 					value: field[1],
@@ -224,6 +224,8 @@ router.post('/:guild/send/embed/', async(req, res)=>{
 				});
 		}
 	}
+	if(!(embed.title||embed.description||embed.fields[0]||embed.thumbnail.url||embed.image.url))
+		return res.sendStatus(400);
 	let channel = guild.channels.cache.get(req.body.channel);
 	if(!channel)
 		return res.sendStatus(404);

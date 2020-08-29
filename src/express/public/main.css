@@ -208,19 +208,19 @@ label{
 
 #fields div{
 	display: grid;
-	grid-template-columns: auto 5rem;
+	grid-template-columns: auto 5rem 2.6rem;
 	margin-bottom: .5rem;
 	background: #00000040;
 	padding: .5rem;
 	border-radius: 1rem;
 }
 
-#fields input, #fields div div{
+#fields input, #fields div div, #fields button{
 	grid-column: span 1;
 }
 
 #fields textarea{
-	grid-column: span 2;
+	grid-column: span 3;
 }
 
 label[for="prefix"]{

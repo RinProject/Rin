@@ -143,7 +143,7 @@ function addField(){
 	if(fields.children.length>24)
 		return notification('No more fields can be created');
 	let field = document.createElement('div');
-	field.innerHTML = '<input type="text" placeholder="Title"><div><label>Short</label><input type="checkbox"></div><textarea placeholder="Content"></textarea>'
+	field.innerHTML = '<input type="text" placeholder="Title"><div><label>Short</label><input type="checkbox"></div><button onclick="this.parentElement.remove()">x</button><textarea placeholder="Content"></textarea>';
 	fields.appendChild(field);
 }
 
@@ -158,7 +158,7 @@ function fetchEmbed(parent){
 		const field = fields.children[i].children;
 		message.fields.push([
 			field[0].value,
-			field[2].value,
+			field[3].value,
 			field[1].children[1].checked
 		]);
 	}
@@ -231,6 +231,7 @@ function pageShift(e, path){
     e = e || window.event;
 	e.preventDefault();
 	(async ()=>{
+		if(`${base}${path}/` == document.URL)return;
 		await load(path)
 		.then(()=>window.history.pushState({"pageTitle":document.getElementById('title').innerText},"", `${base}${path}/`))
 		.catch(()=>{notification('Cannot access that page.')});
