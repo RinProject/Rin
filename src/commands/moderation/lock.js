@@ -1,10 +1,8 @@
 module.exports = {
 	async run(message, args) {
 		if(args[1] != 'off') {
-			message.channel.overwritePermissions([{
-					id: message.guild.id,
-					deny: ['SEND_MESSAGES']
-			}]).then(channel => {
+			message.channel.createOverwrite(message.guild.roles.everyone, { SEND_MESSAGES: false }, `Channel locked by ${message.author.tag}`)
+			.then(channel => {
 				message.channel.send('', {
 					embed: {
 						title: 'Channel Locked',
@@ -13,10 +11,8 @@ module.exports = {
 				});
 			});
 		} else {
-			message.channel.overwritePermissions([{
-				id: message.guild.id,
-				SEND_MESSAGES: null
-			}]).then(channel => {
+			message.channel.createOverwrite(message.guild.roles.everyone, { SEND_MESSAGES: null }, `Channel unlocked by ${message.author.tag}`)
+			.then(channel => {
 				message.channel.send('', {
 					embed: {
 						title: 'Channel Unlocked',
