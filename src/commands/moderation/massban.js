@@ -2,7 +2,7 @@ module.exports = {
     async run(message, args) {
 		let failed = 0;
         if (args[1] == undefined) {
-            message.channel.send({
+            return message.channel.send({
                 embed: {
                     title: 'Please provide users to ban.',
                     color: colors.error
@@ -32,10 +32,11 @@ module.exports = {
             color: colors.negative
         }});
     },
-    description: 'Bans all mentioned users',
-    detailed: 'Bans all mentioned users',
+    description: 'Bans all given users (by id)',
+    detailed: 'Bans all given users (by id)',
     examples: prefix => `${prefix}massban <id> <id> <id>`,
     name: 'massban',
+    aliases: ['mban'],
     perms: ['BAN_MEMBERS'],
     botPerms: ['BAN_MEMBERS'],
     guildOnly: true
