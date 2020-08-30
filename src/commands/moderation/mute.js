@@ -9,7 +9,7 @@ module.exports = {
 		if(isNaN(time))
 			time = undefined;
 		let reason = args.slice(isNaN(time)?2:3).join(' ')||'No reason provided';
-		let member = message.mentions.members.first() || await message.guild.members.fetch(args[1])
+		let member = message.mentions.members.first() || await message.guild.members.fetch(`${args[1]}`)
 		.catch(e => {
 			message.channel.send('', {
 				embed: {
@@ -19,6 +19,8 @@ module.exports = {
 				}
 			});
 		});
+		if (member == undefined) return;
+
 		mute(message.guild, member, time, reason, message.author, message.channel)
 		.then(()=>
 			message.channel.send({embed:{
@@ -38,7 +40,7 @@ module.exports = {
 				color: colors.error
 			}})
 		);
-	},
+},
 	description: 'Mutes a given member',
 	detailed: 'Mutes given member with the option to add a reason for the mute. Mutes are checked twice a minute meaning that an automatic unmute can be up to half a minute late.',
 	examples: prefix => `${prefix}mute @Jihyo#2423 1d Being lazy, ${prefix}mute 157101769858613248 1h, ${prefix}mute @Tarren#9722 Too tardy`,
