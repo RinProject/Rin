@@ -102,10 +102,12 @@ client.on('messageDeleteBulk', (messages) => {
 		if (rows[0] && rows[0]['messageDelete']) {
 			let fields = [];
 			messages.each(message => {
+				let content = message.content
+				if (!content) content = `Message data unavailable, message likely included an attachment or embed.`;
 				fields.push({
 					name: `${message.author.tag} | id: ${message.author.id}`,
 					inline: false,
-					value: message.content
+					value: content
 				});
 			})
 			client.channels.cache.get(rows[0]['messageLogChannel']).send({
