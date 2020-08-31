@@ -101,7 +101,7 @@ db.run('CREATE TABLE IF NOT EXISTS muteRole(guild TEXT UNIQUE NOT NULL, role TEX
 function convertTime(time){
 	if(!time)
 		return NaN;
-	switch(time.slice(-1).toLowerCase()){
+	switch(time.match(/\D/)[0].toLowerCase()){
 		case 's':
 			return Math.floor(parseFloat(time) * 1000 + +new Date);
 		case 'm':
@@ -123,7 +123,7 @@ const mute = {
 			//return channel.send({embed: {title: 'Cannot mute user', description: 'User already muted.', color: colors.error}}), undefined;
 		let role = await asyncDB.get(db, 'SELECT role FROM muteRole WHERE guild = (?);', [guild.id]);
 		if(role)
-			role = guild.roles.resolveID(role.role);
+			role = guild.roles.resolve(role.role);
 		
 		if(!role){
 			role = await guild.roles.create({
@@ -148,13 +148,12 @@ const mute = {
 		}
 		if(!reason)
 			reason = 'No reason provided.';
-		asyncDB.run(
+		member.roles.add(role, `Muted by ${moderator.tag}(id: ${moderator.id}) for "${reason}"`);
+		await asyncDB.run(
 			db,
 			'INSERT OR REPLACE INTO mutes(member, guild, reason, ends, moderator) VALUES((?), (?), (?), (?), (?));',
 			[member.id, guild.id, reason, time||'inf', moderator.id]
 		);
-		member.roles.add(role, `Muted by ${moderator.tag}(id: ${moderator.id}) for "${reason}"`);
-
 		let logChannel = await asyncDB.get(db, 'SELECT modLogChannel FROM logs WHERE guild = (?)', [guild.id])
 		if (logChannel && logChannel.modLogChannel)
 			guild.channels.resolve(logChannel.modLogChannel).send({embed:{
