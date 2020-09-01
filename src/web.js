@@ -48,7 +48,7 @@ module.exports = function(config){
 	app.use(session({
 		secret: sum.digest('hex'),
 		cookie: {
-			maxAge: 60000 * 60 * 24
+			maxAge: 60000 * 60 * 24 * 14
 		},
 		saveUninitialized: false,
 		store: new SQLiteStore({
@@ -74,6 +74,15 @@ module.exports = function(config){
 
 	app.get('/', (req, res) => {
 		res.render('index', {req, content: home, title: 'Home - Rin'});
+	});
+	const converter = new (require('showdown')).Converter({ghCompatibleHeaderId: true, extensions:[require('showdown-highlight')]});
+	const docs = converter.makeHtml(fs.readFileSync('./docs/custom_commands.md').toString());
+	app.get('/docs/', (req, res) => {
+		res.render('index', {req, content: docs, title: 'Custom command docs'});
+	});
+	const highlight = fs.readFileSync('./node_modules/highlight.js/styles/vs2015.css').toString()//.replace(/\n\./g, '.').replace(/\n  /g, '').replace(/\n\n/g,'').replace(/\n\}/g, '}').replace(/\n\./g, '.').replace('/.', '/\n.');
+	app.get('/highlight.css', (req, res) => {
+		res.send(highlight);
 	});
 
 	app.use('/auth', require('./express/routes/auth.js'));

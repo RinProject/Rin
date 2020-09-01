@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const fs = require('fs');
-const converter = new (require('showdown')).Converter()
+const converter = new (require('showdown')).Converter({ghCompatibleHeaderId: true});
 
 let docs = `${fs.readFileSync('./docs/moderation.md')}\n${fs.readFileSync('./docs/utility.md')}\n${fs.readFileSync('./docs/fun.md')}\n${fs.readFileSync('./docs/system.md')}`;
 docs = (()=>{

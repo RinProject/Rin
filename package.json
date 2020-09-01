@@ -25,6 +25,7 @@
     "passport": "^0.4.1",
     "passport-discord": "^0.1.4",
     "showdown": "^1.9.1",
+    "showdown-highlight": "^2.1.5",
     "sqlite3": "^4.2.0"
   }
 }

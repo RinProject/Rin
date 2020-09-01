@@ -2,6 +2,7 @@
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 16pt;
 	color: #cccccc;
+	line-height: 1.5em;
 }
 
 body{
@@ -49,7 +50,7 @@ ul.nav li:last-child{
 nav li{
 	display: block;
 	float: left;
-	padding: .3rem .4rem .3rem .4rem;
+	padding: .1rem .4rem .1rem .4rem;
 	min-width: 3rem;
 	text-align: center;
 }
@@ -62,6 +63,10 @@ a, a:link{
 	text-decoration: none;
 	color: currentColor;
 	opacity: 0.8;
+}
+
+p a:link{
+	text-decoration: underline;
 }
 
 .error{
@@ -118,6 +123,15 @@ pre, .docsLinks{
 	background: #00000080;
 }
 
+pre{
+	white-space: pre-wrap;
+	white-space: -moz-pre-wrap;
+	white-space: -pre-wrap;
+	white-space: -o-pre-wrap;
+	word-wrap: break-word;
+	background: #202020;
+}
+
 .docsLinks{
 	display: flex;
 }
@@ -169,7 +183,7 @@ input, button, textarea{
 	margin: .2rem;
 }
 
-#fields div div{
+.fields div div{
 	border-radius: .3rem;
 	margin: .2rem;
 }
@@ -184,19 +198,46 @@ label{
 	margin-right: 0.5rem;
 }
 
-.embedBuilder input{
+.commandBuilder{
+	padding: 0.3rem;
+	background: #20202080;
+	border-radius: 1rem;
+}
+
+.commandBuilder > .mentions, .commandBuilder > .perms{
+	display: none;
+}
+
+.commandBuilder.requires > .mentions, .commandBuilder.perms > .perms{
+	display: grid;
+}
+
+.commandBuilder.requires > label.mentions, .commandBuilder.perms > label.perms{
+	display: block;
+}
+
+.commandBuilder > input, .commandBuilder > textarea, .commandBuilder > button{
+	width: 98%;
+	display: block;
+}
+
+.commandBuilder > input[type="number"]{
+	width: 2rem;
+}
+
+.embedBuilder > input{
 	grid-column: span 2;	
 }
 
-#thumbnail, #author, #author_icon, #author_url{
+.embedBuilder input.thumbnail, .embedBuilder input.author, .embedBuilder input.author_icon, .embedBuilder input.author_url{
 	grid-column: span 3;
 }
 
-#message_title, #footer{
+.embedBuilder input.message_title, .embedBuilder input.footer{
 	grid-column: span 4;
 }
 
-#description, #add_field, #fields, #image{
+.embedBuilder .description, .embedBuilder .add_field, .embedBuilder input.fields, .embedBuilder input.image, .fields{
 	grid-column: span 6;
 }
 
@@ -206,7 +247,7 @@ label{
 	width: 100%;
 }
 
-#fields div{
+.fields div{
 	display: grid;
 	grid-template-columns: auto 5rem 2.6rem;
 	margin-bottom: .5rem;
@@ -215,12 +256,23 @@ label{
 	border-radius: 1rem;
 }
 
-#fields input, #fields div div, #fields button{
+.fields input, .fields div div, .fields button{
 	grid-column: span 1;
 }
 
-#fields textarea{
+.fields textarea{
 	grid-column: span 3;
+}
+
+textarea#commandEditor{
+	width: 98%;
+	min-height: 60vh;
+	tab-size: 4;
+}
+
+#command{
+	min-width: 10rem;
+	margin-right: .5rem;
 }
 
 label[for="prefix"]{
@@ -273,4 +325,15 @@ hr{
 	width: auto;
 	border-radius: 8rem;
 	margin-bottom: 1.5rem;
+}
+
+code{
+	background-color: #202020;
+	border: 2pt solid #101010;
+	border-radius: .3rem;
+}
+
+.hljs, pre code{
+	background: none;
+	border: none;
 }

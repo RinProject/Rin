@@ -8,6 +8,8 @@ let db = new sqlite3.Database('./databases/handler.db', (err) => {
 		return console.error(err.message);
 	}
 });
+// db.run('DROP TABLE IF EXISTS customCommands')
+db.run('CREATE TABLE IF NOT EXISTS customCommands(guild TEXT NOT NULL, source TEXT NOT NULL, name TEXT NOT NULL, command TEXT NOT NULL, permissions TEXT, requires TEXT, insufficientPermissions TEXT, insufficientMentions TEXT);');
 
 let commands;
 let commandAliases;
@@ -201,6 +203,10 @@ async function commandDisabled(guild, command) {
 	});
 }
 
+const runCustomCommand = require('./handler/customCommands');
+
+const { get }=require('./utils').asyncDB;
+
 /**
  * Runs message through command handler.
  * @param {object} message
@@ -214,7 +220,52 @@ async function handle(message){
 	let args = message.content.slice(localPrefix.length).split(/\s+/);
 
 	let command = commands[commandAliases[args[0].toLowerCase()]];
-	if(!command) return false;
+	if(!command){
+		let customCommand = await get(db, 'SELECT * FROM customCommands WHERE guild = (?) AND name = (?);', [message.guild.id, args[0].toLowerCase()]);
+		if(!(customCommand && customCommand.name))
+			return false;
+		if(customCommand.permissions){
+			let lacking = [];
+			JSON.parse(customCommand.permissions).forEach(perm => {
+				if(!message.member.hasPermission(perm))
+					lacking.push(perm);
+			});
+			if(lacking[0]){
+				if(customCommand.insufficientPermissions)
+					runCustomCommand(customCommand.insufficientPermissions, message);
+				else
+					message.channel.send('', {embed: {
+						title: 'You lack the necessary permissions to use this command',
+						color: colors.error,
+						fields: [{
+							name: 'Missing permission(s)',
+							inline: false,
+							value: lacking.reduce(
+								(accumulator, currentValue) => `${accumulator}, ${currentValue}`
+							).toLowerCase().replace(/_/g, ' ')
+						}]
+					}});
+				
+				return true;
+			}
+		}
+		if(customCommand.requires){
+			let mentions = Number((JSON.parse(customCommand.requires)||{}).mentions)||0;
+			if(message.mentions.members.array().length<mentions){
+				if(customCommand.insufficientMentions)
+					runCustomCommand(customCommand.insufficientMentions, message);
+				else
+					message.channel.send('', {embed: {
+						title: 'Too few mentions',
+						color: colors.error
+					}});
+				
+				return true;
+			}
+		}
+		runCustomCommand(customCommand.command, message);
+		return true
+	}
 	if(await commandDisabled(message.guild.id, command.name)){
 		message.channel.send('`Command disabled`');
 		return true;
