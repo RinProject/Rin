@@ -203,7 +203,7 @@ async function commandDisabled(guild, command) {
 	});
 }
 
-const runCustomCommand = require('./handler/customCommands');
+const { runCustomCommand } = require('./handler/customCommands');
 
 const { get }=require('./utils').asyncDB;
 

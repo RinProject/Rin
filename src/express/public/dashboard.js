@@ -146,7 +146,7 @@ function addField(parent, data){
 	if(fields.children.length>24)
 		return notification('No more fields can be created');
 	let field = document.createElement('div');
-	field.innerHTML = `<input type="text" placeholder="Title"${(data.name||data.title)?` value=${data.name||data.title}`:''}><div><label>Short</label><input type="checkbox" checked="${!!(data.short||data.inline)}"></div><button onclick="this.parentElement.remove()">x</button><textarea placeholder="Content">${data.name||data.title||''}</textarea>`;
+	field.innerHTML = `<input type="text" placeholder="Title"${data&&(data.name||data.title)?` value=${data.name||data.title}`:''}><div><label>Short</label><input type="checkbox" checked="${Boolean(data&&(data.short||data.inline))}"></div><button onclick="this.parentElement.remove()">x</button><textarea placeholder="Content">${data?data.name||data.title||'':''}</textarea>`;
 	fields.appendChild(field);
 }
 
