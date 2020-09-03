@@ -40,6 +40,9 @@ const { get, all, run } = require('./utils').asyncDB;
 client.on('message', async (message) => {
 	if(message.author.bot) return;
 	if(!await handler(message)&&message.guild){
+		let role = message.guild.roles.resolve((await get(db, 'SELECT role FROM expRole WHERE guild = (?);', [message.guild.id])||{}).role);
+		if(role && message.member.roles.cache.get(role.id))
+			return;
 		let expGain = 10;
 		let time = +new Date;
 		let xp = await get(db, 'SELECT * FROM exp WHERE user = (?) AND guild = (?)', [message.author.id, message.guild.id]);
