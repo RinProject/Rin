@@ -1,5 +1,7 @@
 const resolutions = [16, 32, 64, 128, 256, 512, 1024, 2048, 4096];
 function replacer(snippet, member){
+	if(!member)
+		return undefined;
 	return (()=>{
 	switch (snippet){
 		case 'id':
@@ -24,32 +26,28 @@ function replacer(snippet, member){
 	}})().replace(/"/g, '\\"');
 }
 
-const authorPattern = /\((author)(\.(id|mention|nickname|tag|username|pfp\(.{0,4}\))){0,1}\)/gi;
-const mentionsPattern = /\((mention)s{0,1}(\.(nth\(.*?\)|first|last|all)){0,1}(\.(id|mention|nickname|tag|username|pfp\(.{0,4}\))){0,1}\)/gi;
+const pattern = /\((mentions{0,1}|author)(\.(nth\(.*?\)|first|last|all)){0,1}(\.(id|mention|nickname|tag|username|pfp\(.{0,4}\))){0,1}\)/gi;
 
 function parseCommand(command, message){
-	return command.replace(authorPattern, match=>{
-		let arr = match.replace(/^\(/, '').replace(/\)$/, '').split(/\./g);
-		return replacer(arr[1], message.member);
-	}).replace(mentionsPattern, match=>{
-		if(!message.mentions)
-			return undefined;
-		let arr = match.replace(/^\(/, '').replace(/\)$/, '').split(/\./g);
+	return command.replace(pattern, match=>{
+		let arr = match.toLowerCase().replace(/^\(/, '').replace(/\)$/, '').split(/\./g);
+		if(arr[0]=='author')
+			return replacer(arr[arr.length-1], message.member);
 		switch(arr[1]){
 			case 'all':
-				return message.mentions.members.reduce((acc, curr)=>acc + replacer(arr[2], curr) + ', ', ''). replace(/, $/, '');
+				return message.mentions.members.reduce((acc, curr)=>acc + replacer(arr[arr.length-1], curr) + ', ', ''). replace(/, $/, '');
 			case 'first':
-				return replacer(arr[2], message.mentions.members.first());
+				return replacer(arr[arr.length-1], message.mentions.members.first());
 			case 'last':
-				return replacer(arr[2], message.mentions.members.last());
+				return replacer(arr[arr.length-1], message.mentions.members.last());
 			default:
 				if(arr[1].startsWith('nth') || arr.length>2){
-					return replacer(arr[2], message.mentions.members.array()[parseInt(arr[1].replace(/\D/g, ''))-1] || message.mentions.members.last());
+					return replacer(arr[arr.length-1], message.mentions.members.array()[parseInt(arr[1].replace(/\D/g, ''))-1] || message.mentions.members.last());
 				}
 				else
-					return replacer(arr[1], message.mentions.members.first());
+					return replacer(arr[arr.length-1], message.mentions.members.first());
 		}
-	})
+	});
 }
 
 const {mute} = require('../utils').mute;

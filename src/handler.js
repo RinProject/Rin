@@ -213,6 +213,7 @@ const { get }=require('./utils').asyncDB;
  * @returns {boolean} whether a command was triggered
  */
 const { permissionsFlags } = require('./utils');
+const { isArray } = require('util');
 async function handle(message){
 	let localPrefix = message.guild ? await fetchPrefix(message.guild.id)||prefix:prefix;
 	if(message.author.bot || !message.content.startsWith(localPrefix)) return false;
@@ -225,28 +226,31 @@ async function handle(message){
 		if(!(customCommand && customCommand.name))
 			return false;
 		if(customCommand.permissions){
-			let lacking = [];
-			JSON.parse(customCommand.permissions).forEach(perm => {
-				if(!message.member.hasPermission(perm))
-					lacking.push(perm);
-			});
-			if(lacking[0]){
-				if(customCommand.insufficientPermissions)
-					runCustomCommand(customCommand.insufficientPermissions, message);
-				else
-					message.channel.send('', {embed: {
-						title: 'You lack the necessary permissions to use this command',
-						color: colors.error,
-						fields: [{
-							name: 'Missing permission(s)',
-							inline: false,
-							value: lacking.reduce(
-								(accumulator, currentValue) => `${accumulator}, ${currentValue}`
-							).toLowerCase().replace(/_/g, ' ')
-						}]
-					}});
-				
-				return true;
+			let perms = JSON.parse(customCommand.permissions);
+			if(perms&&isArray(perms)){
+				let lacking = [];
+				perms.forEach(perm => {
+					if(!message.member.hasPermission(perm))
+						lacking.push(perm);
+				});
+				if(lacking[0]){
+					if(customCommand.insufficientPermissions)
+						runCustomCommand(customCommand.insufficientPermissions, message);
+					else
+						message.channel.send('', {embed: {
+							title: 'You lack the necessary permissions to use this command',
+							color: colors.error,
+							fields: [{
+								name: 'Missing permission(s)',
+								inline: false,
+								value: lacking.reduce(
+									(accumulator, currentValue) => `${accumulator}, ${currentValue}`
+								).toLowerCase().replace(/_/g, ' ')
+							}]
+						}});
+					
+					return true;
+				}
 			}
 		}
 		if(customCommand.requires){
