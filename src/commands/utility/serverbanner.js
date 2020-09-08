@@ -2,7 +2,7 @@ const options = require('../../JSONStorage/timeFormatOptions.json');
 const formatter = new Intl.DateTimeFormat('en-GB', options);
 module.exports = {
 	async run(message, args) {
-		if (message.guild.bannerUR)
+		if (message.guild.bannerURL())
 			return message.channel.send('', {
 				embed: {
 					title: `Server banner for ${message.guild.name}`,description: `[Server Banner URL](${message.guild.bannerURL({format: "png", size: 512, dynamic: true})})`,
