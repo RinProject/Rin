@@ -4,6 +4,7 @@
 	"directory": "commands",
 	"help": true,
 	"logChannel": "",
+	"enableCustomCommands": true,
 	"owners":[
 		"123456789123456789",
 		"123456789123456789"

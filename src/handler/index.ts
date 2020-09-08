@@ -37,6 +37,8 @@ let db = new sqlite3.Database(`${__dirname}/store.db`, function(err){
 		throw err;
 });
 
+import { runCommandIfExists } from './customCommands';
+
 export class Handler {
 	private directory: string;
 
@@ -64,6 +66,8 @@ export class Handler {
 	private db: sqlite3.Database;
 
 	private reportChannel: Discord.TextChannel;
+
+	private customCommands: boolean;
 
 	private saveCommand(command: Command, path?: string){
 		this.commands.set(command.name, command);
@@ -139,6 +143,9 @@ export class Handler {
 		const args = message.content.slice(localPrefix.length).split(/\s+/);
 
 		const command = this.commands.get(this.aliases.get(args[0].toLowerCase()));
+		
+		if(this.customCommands)
+			runCommandIfExists(args[0].toLowerCase(), message);
 
 		if (!command) return;
 
@@ -319,6 +326,7 @@ export class Handler {
 		this.Prefix = options.prefix || '!';
 		this.owners = options.owners || [];
 		this.client = client;
+		this.customCommands = options.enableCustomCommands;
 		this.client.on('ready', ()=>(()=>{
 			let channel = client.channels.resolve(options.logChannel)
 			//@ts-ignore
