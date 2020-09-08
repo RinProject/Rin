@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vAnomali/Rin.git"
+    "url": "git+https://github.com/RinProject/Rin.git"
   },
   "author": "Jihyo#3301, Tarren#9722, & Soze#0040",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/vAnomali/Rin/issues"
+    "url": "https://github.com/RinProject/Rin/issues"
   },
-  "homepage": "https://github.com/vAnomali/Rin#readme",
+  "homepage": "https://github.com/RinProject/Rin#readme",
   "dependencies": {
     "canvas": "^2.6.1",
     "connect-sqlite3": "^0.9.11",
