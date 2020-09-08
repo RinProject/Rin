@@ -1,4 +1,4 @@
-const images = require('../../JSONStorage/bonk.json')
+const images = require('../../../JSONstorage/bonk.json')
 module.exports = {
 	run: async function (message, args) {
 		let member = message.mentions.members.first() || await message.guild.members.cache.get(args[1]);

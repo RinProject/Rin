@@ -1,4 +1,4 @@
-const images = require('../../JSONStorage/hug.json')
+const images = require('../../../JSONstorage/hug.json')
 module.exports = {
 	run: async function (message, args) {
 		let member = message.mentions.members.first() || await message.guild.members.cache.get(args[1]);

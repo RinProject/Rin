@@ -1,4 +1,4 @@
-const options = require('../../JSONStorage/timeFormatOptions.json');
+const options = require('../../../JSONstorage/timeFormatOptions.json');
 const formatter = new Intl.DateTimeFormat('en-GB', options);
 module.exports = {
 	async run(message, args) {

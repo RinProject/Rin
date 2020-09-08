@@ -1,0 +1,12 @@
+{
+	"compilerOptions": {
+		"module": "commonjs",
+		"esModuleInterop": true,
+		"target": "es6",
+		"watch": false,
+		"moduleResolution": "node",
+		"outDir": "build",
+		"allowJs": true
+	},
+	"include": ["src"]
+}

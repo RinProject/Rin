@@ -4,7 +4,7 @@ let db = new sqlite3.Database('./databases/database.db', (err) => {
 		return console.error(err.message);
 });
 
-const options = require('../../JSONStorage/timeFormatOptions.json');
+const options = require('../../../JSONstorage/timeFormatOptions.json');
 const formatter = new Intl.DateTimeFormat('en-GB', options);
 module.exports = {
 	async run(message, args) {

@@ -4,6 +4,7 @@ A general purpose Discord bot written in JavaScript
 ## Setup
 * Install [Nodejs](https://nodejs.org/en/) if not already installed. **Version 12.0.0 or newer is required.** You can check your Nodejs version with `node -v`.
 * Run `npm i`
+* Build with `npm run build`(*Note: during development `npm run build-watch` is recommended as it doesn't strip comments*)
 * Copy and rename config-template.json to config.json, fill in all data
 	* Token; get pre-existing bot token or create a new one through [Discord's Dev Portal](https://discord.com/developers/applications). **Note: discord.js will throw an error if this is not included**
 	* Pick your desired prefix for example: `;`, `!`, `r!` or something entirely different!
@@ -24,6 +25,6 @@ A general purpose Discord bot written in JavaScript
 *Note: reloading a specific command only works if said command has already been loaded once, so to add a new command reload all commands.*
 
 ## Testing
-* If not installed install nodemon
-	* `npm install -g nodemon`
-* run `npm test`
+* after install run 
+	* `npm run build-watch`
+	* `npm test`
