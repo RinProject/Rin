@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/vAnomali/Rin#readme",
   "dependencies": {
+    "canvas": "^2.6.1",
     "connect-sqlite3": "^0.9.11",
     "discord.js": "^12.2.0",
     "express": "^4.17.1",
