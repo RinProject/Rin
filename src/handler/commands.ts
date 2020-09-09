@@ -52,20 +52,19 @@ export class Help extends Command {
 export class Reload extends Command {
 	private reload: ()=>void;
 	private reloadCommand: (alias: string)=>void;
-	private owners: string[];
 
-	constructor(prefix: string, reload: ()=>void, reloadCommand: (alias: string)=>void, owners: string[]) {
+	constructor(prefix: string, reload: ()=>void, reloadCommand: (alias: string)=>void) {
 		super(
 			{
 				run: async function (message: Discord.Message, args: string[]) {
-					if(this.owners.includes(message.author.id)){
+					if(this.client.isOwner(message.author.id)){
 						let alias = args[1] ? args[1].toLowerCase() : '';
 						if(alias){
-							this.reloadCommand(alias);
+							this.reloadCommand.call(this.client, alias);
 							message.channel.send(`\`Reloaded ${alias}\``);
 							return;
 						}
-						this.reload();
+						this.reload.call(this.client);
 						message.channel.send('Commands reloaded.');
 					}
 				},
@@ -79,7 +78,6 @@ export class Reload extends Command {
 		);
 		this.reload = reload;
 		this.reloadCommand = reloadCommand;
-		this.owners = owners;
 	}
 }
 
@@ -99,13 +97,13 @@ export class Toggle extends Command {
 						return message.channel.send('`Operation not allowed, command can not be disabled.`');
 			
 					if(args[0]=='enable'||args[0]=='enableCommand')
-						this.handler.enableCommand(message.guild.id, command);
+						this.client.enableCommand(message.guild.id, command);
 					else if(args[0]=='disable'||args[0]=='disableCommand')
-						this.handler.disableCommand(message.guild.id, command);
+						this.client.disableCommand(message.guild.id, command);
 					else
 						await this.enabledIn(message.guild.id) ? 
-							this.handler.disableCommand(message.guild.id, command):
-							this.handler.enableCommand(message.guild.id, command);
+							this.client.disableCommand(message.guild.id, command):
+							this.client.enableCommand(message.guild.id, command);
 				},
 				description: 'Toggles commands within server',
 				detailed: 'Toggles whether or not a command is available in a server. If called explicitly with enable/disable it will always enable or disable the given command according to the used keyword.',
@@ -134,13 +132,13 @@ let Prefix = new Command({
 
 		try {
 			if(args[0]=='enable'||args[0]=='enableCommand')
-				await this.handler.enableCommand(message.guild.id, command);
+				await this.client.enableCommand(message.guild.id, command);
 			else if(args[0]=='disable'||args[0]=='disableCommand')
-				await this.handler.disableCommand(message.guild.id, command);
+				await this.client.disableCommand(message.guild.id, command);
 			else
-				await this.handler.enabledIn(message.guild.id) ? 
-					await this.handler.disableCommand(message.guild.id, command):
-					await this.handler.enableCommand(message.guild.id, command);	
+				await this.client.enabledIn(message.guild.id) ? 
+					await this.client.disableCommand(message.guild.id, command):
+					await this.client.enableCommand(message.guild.id, command);	
 		} catch (error) {
 			return message.channel.send({
 				embed: {

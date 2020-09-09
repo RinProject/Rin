@@ -15,7 +15,7 @@ type colors = {
 	[key: string]: number;
 }
 
-type handlerOptions = {
+interface ClientOptions extends Discord.ClientOptions {
 	directory: string;	// Absolute path to commands folder
 	enableCustomCommands: boolean;
 	owners?: string[];	//	Bot owners as an array of id strings
@@ -107,7 +107,7 @@ const commandUtils = {
 	}
 }
 
-export class Handler {
+export class Client extends Discord.Client {
 	private directory: string;
 
 	private categories: boolean;
@@ -122,6 +122,10 @@ export class Handler {
 
 	private owners: string[];
 
+	public isOwner(id: string): boolean{
+		return this.owners.includes(id);
+	}
+
 	private colors: colors = {
 		base: 0xFF8040,
 		negative: 0xFF4040,
@@ -129,9 +133,7 @@ export class Handler {
 		error: 0xFF0000,
 	};
 
-	private client: Discord.Client;
-
-	private db: sqlite3.Database;
+	private store: sqlite3.Database;
 
 	private reportChannel: Discord.TextChannel;
 
@@ -146,7 +148,7 @@ export class Handler {
 
 		command.aliases.forEach((alias) => this.aliases.set(alias.toLowerCase(), command.name), this);
 
-		command.setHandler(this);
+		command.setClient(this);
 	}
 
 	private loadCommand(path: string): Command {
@@ -201,7 +203,7 @@ export class Handler {
 
 		this.saveCommand(new Help(this.Prefix, this.commands, this.aliases, helpInfo));
 
-		this.saveCommand(new Reload(this.Prefix, this.loadCommands, (alias: string)=>this.reloadSingle.call(this, alias), this.owners));
+		this.saveCommand(new Reload(this.Prefix, this.loadCommands, (alias: string)=>this.reloadSingle.call(this, alias)));
 	}
 
 	private async handle(message: Discord.Message): Promise<void> {
@@ -334,29 +336,29 @@ export class Handler {
 	}
 
 
-	constructor(options: handlerOptions, client: Discord.Client) {
+	constructor(options: ClientOptions) {
+		super(options);
 		if(!options.directory)
 			throw 'No directory provided to handler';
 		this.directory = options.directory;
 		this.categories = options.categories || true;
 		this.Prefix = options.prefix || '!';
 		this.owners = options.owners || [];
-		this.client = client;
 		this.customCommands = options.enableCustomCommands;
-		this.client.on('ready', ()=>(()=>{
-			let channel = client.channels.resolve(options.logChannel)
+		this.on('ready', ()=>(()=>{
+			let channel = this.channels.resolve(options.logChannel)
 			//@ts-ignore
 			this.reportChannel = channel && channel.type === 'text' ? channel : null;
 		}).call(this));
 
-		this.db = db;
+		this.store = db;
 
-		this.db.run('CREATE TABLE IF NOT EXISTS disabledCommands(guild TEXT NOT NULL, command TEXT NOT NULL);');
-		this.db.run('CREATE TABLE IF NOT EXISTS prefixes(guild TEXT UNIQUE NOT NULL, prefix TEXT NOT NULL);');
+		this.store.run('CREATE TABLE IF NOT EXISTS disabledCommands(guild TEXT NOT NULL, command TEXT NOT NULL);');
+		this.store.run('CREATE TABLE IF NOT EXISTS prefixes(guild TEXT UNIQUE NOT NULL, prefix TEXT NOT NULL);');
 
 		this.loadCommands();
 
-		this.client.on('message', (m)=>this.handle.call(this, m));
+		this.on('message', (m)=>this.handle.call(this, m));
 	}
 }
 

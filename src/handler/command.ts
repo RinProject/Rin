@@ -1,6 +1,6 @@
 import * as Discord from 'discord.js';
 
-import { Handler } from './index';
+import { Client } from './index';
 
 type command = {
 	name: string;
@@ -26,7 +26,7 @@ export class Command {
 	botPermissions: Discord.PermissionString[];
 	guildOnly: boolean;
 	category: string;
-	handler: Handler;
+	client: Client;
 
 	constructor(source: command, prefix: string = '!', category?: string) {
 		if (!source.name)
@@ -61,11 +61,11 @@ export class Command {
 		this.category = source.category||category;
 	}
 
-	public setHandler(handler: Handler){
-		this.handler = handler;
+	public setClient(client: Client){
+		this.client = client;
 	}
 
 	public async enabledIn(guild: string | Discord.Guild): Promise<boolean>{
-		return await this.handler.enabledIn(this.name, typeof(guild)==='string'?guild : guild.id);
+		return await this.client.enabledIn(this.name, typeof(guild)==='string'?guild : guild.id);
 	}
 }

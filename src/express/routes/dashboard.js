@@ -140,7 +140,7 @@ router.get('/:guild/get/:type/', async(req, res)=>{
 const logProperties = require('../../../JSONstorage/logProperties.json');
 const logSQL = `UPDATE logs SET ${logProperties.join('=(?),')}=(?) WHERE guild=(?);`;
 
-const { createCommand, processEmbed, fetchCommands, deleteCommand } = require('../../handler/customCommands');
+const { createCommand, processEmbed, fetchCommands, deleteCommand } = require('../../handler/index').customCommands;
 
 router.post('/:guild/save/:type/', async(req, res)=>{
 	let guild = client.guilds.cache.get(req.params.guild);

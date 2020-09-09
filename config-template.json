@@ -1,8 +1,6 @@
 {
 	"token": "token-here",
 	"prefix": ";",
-	"directory": "commands",
-	"help": true,
 	"logChannel": "",
 	"enableCustomCommands": true,
 	"owners":[
