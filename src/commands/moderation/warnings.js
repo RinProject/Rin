@@ -106,7 +106,7 @@ module.exports = {
 	detailed: 'Warns a user',
 	examples: prefix => `${prefix}warnings @Tarren#9722\n${prefix}warnings 157101769858613248\n${prefix}warning [id]`,
 	name: 'warnings',
-	perms: ['BAN_MEMBERS'],
-	botPerms: ['BAN_MEMBERS'],
+	permissions: ['BAN_MEMBERS'],
+	botPermissions: ['BAN_MEMBERS'],
 	guildOnly: true
 }

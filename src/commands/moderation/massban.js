@@ -37,7 +37,7 @@ module.exports = {
     examples: prefix => `${prefix}massban <id> <id> <id>`,
     name: 'massban',
     aliases: ['mban'],
-    perms: ['BAN_MEMBERS'],
-    botPerms: ['BAN_MEMBERS'],
+    permissions: ['BAN_MEMBERS'],
+    botPermissions: ['BAN_MEMBERS'],
     guildOnly: true
 }

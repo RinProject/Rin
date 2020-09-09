@@ -22,6 +22,5 @@ module.exports = {
 	description: 'Provides a users avatar',
 	detailed: 'Provides a users avatar',
 	examples: prefix => `${prefix}avatar @user, ${prefix}avatar <user id>`,
-	name: 'avatar',
-	perms: null
+	name: 'avatar'
 }

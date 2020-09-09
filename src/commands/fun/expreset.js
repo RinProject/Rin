@@ -40,6 +40,6 @@ module.exports = {
 	examples: prefix => `${prefix}expreset`,
 	name: 'expreset',
 	aliases: ['xpreset'],
-	perms: ['MANAGE_SERVER'],
+	permissions: ['MANAGE_SERVER'],
 	guildOnly: true
 }

@@ -27,5 +27,5 @@ module.exports = {
     detailed: 'Says a given message in a given channel.',
     examples: prefix => `${prefix}sayc #channel <message>`,
     name: 'sayc',
-    perms: ['ADMINISTRATOR']
+    permissions: ['ADMINISTRATOR']
 }

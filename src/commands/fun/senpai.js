@@ -24,6 +24,5 @@ module.exports = {
 	description: 'Sets, clears, and displays your senpai',
 	detailed: 'Lets you set, display, modify, and clear your senpai to your hearts content',
 	examples: prefix => `${prefix}senpai @someone, ${prefix}senpai del, ${prefix}senpai`,
-	name: 'senpai',
-	perms: null,
+	name: 'senpai'
 };

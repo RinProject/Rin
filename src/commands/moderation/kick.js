@@ -42,7 +42,7 @@ module.exports = {
 	detailed: 'Kicks given member with the option to add a reason for the kick.',
 	examples: prefix => `${prefix}kick @someone reason, ${prefix}kick <id> reason`,
 	name: 'kick',
-	perms: ['KICK_MEMBERS'],
-	botPerms: ['KICK_MEMBERS'],
+	permissions: ['KICK_MEMBERS'],
+	botPermissions: ['KICK_MEMBERS'],
 	guildOnly: true
 }

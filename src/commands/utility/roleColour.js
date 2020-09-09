@@ -45,7 +45,7 @@ module.exports = {
 	examples: prefix => `${prefix}rolecolour @rolename #hexcolor`,
 	name: 'rolecolour',
 	aliases: ['rolecolor'],
-	perms: ['MANAGE_ROLES'],
-	botPerms: ['MANAGE_ROLES'],
+	permissions: ['MANAGE_ROLES'],
+	botPermissions: ['MANAGE_ROLES'],
 	guildOnly: true
 }

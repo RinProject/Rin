@@ -38,6 +38,5 @@ module.exports = {
 	description: 'Kisses a user',
 	detailed: 'Kisses first mentioned user',
 	examples: prefix => `${prefix}kiss @member`,
-	name: 'kiss',
-	perms: null,
+	name: 'kiss'
 };

@@ -32,6 +32,5 @@ module.exports = {
 	detailed: 'Returns a server banner',
 	examples: prefix => `${prefix}serverbanner`,
 	name: 'serverbanner',
-	perms: null,
     guildOnly: true
 }

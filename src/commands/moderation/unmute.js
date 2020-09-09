@@ -33,7 +33,7 @@ module.exports = {
 	detailed: 'Unmutes given member with the option to add a reason for the unmute.',
 	examples: prefix => `${prefix}unmute @Jihyo#2423, ${prefix}unmute 157101769858613248`,
 	name: 'unmute',
-	perms: ['MANAGE_ROLES'],
-	botPerms: ['MANAGE_ROLES'],
+	permissions: ['MANAGE_ROLES'],
+	botPermissions: ['MANAGE_ROLES'],
 	guildOnly: true
 }

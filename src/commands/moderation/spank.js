@@ -40,7 +40,7 @@ module.exports = {
 	detailed: 'Mutes a given member for one minute. Mutes are checked twice a minute meaning that an automatic unmute can be up to half a minute late.',
 	examples: prefix => `${prefix}spank @Jihyo#2423`,
 	name: 'spank',
-	perms: ['MANAGE_ROLES'],
-	botPerms: ['MANAGE_ROLES', 'MANAGE_CHANNELS'],
+	permissions: ['MANAGE_ROLES'],
+	botPermissions: ['MANAGE_ROLES', 'MANAGE_CHANNELS'],
 	guildOnly: true
 }

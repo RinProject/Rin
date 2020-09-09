@@ -71,5 +71,5 @@ module.exports = {
 	detailed: 'Add a react role to a message, or remove a react role from a message.',
 	examples: prefix => `${prefix}reactrole add <messageID> <emojiID> <roleID>, ${prefix}reactrole remove <messageID> <roleID>`,
 	name: 'reactrole',
-	perms: ['MANAGE_ROLES']
+	permissions: ['MANAGE_ROLES']
 }

@@ -40,5 +40,5 @@ description: 'Removes a role from a user.',
 detailed: 'Removes a role from a user.',
 examples: prefix => `${prefix}removerole @user @role`,
 name: 'removerole',
-perms: ['MANAGE_ROLES']
+permissions: ['MANAGE_ROLES']
 }

@@ -45,7 +45,7 @@ module.exports = {
 	detailed: 'Mutes given member with the option to add a reason for the mute. Mutes are checked twice a minute meaning that an automatic unmute can be up to half a minute late.',
 	examples: prefix => `${prefix}mute @Jihyo#2423 1d Being lazy, ${prefix}mute 157101769858613248 1h, ${prefix}mute @Tarren#9722 Too tardy`,
 	name: 'mute',
-	perms: ['MANAGE_ROLES'],
-	botPerms: ['MANAGE_ROLES', 'MANAGE_CHANNELS'],
+	permissions: ['MANAGE_ROLES'],
+	botPermissions: ['MANAGE_ROLES', 'MANAGE_CHANNELS'],
 	guildOnly: true
 }

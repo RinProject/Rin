@@ -16,5 +16,5 @@ module.exports = {
     detailed: 'Says a given message.',
     examples: prefix => `${prefix}say <message>`,
     name: 'say',
-    perms: ['ADMINISTRATOR']
+    permissions: ['ADMINISTRATOR']
 }

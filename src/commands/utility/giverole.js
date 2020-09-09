@@ -41,5 +41,5 @@ description: 'Gives a given user a given role.',
 detailed: 'Gives a given user a given role.',
 examples: prefix => `${prefix}giverole @user @role`,
 name: 'giverole',
-perms: ['MANAGE_ROLES']
+permissions: ['MANAGE_ROLES']
 }

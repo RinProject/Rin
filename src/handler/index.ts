@@ -39,6 +39,74 @@ let db = new sqlite3.Database(`${__dirname}/store.db`, function(err){
 
 import { runCommandIfExists } from './customCommands';
 
+const PREFIX = {
+	async set(guild: string, prefix: string): Promise<void>{
+		return new Promise((resolve, reject)=>{
+			db.run('INSERT OR REPLACE INTO prefixes(guild, prefix) VALUES((?), (?));', [guild, Prefix], (err)=> {
+				if (err)
+					reject(err);
+				resolve();
+			});
+		});
+	},
+
+	async get(guild: string): Promise<string>{
+		return new Promise((resolve, reject)=>{
+			db.get('SELECT prefix FROM prefixes WHERE guild = (?)', [guild], (err, row)=> {
+				if (err)
+					reject(err);
+				resolve(row?row.prefix:null);
+			});
+		});
+	}
+}
+
+const commandUtils = {
+	async disableCommand(guild: string, command: string): Promise<void>{
+		return new Promise((resolve, reject)=>{
+			command = this.aliases.get(command.toLowerCase());
+			if(command == 'toggleCommand')
+				reject(new Error('Incorrect usage'));
+			db.run('INSERT OR REPLACE INTO FROM disabledCommands WHERE guild = (?) AND command = (?);', [guild, command], (err)=> {
+				if (err)
+					reject(err);
+				resolve();
+			});
+		});
+	},
+
+	async enableCommand(guild: string, command: string): Promise<void>{
+		return new Promise((resolve, reject)=>{
+			db.run('DELETE FROM disabledCommands WHERE guild = (?) AND command = (?);', [guild, command], (err)=> {
+				if (err)
+					reject(err);
+				resolve();
+			});
+		});
+	},
+
+	async enabledIn(guild: string, command: string): Promise<boolean>{
+		return new Promise((resolve, reject)=>{
+			command = this.aliases.get(command.toLowerCase());
+			db.get('SELECT * FROM disabledCommands WHERE guild = (?) AND command = (?)', [guild, command], (err, row)=> {
+				if (err)
+					reject(err);
+				resolve(!Boolean(row));
+			});
+		});
+	},
+
+	async allDisabledIn(guild: string): Promise<any[]>{
+		return new Promise((resolve, reject)=>{
+			db.all('SELECT * FROM disabledCommands WHERE guild = (?) AND command = (?)', [guild], (err, rows)=> {
+				if (err)
+					reject(err);
+				resolve(rows);
+			});
+		});
+	}
+}
+
 export class Handler {
 	private directory: string;
 
@@ -249,69 +317,17 @@ export class Handler {
 		});
 	}
 
-	public disableCommand(guild: string, command: string): Promise<void>{
-		return new Promise((resolve, reject)=>{
-			command = this.aliases.get(command.toLowerCase());
-			if(command == 'toggleCommand')
-				reject(new Error('Incorrect usage'));
-			this.db.run('INSERT OR REPLACE INTO FROM disabledCommands WHERE guild = (?) AND command = (?);', [guild, command], (err)=> {
-				if (err)
-					reject(err);
-				resolve();
-			});
-		});
-	}
+	public disableCommand: (guild: string, command: string) => Promise<void> = commandUtils.disableCommand;
 
-	public enableCommand(guild: string, command: string): Promise<void>{
-		return new Promise((resolve, reject)=>{
-			this.db.run('DELETE FROM disabledCommands WHERE guild = (?) AND command = (?);', [guild, command], (err)=> {
-				if (err)
-					reject(err);
-				resolve();
-			});
-		});
-	}
+	public enableCommand: (guild: string, command: string) => Promise<void> = commandUtils.enableCommand;
 
-	public async enabledIn(guild: string, command: string): Promise<boolean>{
-		return new Promise((resolve, reject)=>{
-			command = this.aliases.get(command.toLowerCase());
-			this.db.get('SELECT * FROM disabledCommands WHERE guild = (?) AND command = (?)', [guild, command], (err, row)=> {
-				if (err)
-					reject(err);
-				resolve(!Boolean(row));
-			});
-		});
-	}
+	public enabledIn: (guild: string, command: string) => Promise<boolean> = commandUtils.enabledIn;
 
-	public async allDisabledIn(guild: string): Promise<any[]>{
-		return new Promise((resolve, reject)=>{
-			this.db.all('SELECT * FROM disabledCommands WHERE guild = (?) AND command = (?)', [guild], (err, rows)=> {
-				if (err)
-					reject(err);
-				resolve(rows);
-			});
-		});
-	}
+	public allDisabledIn: (guild: string)=>Promise<any[]> = commandUtils.allDisabledIn;
 
-	public async prefixFor(guild: string): Promise<string>{
-		return new Promise((resolve, reject)=>{
-			this.db.get('SELECT prefix FROM prefixes WHERE guild = (?)', [guild], (err, row)=> {
-				if (err)
-					reject(err);
-				resolve(row?row.prefix:null);
-			});
-		});
-	}
+	public prefixFor: (guild: string) => Promise<string> = PREFIX.get;
 
-	public async setPrefix(guild: string, prefix: string): Promise<void>{
-		return new Promise((resolve, reject)=>{
-			this.db.run('INSERT OR REPLACE INTO prefixes(guild, prefix) VALUES((?), (?));', [guild, Prefix], (err)=> {
-				if (err)
-					reject(err);
-				resolve();
-			});
-		});
-	}
+	public setPrefix: (guild: string, prefix: string) => Promise<void> = PREFIX.set;
 
 	public prefix(): string{
 		return this.Prefix;
@@ -341,74 +357,6 @@ export class Handler {
 		this.loadCommands();
 
 		this.client.on('message', (m)=>this.handle.call(this, m));
-	}
-}
-
-const PREFIX = {
-	async set(guild: string, prefix: string): Promise<void>{
-		return new Promise((resolve, reject)=>{
-			db.run('INSERT OR REPLACE INTO prefixes(guild, prefix) VALUES((?), (?));', [guild, Prefix], (err)=> {
-				if (err)
-					reject(err);
-				resolve();
-			});
-		});
-	},
-
-	async get(guild: string): Promise<string>{
-		return new Promise((resolve, reject)=>{
-			db.get('SELECT prefix FROM prefixes WHERE guild = (?)', [guild], (err, row)=> {
-				if (err)
-					reject(err);
-				resolve(row?row.prefix:null);
-			});
-		});
-	}
-}
-
-const commandUtils = {
-	async disableCommand(guild: string, command: string): Promise<void>{
-		return new Promise((resolve, reject)=>{
-			command = this.aliases.get(command.toLowerCase());
-			if(command == 'toggleCommand')
-				reject(new Error('Incorrect usage'));
-			db.run('INSERT OR REPLACE INTO FROM disabledCommands WHERE guild = (?) AND command = (?);', [guild, command], (err)=> {
-				if (err)
-					reject(err);
-				resolve();
-			});
-		});
-	},
-
-	async enableCommand(guild: string, command: string): Promise<void>{
-		return new Promise((resolve, reject)=>{
-			db.run('DELETE FROM disabledCommands WHERE guild = (?) AND command = (?);', [guild, command], (err)=> {
-				if (err)
-					reject(err);
-				resolve();
-			});
-		});
-	},
-
-	async enabledIn(guild: string, command: string): Promise<boolean>{
-		return new Promise((resolve, reject)=>{
-			command = this.aliases.get(command.toLowerCase());
-			db.get('SELECT * FROM disabledCommands WHERE guild = (?) AND command = (?)', [guild, command], (err, row)=> {
-				if (err)
-					reject(err);
-				resolve(!Boolean(row));
-			});
-		});
-	},
-
-	async allDisabledIn(guild: string): Promise<any[]>{
-		return new Promise((resolve, reject)=>{
-			db.all('SELECT * FROM disabledCommands WHERE guild = (?) AND command = (?)', [guild], (err, rows)=> {
-				if (err)
-					reject(err);
-				resolve(rows);
-			});
-		});
 	}
 }
 

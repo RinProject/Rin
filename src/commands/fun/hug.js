@@ -42,6 +42,5 @@ module.exports = {
 	detailed: 'Hugs first mentioned user',
 	examples: prefix => `${prefix}hug @member`,
 	name: 'hug',
-	perms: null,
 	guildOnly: true
 };

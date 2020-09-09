@@ -98,6 +98,5 @@ module.exports = {
 	examples: prefix => `${prefix}airing\n${prefix}next Shokugeki no Souma`,
 	name: 'airing',
 	aliases: ['next'],
-	perms: null,
 	guildOnly: false
 };

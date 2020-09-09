@@ -41,7 +41,6 @@ module.exports = {
 	description: 'Pats a user',
 	detailed: 'Pats first mentioned user',
 	examples: prefix => `${prefix}pat @member`,
-	name: 'pat',
-	perms: null,
+	name: 'pat',	
 	guildOnly: true
 };

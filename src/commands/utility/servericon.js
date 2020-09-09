@@ -32,6 +32,5 @@ module.exports = {
 	detailed: 'Returns a server icon',
 	examples: prefix => `${prefix}servericon`,
 	name: 'servericon',
-	perms: null,
     guildOnly: true
 }

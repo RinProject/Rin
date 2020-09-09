@@ -53,7 +53,7 @@ module.exports = {
 	examples: prefix => `${prefix}disableexp @Soze#0040`,
 	name: 'disableExp',
 	aliases: ['disableXp', 'noExp', 'noXp'],
-	perms: ['MANAGE_SERVER'],
-	botPerms: ['MANAGE_ROLES'],
+	permissions: ['MANAGE_SERVER'],
+	botPermissions: ['MANAGE_ROLES'],
 	guildOnly: true
 }
