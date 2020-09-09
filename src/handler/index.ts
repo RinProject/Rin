@@ -361,3 +361,9 @@ export class Handler {
 }
 
 export { Command, commandUtils, PREFIX as Prefix };
+
+import * as customCommands from './customCommands';
+import * as utils from './utils';
+import * as mute from './mute';
+
+export { customCommands, utils, mute };

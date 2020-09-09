@@ -7,7 +7,7 @@ let db = new sqlite3.Database('./databases/database.db', (err) => {
 		throw err;
 });
 
-const perms = require('../../utils').permissionsFlags;
+const perms = require('../../handler/index').utils.permissionsFlags;
 
 async function fetchPerms(guild, user){
 	if(guild&&guild.members)

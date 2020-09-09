@@ -115,8 +115,9 @@ function parseCommand(command: string, message: Discord.Message): string{
 	});
 }
 
-const {mute} = require('../utils').mute;
-const { convertTime } = require('../utils');
+import { mute as Mute } from  './mute';
+const mute = Mute.mute;
+import { convertTime } from './utils';
 
 function takeAction(message: Discord.Message, member: Discord.GuildMember, action: action, option: string): void{
 	switch (action){
@@ -124,7 +125,7 @@ function takeAction(message: Discord.Message, member: Discord.GuildMember, actio
 			let time = convertTime(option);
 			if(isNaN(time))
 				time = undefined;
-			mute(message.guild, member, time, 'Custom command test', message.author, message.channel)
+			mute(message.guild, member, time, 'Custom command test', message.member)
 			.catch(e=>
 				message.channel.send({embed:{
 					title: 'Unable to mute user',
@@ -308,8 +309,8 @@ const customCommandSQL = `INSERT OR REPLACE INTO customCommands(
 )
 VALUES ((?),(?),(?),(?),(?),(?),(?),(?))`;
 
-import { permissionsFlags } from '../utils';
-import  {asyncDB} from '../utils';
+import { permissionsFlags } from './utils';
+import  {asyncDB} from './utils';
 const {run, get, all} = asyncDB;
 
 import * as sqlite from 'sqlite3';

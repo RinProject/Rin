@@ -36,7 +36,7 @@ client.on('ready', () => {
 		require('./web')({port: config.port, clientSecret: config.clientSecret});
 });
 
-const { get, all, run } = require('./utils').asyncDB;
+const { get, all, run } = require('./handler/index').utils.asyncDB;
 
 client.on('message', async (message) => {
 	if(message.author.bot) return;

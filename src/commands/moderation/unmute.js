@@ -1,4 +1,4 @@
-const { unmute } = require('../../utils').mute;
+const { unmute } = require('../../handler/index').mute;
 
 module.exports = {
 	async run(message, args) {

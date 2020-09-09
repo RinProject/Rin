@@ -7,7 +7,7 @@ let db = new sqlite3.Database('./databases/database.db', (err) => {
 
 db.run('CREATE TABLE IF NOT EXISTS expRole(guild TEXT UNIQUE NOT NULL, role TEXT NOT NULL);');
 
-const { run, get } = require('../../utils').asyncDB;
+const { run, get } = require('../../handler/index').utils.asyncDB;
 
 module.exports = {
 	async run(message, args) {

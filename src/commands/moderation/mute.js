@@ -1,7 +1,5 @@
-const { mute, startMuteCheck } = require('../../utils').mute;
-const { convertTime } = require('../../utils');
-
-startMuteCheck();
+const { mute } = require('../../handler/index').mute;
+const { convertTime } = require('../../handler/index').utils;
 
 module.exports = {
 	async run(message, args) {
