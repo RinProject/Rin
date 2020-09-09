@@ -1,5 +1,5 @@
 module.exports = {
-	async run(message, args) {
+	async run(message, args, colors) {
 		if(args.length == 1)
 			message.channel.bulkDelete(2);
 		else {

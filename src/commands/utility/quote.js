@@ -1,5 +1,5 @@
 module.exports = {
-	run: async (message, args)=>
+	run: async (message, args, colors)=>
 	{
 		const channel = message.mentions.channels.first() || message.channel;
 

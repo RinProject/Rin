@@ -1,5 +1,5 @@
 module.exports = {
-    async run(message, args) {
+    async run(message, args, colors) {
         if (args[1] == undefined) {
             return message.channel.send('', {
                 embed: {

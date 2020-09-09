@@ -1,7 +1,7 @@
 const options = require('../../../JSONstorage/timeFormatOptions.json');
 const formatter = new Intl.DateTimeFormat('en-GB', options);
 module.exports = {
-	async run(message, args) {
+	async run(message, args, colors) {
 		if (message.guild.bannerURL())
 			return message.channel.send('', {
 				embed: {

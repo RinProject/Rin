@@ -70,7 +70,7 @@ const settings = [
 ]
 
 module.exports = {
-	run: async function (message, args) {
+	run: async function (message, args, colors) {
 		if(args[1]=='channel'){
 			if(args[2]=='mod')
 				db.run(`SELECT * FROM logs WHERE guild = ${message.guild.id}`, (err, column)=>{

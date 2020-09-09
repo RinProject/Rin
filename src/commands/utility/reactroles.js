@@ -13,7 +13,7 @@ db.run(`CREATE TABLE IF NOT EXISTS reactRoles(
 );`);
 
 module.exports = {
-	run: async function (message, args) {
+	run: async function (message, args, colors) {
 		if (args[1] == undefined) {
 			message.channel.send('', {
 				embed: {

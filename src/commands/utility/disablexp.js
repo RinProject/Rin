@@ -10,7 +10,7 @@ db.run('CREATE TABLE IF NOT EXISTS expRole(guild TEXT UNIQUE NOT NULL, role TEXT
 const { run, get } = require('../../handler/index').utils.asyncDB;
 
 module.exports = {
-	async run(message, args) {
+	async run(message, args, colors) {
 		let member = message.mentions.members.first() || await message.guild.members.fetch(`${args[1]}`)
 
 		if (args[1] == undefined || !member)

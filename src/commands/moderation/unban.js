@@ -1,5 +1,5 @@
 module.exports = {
-	async run(message, args) {
+	async run(message, args, colors) {
 		let bans = await message.guild.fetchBans();
 		let bannedPerson = bans.get(args[1]);
 		

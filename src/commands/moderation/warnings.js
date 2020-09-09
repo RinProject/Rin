@@ -7,7 +7,7 @@ let db = new sqlite3.Database('./databases/database.db', (err) => {
 const options = require('../../../JSONstorage/timeFormatOptions.json');
 const formatter = new Intl.DateTimeFormat('en-GB', options);
 module.exports = {
-	async run(message, args) {
+	async run(message, args, colors) {
 		if(args[1]){
 			let member = message.mentions.members.first()||await message.guild.members.cache.get(args[1]);
 			if(member)

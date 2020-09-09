@@ -1,5 +1,5 @@
 module.exports = {
-	async run(message, args) {
+	async run(message, args, colors) {
 		let member = message.mentions.members.first() || await message.guild.members.cache.get(args[1]) || message.member;
 		message.channel.send('', {
 			embed: {

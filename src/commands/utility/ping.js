@@ -1,5 +1,5 @@
 module.exports = {
-	async run(message) {
+	async run(message, colors) {
 		message.channel.send('', {
 			embed: {
 				title: 'Calculating ping..',

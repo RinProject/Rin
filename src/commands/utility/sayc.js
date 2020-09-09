@@ -1,5 +1,5 @@
 module.exports = {
-    async run(message, args) {
+    async run(message, args, colors) {
         let content = args.splice(2).join(' ');
         
         if (!content) {

@@ -1,7 +1,7 @@
 const { unmute } = require('../../handler/index').mute;
 
 module.exports = {
-	async run(message, args) {
+	async run(message, args, colors) {
 		let member = message.mentions.members.first() || await message.guild.members.fetch(`${args[1]}`)
 		.catch(e => {
 			message.channel.send('', {

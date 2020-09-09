@@ -8,7 +8,7 @@ let expDB = new sqlite3.Database('./databases/database.db', (err) => {
 expDB.run('CREATE TABLE IF NOT EXISTS exp(user TEXT NOT NULL, exp INTEGER DEFAULT 0 NOT NULL, guild TEXT NOT NULL, lastMessage INTEGER DEFAULT 0 NOT NULL);')
 
 module.exports = {
-	async run(message, args) {
+	async run(message, args, colors) {
 		if(args[1]&&args[1].toLowerCase()=='top')
 			expDB.all(`SELECT exp, user FROM exp WHERE guild = (?) ORDER BY exp DESC LIMIT 0, 10;`, [message.guild.id], (err, rows)=>{
 				if(err)

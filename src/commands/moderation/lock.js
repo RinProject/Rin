@@ -1,5 +1,5 @@
 module.exports = {
-	async run(message, args) {
+	async run(message, args, colors) {
 		if(args[1] != 'off') {
 			message.channel.createOverwrite(message.guild.roles.everyone, { SEND_MESSAGES: false }, `Channel locked by ${message.author.tag}`)
 			.then(channel => {

@@ -1,5 +1,5 @@
 module.exports = {
-    async run(message, args) {
+    async run(message, args, colors) {
 		let failed = 0;
         if (args[1] == undefined) {
             return message.channel.send({

@@ -1,10 +1,10 @@
 import * as Discord from 'discord.js';
 
-import { Client } from './index';
+import { Client, Colors } from './index';
 
 type command = {
 	name: string;
-	run: (message: Discord.Message, args: string[]) => void;
+	run: (message: Discord.Message, args?: string[], colors?: Colors, Prompt?: (message: Discord.Message, search: RegExp)=>Promise<any>) => void;
 	description?: string;
 	detailed?: string;
 	examples?: ((prefix: string) => string | string);
@@ -17,7 +17,7 @@ type command = {
 
 export class Command {
 	name: string;
-	run: (message: Discord.Message, args?: string[]) => void;
+	run: (message: Discord.Message, args?: string[], colors?: Colors, Prompt?: (message: Discord.Message, search: RegExp)=>Promise<Discord.Message>) => void;
 	description: string;
 	detailed: string;
 	examples: string;

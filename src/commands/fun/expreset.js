@@ -6,7 +6,7 @@ let expDB = new sqlite3.Database('./databases/database.db', (err) => {
 });
 
 module.exports = {
-	async run(message, args) {
+	async run(message, args, colors) {
         let member = message.mentions.members.first() || await message.guild.members.cache.get(args[1])
         if (args[1]) {
             if (member) {

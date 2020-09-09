@@ -2,7 +2,7 @@ const { mute } = require('../../handler/index').mute;
 const { convertTime } = require('../../handler/index').utils;
 
 module.exports = {
-	async run(message, args) {
+	async run(message, args, colors) {
 		let time = convertTime(args[2]);
 		if(isNaN(time))
 			time = undefined;

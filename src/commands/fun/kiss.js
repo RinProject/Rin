@@ -1,6 +1,6 @@
 const images = require('../../../JSONstorage/kiss.json')
 module.exports = {
-	run: async function (message, args) {
+	run: async function (message, args, colors) {
 		let member = message.mentions.members.first() || await message.guild.members.cache.get(args[1]);
 		
 		if(member) {

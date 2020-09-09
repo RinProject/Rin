@@ -5,7 +5,7 @@ let db = new sqlite3.Database('./databases/database.db', (err) => {
 });
 db.run(`CREATE TABLE IF NOT EXISTS senpais(kouhai TEXT UNIQUE NOT NULL, senpai TEXT NOT NULL);`);
 module.exports = {
-	run: async function (message, args) {
+	run: async function (message, args, colors) {
 		if(args[1] && args[1].startsWith('del'))
 			return db.run(`DELETE FROM senpais WHERE kouhai = ${message.author.id};`), message.channel.send('', { embed: { color: 0xff0000, title: 'Senpai cleared' } });
 		if(message.mentions.users.first())

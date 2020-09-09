@@ -2,7 +2,7 @@ const { mute } = require('../../handler/index').mute;
 const { convertTime } = require('../../handler/index').utils;
 
 module.exports = {
-	async run(message, args) {
+	async run(message, args, colors) {
 		let time = convertTime(`1m`);
 		let reason = 'No reason provided';
 		let member = message.mentions.members.first() || await message.guild.members.fetch(`${args[1]}`)

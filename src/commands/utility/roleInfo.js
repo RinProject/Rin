@@ -2,7 +2,7 @@ const options = require('../../../JSONstorage/timeFormatOptions.json');
 const formatter = new Intl.DateTimeFormat('en-GB', options);
 
 module.exports = {
-	async run(message, args) {
+	async run(message, args, colors) {
 		let role = message.mentions.roles.first() || message.guild.roles.cache.find(role => role.name === args[1]) || message.guild.roles.cache.find(role => role.id === args[1]);
 		if(role == undefined) {
 			return message.channel.send('', {

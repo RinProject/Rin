@@ -1,3 +1,9 @@
+// Pass through submodules
+import * as customCommands from './customCommands';
+import * as utils from './utils';
+import * as mute from './mute';
+export { customCommands, utils, mute };
+
 import * as Discord from 'discord.js';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -5,9 +11,11 @@ import { Command } from './command';
 import { Help, Reload, Prefix } from './commands';
 import * as sqlite3 from 'sqlite3';
 
+import * as crypto from 'crypto';
+
 const sqlite = sqlite3.verbose();
 
-type colors = {
+export type Colors = {
 	base?: number;
 	negative?: number;
 	success?: number;
@@ -15,14 +23,14 @@ type colors = {
 	[key: string]: number;
 }
 
-interface ClientOptions extends Discord.ClientOptions {
+export interface ClientOptions extends Discord.ClientOptions {
 	directory: string;	// Absolute path to commands folder
 	enableCustomCommands: boolean;
 	owners?: string[];	//	Bot owners as an array of id strings
 	prefix?: string;	//	Default prefix
 	logChannel?: string;	//	Discord channel to which errors / shall be logged
 	categories?: boolean;	//	wether or not to read direct child directories as categories
-	colors?: colors;	//	color variables that can be used in command
+	colors?: Colors;	//	color variables that can be used in command
 }
 
 type reportInfo = {
@@ -61,7 +69,7 @@ const PREFIX = {
 	}
 }
 
-const commandUtils = {
+export const commandUtils = {
 	async disableCommand(guild: string, command: string): Promise<void>{
 		return new Promise((resolve, reject)=>{
 			command = this.aliases.get(command.toLowerCase());
@@ -126,7 +134,7 @@ export class Client extends Discord.Client {
 		return this.owners.includes(id);
 	}
 
-	private colors: colors = {
+	private colors: Colors = {
 		base: 0xFF8040,
 		negative: 0xFF4040,
 		success: 0x80FF80,
@@ -207,6 +215,17 @@ export class Client extends Discord.Client {
 	}
 
 	private async handle(message: Discord.Message): Promise<void> {
+		let prompt = await utils.asyncDB.get(
+			this.prompts,
+			'SELECT id FROM prompts WHERE channel = (?) AND user = (?);',
+			[message.channel.id, message.author.id]
+		).catch(e=>this.reportError(e));
+
+		if(prompt && prompt.id){
+			let checkPrompt = this.promptResolutionMap.get(prompt.id);
+			if(checkPrompt)
+				checkPrompt(message);
+		}
 		const localPrefix = message.guild ? await this.prefixFor(message.guild.id) || this.Prefix : this.Prefix;
 		if (message.author.bot || !message.content.startsWith(localPrefix)) return;
 
@@ -298,7 +317,7 @@ export class Client extends Discord.Client {
 			}
 		}
 
-		command.run(message, args);
+		command.run(message, args, this.colors, this.prompt.bind(this));
 	}
 
 	public async isCommand(message: Discord.Message): Promise<boolean> {
@@ -335,6 +354,39 @@ export class Client extends Discord.Client {
 		return this.Prefix;
 	}
 
+	private prompts: sqlite3.Database;
+
+	private promptResolutionMap: Map<string, (message: Discord.Message)=>void>
+
+	private addPrompt(message: Discord.Message, id: string, callback: (message: Discord.Message)=>void){
+		this.promptResolutionMap.set(id, callback);
+		this.prompts.run('INSERT OR REPLACE INTO prompts(user, channel, id) values((?), (?), (?))', [message.author.id, message.channel.id, id]);
+	}
+
+	private removePrompt(id: string){
+		this.promptResolutionMap.delete(id);
+		this.prompts.run('DELETE FROM prompts WHERE id = (?);', [id], err=>{
+			if(err)
+				throw err;
+		});
+	}
+
+	public prompt(message: Discord.Message, search: RegExp): Promise<Discord.Message>{
+		return new Promise((resolve, reject)=>{
+			let id = crypto.createHash('sha256');
+			id.update((+new Date).toString()+message.author.id);
+			let timer = setTimeout(()=>{
+				this.removePrompt.call(this, id);
+				reject('No reply');
+			},300000);
+			this.addPrompt(message, id.digest('base64'), (message: Discord.Message)=>{
+				if(Boolean(message.content.match(search))){
+					this.removePrompt.call(this, id);
+					resolve(message);
+				}
+			});
+		});
+	}
 
 	constructor(options: ClientOptions) {
 		super(options);
@@ -345,6 +397,14 @@ export class Client extends Discord.Client {
 		this.Prefix = options.prefix || '!';
 		this.owners = options.owners || [];
 		this.customCommands = options.enableCustomCommands;
+
+		if(options.colors)
+			Object.keys(options.colors)
+				.forEach(
+					key=>this.colors[key]=options.colors[key],
+					this
+				);
+
 		this.on('ready', ()=>(()=>{
 			let channel = this.channels.resolve(options.logChannel)
 			//@ts-ignore
@@ -356,16 +416,19 @@ export class Client extends Discord.Client {
 		this.store.run('CREATE TABLE IF NOT EXISTS disabledCommands(guild TEXT NOT NULL, command TEXT NOT NULL);');
 		this.store.run('CREATE TABLE IF NOT EXISTS prefixes(guild TEXT UNIQUE NOT NULL, prefix TEXT NOT NULL);');
 
+		this.prompts = new sqlite.Database(':memory:', err=>{
+			if(err)
+				throw err;
+		});
+
+		this.prompts.run('CREATE TABLE IF NOT EXISTS prompts(user TEXT NOT NULL, channel TEXT NOT NULL, id TEXT NOT NULL);')
+
+		this.promptResolutionMap = new Map;
+		
 		this.loadCommands();
 
-		this.on('message', (m)=>this.handle.call(this, m));
+		this.on('message', this.handle.bind(this));
 	}
 }
 
-export { Command, commandUtils, PREFIX as Prefix };
-
-import * as customCommands from './customCommands';
-import * as utils from './utils';
-import * as mute from './mute';
-
-export { customCommands, utils, mute };
+export { Command, PREFIX as Prefix };

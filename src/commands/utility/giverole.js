@@ -1,7 +1,7 @@
 const config = require('../../../config.json')
 
 module.exports = {
-    async run(message, args) {
+    async run(message, args, colors) {
         let member = message.mentions.members.first() || await message.guild.members.cache.get(args[1])
         let role = message.mentions.roles.first() || await message.guild.roles.cache.get(args[2])
 

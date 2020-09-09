@@ -19,7 +19,7 @@ db.run(
 const sql = `INSERT INTO warnings(id, user, moderator, reason, guild, time) VALUES((?), (?), (?), (?), (?), (?));`
 const crypto = require('crypto');
 module.exports = {
-	async run(message, args) {
+	async run(message, args, colors) {
 		let member = message.mentions.members.first()||await message.guild.members.cache.get(args[1]);
 		let reason = args.slice(2).join(' ');
 		if(reason&&member)

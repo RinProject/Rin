@@ -1,5 +1,5 @@
 module.exports = {
-	async run(message, args) {
+	async run(message, args, colors) {
 		let reason = "";
 		let days = 0;
 		let user = message.mentions.users.first() || await message.client.users.fetch(args[1])

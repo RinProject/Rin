@@ -31,8 +31,6 @@ let db = new sqlite3.Database('./databases/database.db', (err) => {
 		return console.error(err.message);
 });
 
-global.colors = config.colors;
-
 client.on('ready', () => {
 	//print some information about the bot
 	console.log(`logged in as ${client.user.username}#${client.user.discriminator} with ${client.guilds.cache.array().length} guilds! Using the prefix ${config.prefix}`);
