@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const fs = require('fs');
-const dashboard = fs.readFileSync('./src/express/routes/dashboard.html');
+const dashboard = fs.readFileSync(__dirname+'/dashboard.html');
 const sqlite3 = require('sqlite3').verbose();
 let db = new sqlite3.Database('./databases/database.db', (err) => {
 	if(err)
@@ -16,7 +16,7 @@ async function fetchPerms(guild, user){
 		return 0;
 }
 
-const {run, get, all} = require('../../utils').asyncDB;
+const {run, get, all} = require('../../handler/index').utils.asyncDB;
 
 let permsCheck = perms.kick_members | perms.ban_members | perms.administrator | perms.manage_guild | perms.manage_messages;
 

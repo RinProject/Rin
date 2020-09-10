@@ -6,7 +6,9 @@
 		"watch": false,
 		"moduleResolution": "node",
 		"outDir": "build",
-		"allowJs": true
+		"allowJs": true,
+		"sourceMap": true,
+		"incremental": true
 	},
 	"include": ["src"]
 }

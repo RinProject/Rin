@@ -1,12 +1,8 @@
 //load config file
-const config = (() => {
-	let configuration = require("../config.json");
-	Object.keys(configuration.colors).forEach(key => {
-		// TODO: implement usage of colours from config in commands
-		configuration.colors[key]=parseInt(configuration.colors[key], 16);
-	});
-	return configuration 
-})();
+let config = require("../config.json");
+Object.keys(config.colors).forEach(key => {
+	config.colors[key]=parseInt(config.colors[key], 16);
+});
 
 const coreLibraries = require('./handler/index');
 const client = new coreLibraries.Client({
@@ -33,7 +29,7 @@ let db = new sqlite3.Database('./databases/database.db', (err) => {
 
 client.on('ready', () => {
 	//print some information about the bot
-	console.log(`logged in as ${client.user.username}#${client.user.discriminator} with ${client.guilds.cache.array().length} guilds! Using the prefix ${config.prefix}`);
+	console.log(`Logged in as ${client.user.username}#${client.user.discriminator} with ${client.guilds.cache.array().length} guilds! Using the prefix ${config.prefix}`);
 	if(config.enableWeb)
 		require('./web')({port: config.port, clientSecret: config.clientSecret});
 });

@@ -18,8 +18,8 @@ module.exports = function(config){
 	sum.update(config.clientSecret);
 
 	const fs = require('fs');
-	const base = fs.readFileSync('./src/express/index.html').toString();
-	const baseError = fs.readFileSync('./src/express/error.html').toString();
+	const base = fs.readFileSync(__dirname+'/express/index.html').toString();
+	const baseError = fs.readFileSync(__dirname+'/express/error.html').toString();
 	const sqlite3 = require('sqlite3').verbose();
 
 	let db = new sqlite3.Database('./databases/database.db', (err) => {
@@ -43,7 +43,7 @@ module.exports = function(config){
 			.replace('#content#', options.content);
 		return callback(null, rendered)
 	})
-	app.set('views', './src/express');
+	app.set('views', __dirname+'/express');
 	app.set('view engine', 'html');
 	app.use(session({
 		secret: sum.digest('hex'),
@@ -62,13 +62,13 @@ module.exports = function(config){
 	app.use(passport.initialize());
 	app.use(passport.session());
 
-	app.use(express.static('./src/express/public'))
+	app.use(express.static(__dirname+'/express/public'))
 
 	const bodyParser = require('body-parser');
 	app.use(bodyParser.urlencoded({ extended: true }));
 	app.use(bodyParser.json());
 
-	const home = fs.readFileSync('./src/express/home.html').toString()
+	const home = fs.readFileSync(__dirname+'/express/home.html').toString()
 	.replace('#invite#', `https://discord.com/oauth2/authorize?client_id=${client.user.id}&scope=bot&permissions=8`)
 	.replace('#avatar#', `<img src="${client.user.avatarURL({size: 1024})}">`);
 
