@@ -5,7 +5,7 @@ module.exports = {
         if (!content) {
             return message.channel.send('', {
                 embed: {
-                    description: `Please follow this format: ${message.client.prefix}sayc #channel text`,
+                    description: `Please follow this format: ${message.client.prefix()}sayc #channel text`,
                     color: colors.error
                 }
             });

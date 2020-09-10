@@ -59,7 +59,7 @@ module.exports = {
 					},
 					{
 						name: 'Prefix',
-						value: message.client.prefix,
+						value: message.client.prefix(),
 						inline: true
 					},
 					{

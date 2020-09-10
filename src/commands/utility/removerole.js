@@ -30,7 +30,7 @@ module.exports = {
         function handleError(e) {
             return message.channel.send('', {
                 embed: {
-                    description: `Please follow the format ${message.client.prefix}removerole @user @role.`,
+                    description: `Please follow the format ${message.client.prefix()}removerole @user @role.`,
                     color: colors.error
                 }
             });

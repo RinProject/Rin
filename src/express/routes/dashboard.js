@@ -103,7 +103,7 @@ router.get('/:guild/get/:type/', async(req, res)=>{
 			res.send(JSON.stringify({
 				name:guild.name.replace(/'/g, '\''),
 				settings:{
-					prefix: (await Prefix.get(req.params.guild)||{}).prefix||client.prefix,
+					prefix: (await Prefix.get(req.params.guild)||{}).prefix||client.prefix(),
 					disabled: commands
 				}
 			}));
