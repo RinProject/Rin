@@ -214,6 +214,12 @@ export class Client extends Discord.Client {
 		this.saveCommand(new Reload(this.Prefix, this.loadCommands, (alias: string)=>this.reloadSingle.call(this, alias)));
 	}
 
+	private async handleCusomCommands(message: Discord.Message){
+		if(message.guild){
+			runCommandIfExists(message.content.slice((await this.prefixFor(message.guild.id) || this.Prefix).length).split(/\s+/,1)[0].toLowerCase(), message);
+		}
+	}
+
 	private async handle(message: Discord.Message): Promise<void> {
 		let prompt = await utils.asyncDB.get(
 			this.prompts,
@@ -232,9 +238,6 @@ export class Client extends Discord.Client {
 		const args = message.content.slice(localPrefix.length).split(/\s+/);
 
 		const command = this.commands.get(this.aliases.get(args[0].toLowerCase()));
-		
-		if(this.customCommands)
-			runCommandIfExists(args[0].toLowerCase(), message);
 
 		if (!command) return;
 
@@ -427,7 +430,14 @@ export class Client extends Discord.Client {
 		
 		this.loadCommands();
 
-		this.on('message', this.handle.bind(this));
+		this.on('message', 
+			!this.customCommands ? 
+				this.handle.bind(this) : 
+				(m)=>{
+						this.handle.call(this, m);
+						this.handleCusomCommands.call(this, m);
+					}
+			);
 	}
 }
 
