@@ -43,7 +43,7 @@ module.exports = function(config){
 			.replace('#content#', options.content);
 		return callback(null, rendered)
 	})
-	app.set('views', __dirname + '/express');
+	app.set('views', __dirname+'/express');
 	app.set('view engine', 'html');
 	app.use(session({
 		secret: sum.digest('hex'),
@@ -62,7 +62,7 @@ module.exports = function(config){
 	app.use(passport.initialize());
 	app.use(passport.session());
 
-	app.use(express.static(__dirname + '/express/public'))
+	app.use(express.static(__dirname+'/express/public'))
 
 	const bodyParser = require('body-parser');
 	app.use(bodyParser.urlencoded({ extended: true }));

@@ -70,7 +70,7 @@ const settings = [
 ]
 
 module.exports = {
-	run: async function (message, args) {
+	run: async function (message, args, colors) {
 		if(args[1]=='channel'){
 			if(args[2]=='mod')
 				db.run(`SELECT * FROM logs WHERE guild = ${message.guild.id}`, (err, column)=>{
@@ -258,6 +258,6 @@ module.exports = {
 	detailed: 'Lets you set and modify: your log channel and what you log to your hearts content.',
 	examples: prefix => `${prefix}log channel #logs, ${prefix}log enable all`,
 	name: 'log',
-	perms: ['ADMINISTRATOR'],
+	permissions: ['ADMINISTRATOR'],
 	guildOnly: true
 };

@@ -32,7 +32,7 @@ function secondsToHuman(seconds){
 	return `${d} days ${h} hours ${m} minutes ${s} seconds`;
 }
 module.exports = {
-	run: async function (message, args) {
+	run: async function (message, args, colors) {
 		if(args[1]){
 			const data = JSON.stringify({
 				query: query,
@@ -98,6 +98,5 @@ module.exports = {
 	examples: prefix => `${prefix}airing\n${prefix}next Shokugeki no Souma`,
 	name: 'airing',
 	aliases: ['next'],
-	perms: null,
 	guildOnly: false
 };

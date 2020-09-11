@@ -1,5 +1,5 @@
 module.exports = {
-	async run(message) {
+	async run(message, colors) {
 		message.channel.send('', {
 			embed: {
 				title: 'Calculating ping..',
@@ -18,6 +18,5 @@ module.exports = {
 	description: 'Provides ping',
 	detailed: 'Provides API latency and WebSocket ping for the bot.',
 	examples: prefix => `${prefix}ping`,
-	name: 'ping',
-	perms: null
+	name: 'ping'
 }

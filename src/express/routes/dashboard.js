@@ -7,13 +7,7 @@ let db = new sqlite3.Database('./databases/database.db', (err) => {
 		throw err;
 });
 
-let handlerDB = new sqlite3.Database('./databases/handler.db', (err) => {
-	if (err) {
-		return console.error(err.message);
-	}
-});
-
-const perms = require('../../utils').permissionsFlags;
+const perms = require('../../handler/index').utils.permissionsFlags;
 
 async function fetchPerms(guild, user){
 	if(guild&&guild.members)
@@ -22,7 +16,7 @@ async function fetchPerms(guild, user){
 		return 0;
 }
 
-const {run, get, all} = require('../../utils').asyncDB;
+const {run, get, all} = require('../../handler/index').utils.asyncDB;
 
 let permsCheck = perms.kick_members | perms.ban_members | perms.administrator | perms.manage_guild | perms.manage_messages;
 
@@ -67,6 +61,8 @@ router.get('/:guild/:page/', (req, res)=>{
 		res.render('error', {req: req, title: '404', content: 'Page not found'});
 });
 
+const { Prefix, commandUtils} = require('../../handler/index');
+
 router.get('/:guild/get/:type/', async(req, res)=>{
 	let guild = client.guilds.cache.get(req.params.guild);
 	let userPerms = await fetchPerms(guild, req.user.discordID);
@@ -102,12 +98,12 @@ router.get('/:guild/get/:type/', async(req, res)=>{
 			});
 			break;
 		case 'settings':
-			let commands = (await all(handlerDB, 'SELECT command FROM disabledCommands WHERE guild = (?);', [req.params.guild])||{})
+			let commands = await commandUtils.allDisabledIn(req.params.guild)||{}
 			commands.forEach((c,i)=>commands[i] = c.command);
 			res.send(JSON.stringify({
 				name:guild.name.replace(/'/g, '\''),
 				settings:{
-					prefix: (await get(handlerDB, 'SELECT * FROM prefixes WHERE guild = (?);', [req.params.guild])||{}).prefix||client.prefix,
+					prefix: (await Prefix.get(req.params.guild)||{}).prefix||client.prefix(),
 					disabled: commands
 				}
 			}));
@@ -134,25 +130,17 @@ router.get('/:guild/get/:type/', async(req, res)=>{
 		case 'commands':
 			if(!(userPerms&(perms.administrator|perms.manage_guild)))
 				return res.sendStatus(404);
-			let c = (await all(handlerDB, 'SELECT source FROM customCommands WHERE guild = (?);', [req.params.guild]));
-			if(c[0])
-				for (let i = 0; i < c.length; i++) {
-					c[i]=JSON.parse(c[i].source);
-				}
-			res.send(JSON.stringify({name:guild.name, commands: c||null}));
+			res.send(JSON.stringify({name:guild.name, commands: await fetchCommands(req.params.guild)||null}));
 			break;
 		default:
 			res.sendStatus(404);
 	}
 });
 
-const logProperties = require('../../JSONStorage/logProperties.json');
-const prefix = require('../../handler/prefix');
-const { isArray } = require('util');
+const logProperties = require('../../../JSONstorage/logProperties.json');
 const logSQL = `UPDATE logs SET ${logProperties.join('=(?),')}=(?) WHERE guild=(?);`;
 
-const { createCommand, processEmbed } = require('../../handler/customCommands');
-const { response } = require('express');
+const { createCommand, processEmbed, fetchCommands, deleteCommand } = require('../../handler/index').customCommands;
 
 router.post('/:guild/save/:type/', async(req, res)=>{
 	let guild = client.guilds.cache.get(req.params.guild);
@@ -182,27 +170,22 @@ router.post('/:guild/save/:type/', async(req, res)=>{
 			if(!req.user||!fetchPerms(guild, req.user.discordID)&(perms.administrator|perms.manage_guild)){
 				return res.sendStatus(403);
 			}
-			if(!req.body.prefix&&typeof(prefix)=='string')
+			if(!req.body.prefix&&typeof(req.body.prefix)=='string')
 				return res.sendStatus(400);
-			handlerDB.get('INSERT OR REPLACE INTO prefixes(guild, prefix) VALUES((?), (?));', [req.params.guild, req.body.prefix], (err)=>{
-				if(err){
-					console.log(err);
-					return res.sendStatus(500);
-				}
-				res.sendStatus(200);
-			});	
+			Prefix.set(req.params.guild, req.body.prefix)
+				.then(()=>res.sendStatus(200))
+				.catch(()=>res.sendStatus(500));
 			break;
 		case 'command':
 			if(!req.user||!fetchPerms(guild, req.user.discordID)&(perms.administrator|perms.manage_guild)){
 				return res.sendStatus(403);
 			}
 			createCommand(req.body, req.params.guild)
-			.then(r =>{
-				res.statusMessage = r.message;
-				res.status(r.status).end();
+			.then(()=>{
+				res.sendStatus(200);
 			}).catch(e=>{
-				res.statusMessage = e.message;
-				res.status(e.status).end();
+				res.statusMessage = e;
+				res.status(e==='Internal server error'?500:400).end();
 			})
 			break;
 	}
@@ -218,7 +201,7 @@ router.post('/:guild/delete/command/', async(req, res)=>{
 	}
 	if(!(req.body.name&&typeof(req.body.name)=='string'))
 		res.sendStatus(400);
-	run(handlerDB, 'DELETE FROM customCommands WHERE guild = (?) AND name = (?);', [req.params.guild, req.body.name])
+	deleteCommand(req.params.guild, req.body.name)
 		.then(()=>res.sendStatus(200))
 		.catch(()=>res.sendStatus(500));
 });

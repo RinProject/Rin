@@ -1,5 +1,5 @@
 module.exports = {
-    async run (message, args) {
+    async run (message, args, colors) {
         if (args[1] == undefined) {
             return message.channel.send('', {
                 embed: {
@@ -37,7 +37,7 @@ module.exports = {
 	detailed: 'Deletes a given role.',
 	examples: prefix => `${prefix}deleterole @rolename`,
 	name: 'deleterole',
-	perms: ['MANAGE_ROLES'],
-	botPerms: ['MANAGE_ROLES'],
+	permissions: ['MANAGE_ROLES'],
+	botPermissions: ['MANAGE_ROLES'],
 	guildOnly: true
 }

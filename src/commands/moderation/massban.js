@@ -1,5 +1,5 @@
 module.exports = {
-    async run(message, args) {
+    async run(message, args, colors) {
 		let failed = 0;
         if (args[1] == undefined) {
             return message.channel.send({
@@ -37,7 +37,7 @@ module.exports = {
     examples: prefix => `${prefix}massban <id> <id> <id>`,
     name: 'massban',
     aliases: ['mban'],
-    perms: ['BAN_MEMBERS'],
-    botPerms: ['BAN_MEMBERS'],
+    permissions: ['BAN_MEMBERS'],
+    botPermissions: ['BAN_MEMBERS'],
     guildOnly: true
 }

@@ -1,7 +1,7 @@
-const options = require('../../JSONStorage/timeFormatOptions.json');
+const options = require('../../../JSONstorage/timeFormatOptions.json');
 const formatter = new Intl.DateTimeFormat('en-GB', options);
 
-const importantPerms = [
+const importantPermissions = [
 	{
 		permission: 'ADMINISTRATOR',
 		name: 'Administrator'
@@ -65,7 +65,7 @@ const importantPerms = [
 ];
 
 module.exports = {
-	async run(message, args) {
+	async run(message, args, colors) {
 		let member = message.mentions.members.first() || await message.guild.members.cache.get(args[1]) || message.member;
 		let roles = '';
 		member.roles.cache.each(role=>{
@@ -74,7 +74,7 @@ module.exports = {
 		});
 		let permissions = '';
 		if(roles)
-			importantPerms.forEach(permission=>{
+			importantPermissions.forEach(permission=>{
 				if(member.hasPermission(permission.name))
 					permissions += `${permission.name}, `
 			});
@@ -144,6 +144,5 @@ module.exports = {
 	description: 'Returns info of a user',
 	detailed: 'Returns info of a user',
 	examples: prefix => `${prefix}whois @someone`,
-	name: 'whois',
-	perms: null,
+	name: 'whois'
 }

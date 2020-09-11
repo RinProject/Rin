@@ -1,5 +1,5 @@
 module.exports = {
-	async run(message, args) {
+	async run(message, args, colors) {
 		if(args[1] == undefined || args[2] == undefined) {
 			return message.channel.send('', {
 				embed: {
@@ -45,7 +45,7 @@ module.exports = {
 	examples: prefix => `${prefix}rolecolour @rolename #hexcolor`,
 	name: 'rolecolour',
 	aliases: ['rolecolor'],
-	perms: ['MANAGE_ROLES'],
-	botPerms: ['MANAGE_ROLES'],
+	permissions: ['MANAGE_ROLES'],
+	botPermissions: ['MANAGE_ROLES'],
 	guildOnly: true
 }

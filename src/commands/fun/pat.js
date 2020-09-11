@@ -1,6 +1,6 @@
-const images = require('../../JSONStorage/pat.json')
+const images = require('../../../JSONstorage/pat.json')
 module.exports = {
-	run: async function (message, args) {
+	run: async function (message, args, colors) {
 		let member = message.mentions.members.first() || await message.guild.members.cache.get(args[1]);
 		
 		if(member) {
@@ -41,7 +41,6 @@ module.exports = {
 	description: 'Pats a user',
 	detailed: 'Pats first mentioned user',
 	examples: prefix => `${prefix}pat @member`,
-	name: 'pat',
-	perms: null,
+	name: 'pat',	
 	guildOnly: true
 };

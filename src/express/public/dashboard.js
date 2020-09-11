@@ -89,6 +89,7 @@ function generateWarnings(warnings){
 }
 
 function generateSettings(settings){
+	console.log(settings)
 	let div = document.getElementById('content');
 	div.innerHTML = `<label for="prefix">Prefix</label><input style="width: 4rem;margin-right:0.3rem;" type="text" name="prefix" id="prefix" value="${settings.prefix}"><button onclick="setPrefix()">save</button><br /><h1>Disabled commands</h1><p style="opacity: .5;">Commands can currently only be disabled in client, see <a href="/commands/#togglecommand">toggleCommand</a></p>`
 	+ settings.disabled.reduce((acc, command)=>{return acc + `<div class="warning"><h3>${command}</h3></div>`}, '') || '<div class="warning"><h3>none</h3></div>';

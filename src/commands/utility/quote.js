@@ -1,5 +1,5 @@
 module.exports = {
-	run: async (message, args)=>
+	run: async (message, args, colors)=>
 	{
 		const channel = message.mentions.channels.first() || message.channel;
 
@@ -111,6 +111,5 @@ module.exports = {
 	description: 'Quotes a message.',
 	detailed: 'Quotes a message.',
 	examples: prefix => `${prefix}quote <messageID> OR ${prefix}quote #channel <messageID>`,
-	name: 'quote',
-	perms: null
+	name: 'quote'
 }

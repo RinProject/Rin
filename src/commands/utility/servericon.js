@@ -1,7 +1,7 @@
-const options = require('../../JSONStorage/timeFormatOptions.json');
+const options = require('../../../JSONstorage/timeFormatOptions.json');
 const formatter = new Intl.DateTimeFormat('en-GB', options);
 module.exports = {
-	async run(message, args) {
+	async run(message, args, colors) {
 		if (message.guild.iconURL())
 			return message.channel.send('', {
 				embed: {
@@ -32,6 +32,5 @@ module.exports = {
 	detailed: 'Returns a server icon',
 	examples: prefix => `${prefix}servericon`,
 	name: 'servericon',
-	perms: null,
     guildOnly: true
 }

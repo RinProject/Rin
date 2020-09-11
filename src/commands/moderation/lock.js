@@ -1,5 +1,5 @@
 module.exports = {
-	async run(message, args) {
+	async run(message, args, colors) {
 		if(args[1] != 'off') {
 			message.channel.createOverwrite(message.guild.roles.everyone, { SEND_MESSAGES: false }, `Channel locked by ${message.author.tag}`)
 			.then(channel => {
@@ -26,7 +26,7 @@ module.exports = {
 	detailed: 'Overwrites permissions to speak in channel it is called in',
 	examples: prefix => `${prefix} lock, prefix => ${prefix} lock off`,
 	name: 'lock',
-	perms: ['MANAGE_CHANNELS'],
-	botPerms: ['MANAGE_CHANNELS'],
+	permissions: ['MANAGE_CHANNELS'],
+	botPermissions: ['MANAGE_CHANNELS'],
 	guildOnly: true
 }

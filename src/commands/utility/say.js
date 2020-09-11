@@ -1,5 +1,5 @@
 module.exports = {
-    async run(message, args) {
+    async run(message, args, colors) {
         if (args[1] == undefined) {
             return message.channel.send('', {
                 embed: {
@@ -16,5 +16,5 @@ module.exports = {
     detailed: 'Says a given message.',
     examples: prefix => `${prefix}say <message>`,
     name: 'say',
-    perms: ['ADMINISTRATOR']
+    permissions: ['ADMINISTRATOR']
 }

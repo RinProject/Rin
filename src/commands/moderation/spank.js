@@ -1,10 +1,8 @@
-const { mute, startMuteCheck } = require('../../utils').mute;
-const { convertTime } = require('../../utils');
-
-startMuteCheck();
+const { mute } = require('../../handler/index').mute;
+const { convertTime } = require('../../handler/index').utils;
 
 module.exports = {
-	async run(message, args) {
+	async run(message, args, colors) {
 		let time = convertTime(`1m`);
 		let reason = 'No reason provided';
 		let member = message.mentions.members.first() || await message.guild.members.fetch(`${args[1]}`)
@@ -40,7 +38,7 @@ module.exports = {
 	detailed: 'Mutes a given member for one minute. Mutes are checked twice a minute meaning that an automatic unmute can be up to half a minute late.',
 	examples: prefix => `${prefix}spank @Jihyo#2423`,
 	name: 'spank',
-	perms: ['MANAGE_ROLES'],
-	botPerms: ['MANAGE_ROLES', 'MANAGE_CHANNELS'],
+	permissions: ['MANAGE_ROLES'],
+	botPermissions: ['MANAGE_ROLES', 'MANAGE_CHANNELS'],
 	guildOnly: true
 }

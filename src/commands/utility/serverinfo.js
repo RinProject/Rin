@@ -1,7 +1,7 @@
-const options = require('../../JSONStorage/timeFormatOptions.json');
+const options = require('../../../JSONstorage/timeFormatOptions.json');
 const formatter = new Intl.DateTimeFormat('en-GB', options);
 module.exports = {
-	async run(message, args) {
+	async run(message, args, colors) {
 		let voiceChannels = 0,
 			textChannels = 0;
 
@@ -59,7 +59,7 @@ module.exports = {
 					},
 					{
 						name: 'Prefix',
-						value: message.client.prefix,
+						value: message.client.prefix(),
 						inline: true
 					},
 					{
@@ -129,6 +129,5 @@ module.exports = {
 	detailed: 'Returns info about the server',
 	examples: prefix => `${prefix}serverinfo`,
 	name: 'serverinfo',
-	perms: null,
 	guildOnly: true
 }

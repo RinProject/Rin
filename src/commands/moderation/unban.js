@@ -1,5 +1,5 @@
 module.exports = {
-	async run(message, args) {
+	async run(message, args, colors) {
 		let bans = await message.guild.fetchBans();
 		let bannedPerson = bans.get(args[1]);
 		
@@ -40,7 +40,7 @@ module.exports = {
 	detailed: 'Unbans mentioned user',
 	examples: prefix => `${prefix}unban <id>`,
 	name: 'unban',
-	perms: ['BAN_MEMBERS'],
-	botPerms: ['BAN_MEMBERS'],
+	permissions: ['BAN_MEMBERS'],
+	botPermissions: ['BAN_MEMBERS'],
 	guildOnly: true
 }

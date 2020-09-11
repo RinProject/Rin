@@ -1,5 +1,5 @@
 module.exports = {
-	async run(message, args) {
+	async run(message, args, colors) {
 		let member = message.mentions.members.first() || await message.guild.members.cache.get(args[1]);
 		let reason = args.slice(2).join(" ");
 		if (!reason) reason = `No reason provided. Responsible moderator: ${message.author.tag}`;
@@ -42,7 +42,7 @@ module.exports = {
 	detailed: 'Kicks given member with the option to add a reason for the kick.',
 	examples: prefix => `${prefix}kick @someone reason, ${prefix}kick <id> reason`,
 	name: 'kick',
-	perms: ['KICK_MEMBERS'],
-	botPerms: ['KICK_MEMBERS'],
+	permissions: ['KICK_MEMBERS'],
+	botPermissions: ['KICK_MEMBERS'],
 	guildOnly: true
 }

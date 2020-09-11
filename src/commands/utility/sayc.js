@@ -1,11 +1,11 @@
 module.exports = {
-    async run(message, args) {
+    async run(message, args, colors) {
         let content = args.splice(2).join(' ');
         
         if (!content) {
             return message.channel.send('', {
                 embed: {
-                    description: `Please follow this format: ${message.client.prefix}sayc #channel text`,
+                    description: `Please follow this format: ${message.client.prefix()}sayc #channel text`,
                     color: colors.error
                 }
             });
@@ -27,5 +27,5 @@ module.exports = {
     detailed: 'Says a given message in a given channel.',
     examples: prefix => `${prefix}sayc #channel <message>`,
     name: 'sayc',
-    perms: ['ADMINISTRATOR']
+    permissions: ['ADMINISTRATOR']
 }

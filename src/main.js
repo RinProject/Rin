@@ -1,5 +1,23 @@
-const Discord = require('discord.js');
-const client = new Discord.Client({disableMentions: "everyone", partials: ['MESSAGE', 'REACTION']});
+//load config file
+let config = require("../config.json");
+Object.keys(config.colors).forEach(key => {
+	config.colors[key]=parseInt(config.colors[key], 16);
+});
+
+const coreLibraries = require('./handler/index');
+const client = new coreLibraries.Client({
+	disableMentions: 'everyone',
+	partials: ['MESSAGE', 'REACTION'],
+
+	directory: `${__dirname}/commands`,
+	enableCustomCommands: config.enableCustomCommands,
+	owners: config.owners,
+	prefix: config.prefix,
+	logChannel: config.logChannel,
+	categories: true,
+	colors: config.colors
+});
+
 const sqlite3 = require('sqlite3').verbose();
 
 global.client = client;
@@ -9,37 +27,18 @@ let db = new sqlite3.Database('./databases/database.db', (err) => {
 		return console.error(err.message);
 });
 
-//load config file
-const config = (() => {
-	let configuration = require("../config.json");
-	configuration.directory = `${__dirname}\\${configuration.directory}`;
-	Object.keys(configuration.colors).forEach(key => {
-		// TODO: implement usage of colours from config in commands
-		configuration.colors[key]=parseInt(configuration.colors[key], 16);
-	});
-	client.colors = configuration.colors;
-	return configuration 
-})();
-client.prefix = config.prefix;
-client.owners = config.owners;
-
-global.colors = config.colors;
-
 client.on('ready', () => {
 	//print some information about the bot
-	console.log(`logged in as ${client.user.username}#${client.user.discriminator} with ${client.guilds.cache.array().length} guilds! Using the prefix ${config.prefix}`);
-	init(config, client);
+	console.log(`Logged in as ${client.user.username}#${client.user.discriminator} with ${client.guilds.cache.array().length} guilds! Using the prefix ${config.prefix}`);
 	if(config.enableWeb)
 		require('./web')({port: config.port, clientSecret: config.clientSecret});
 });
 
-const { handler, init, errorLog } = require('./handler');
-
-const { get, all, run } = require('./utils').asyncDB;
+const { get, all, run } = require('./handler/index').utils.asyncDB;
 
 client.on('message', async (message) => {
 	if(message.author.bot) return;
-	if(!await handler(message)&&message.guild){
+	if(message.guild && !await client.isCommand(message)){
 		let role = message.guild.roles.resolve((await get(db, 'SELECT role FROM expRole WHERE guild = (?);', [message.guild.id])||{}).role);
 		if(role && message.member.roles.cache.get(role.id))
 			return;
@@ -72,7 +71,7 @@ client.on('channelPinsUpdate', (channel, time) => {
 			}
 		})
 		if (err)
-			errorLog(err);
+			client.reportError(err);
 	});
 });
 
@@ -95,7 +94,7 @@ client.on('messageDelete', (message) => {
 				}
 			});
 		if (err)
-			errorLog(err);
+			client.reportError(err);
 	});
 });
 
@@ -123,7 +122,7 @@ client.on('messageDeleteBulk', (messages) => {
 			});
 		}
 		if (err)
-			errorLog(err);
+			client.reportError(err);
 	});
 });
 
@@ -158,7 +157,7 @@ client.on('messageUpdate', (oldMessage, newMessage) => {
 				}
 			});
 		if (err)
-			errorLog(err);
+			client.reportError(err);
 	});
 });
 
@@ -196,7 +195,7 @@ client.on('messageReactionAdd', async (reaction, user) => {
 				}
 			});
 		if (err)
-			errorLog(err);
+			client.reportError(err);
 	});
 });
 
@@ -233,7 +232,7 @@ client.on('messageReactionRemove', (reaction, user) => {
 				}
 			});
 		if (err)
-			errorLog(err);
+			client.reportError(err);
 	});
 });
 
@@ -256,7 +255,7 @@ client.on('messageReactionRemoveAll', (message) => {
 				}
 			});
 		if (err)
-			errorLog(err);
+			client.reportError(err);
 	});
 });
 
@@ -279,7 +278,7 @@ client.on('messageReactionRemoveEmoji', (messageReaction) => {
 				}
 			});
 		if (err)
-			errorLog(err);
+			client.reportError(err);
 	});
 });
 
@@ -318,7 +317,7 @@ client.on('inviteCreate', invite => {
 				}
 			});
 		if (err)
-			errorLog(err);
+			client.reportError(err);
 	});
 });
 
@@ -351,7 +350,7 @@ client.on('inviteDelete', invite => {
 				}
 			});
 		if (err)
-			errorLog(err);
+			client.reportError(err);
 	});
 });
 
@@ -382,7 +381,7 @@ client.on('channelCreate', channel => {
 				}
 			});
 		if (err)
-			errorLog(err);
+			client.reportError(err);
 	});
 });
 
@@ -412,7 +411,7 @@ client.on('channelDelete', channel => {
 				}
 			});
 		if (err)
-			errorLog(err);
+			client.reportError(err);
 	});
 });
 
@@ -455,7 +454,7 @@ client.on('channelUpdate', (oldChannel, newChannel) => {
 				});
 		}
 		if (err)
-			errorLog(err);
+			client.reportError(err);
 	});
 });
 
@@ -478,7 +477,7 @@ client.on('webhookUpdate', (channel) => {
 			});
 		}
 		if (err)
-			errorLog(err);
+			client.reportError(err);
 	});
 });
 
@@ -502,7 +501,7 @@ client.on('emojiCreate', emoji => {
 				}
 			});
 		if (err)
-			errorLog(err);
+			client.reportError(err);
 	});
 });
 
@@ -525,7 +524,7 @@ client.on('emojiDelete', emoji => {
 				}
 			});
 		if (err)
-			errorLog(err);
+			client.reportError(err);
 	});
 });
 
@@ -556,7 +555,7 @@ client.on('emojiUpdate', (oldEmoji, newEmoji) => {
 			});
 		}
 		if (err)
-			errorLog(err);
+			client.reportError(err);
 	});
 });
 
@@ -625,7 +624,7 @@ client.on('guildUpdate', (oldGuild, newGuild) => {
 				});
 		}
 		if (err)
-			errorLog(err);
+			client.reportError(err);
 	});
 });
 
@@ -647,7 +646,7 @@ client.on('guildIntegrationsUpdate', guild => {
 			});
 		}
 		if (err)
-			errorLog(err);
+			client.reportError(err);
 	});
 });
 
@@ -671,7 +670,7 @@ client.on('guildBanAdd', (guild, user) => {
 			});
 		}
 		if (err)
-			errorLog(err);
+			client.reportError(err);
 	});
 });
 
@@ -693,7 +692,7 @@ client.on('guildBanRemove', (guild, user) => {
 			});
 		}
 		if (err)
-			errorLog(err);
+			client.reportError(err);
 	});
 });
 
@@ -717,7 +716,7 @@ client.on('guildMemberAdd', (member) => {
 			});
 		}
 		if (err)
-			errorLog(err);
+			client.reportError(err);
 	});
 });
 
@@ -739,7 +738,7 @@ client.on('guildMemberRemove', (member) => {
 			});
 		}
 		if (err)
-			errorLog(err);
+			client.reportError(err);
 	});
 });
 
@@ -802,7 +801,7 @@ client.on('guildMemberUpdate', (oldMember, newMember) => {
 				});
 		}
 		if (err)
-			errorLog(err);
+			client.reportError(err);
 	});
 });
 

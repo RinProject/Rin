@@ -1,5 +1,69 @@
+import * as Discord from 'discord.js';
+
+type action = 'mute' | 'giveRole' | 'addRole' | 'removeRole' | 'toggleRole';
+
+type Action = {
+	action: action;
+	target: string;
+	option: string;
+};
+
+type Field = {
+	title?: string;
+	name?: string;
+	description?: string;
+	value?: string;
+	short?: boolean;
+	inline?: boolean;
+};
+
+type Image = {
+	url?: string;
+};
+
+type Embed = {
+	author?: Discord.MessageEmbedAuthor;
+	author_url?: string;
+	author_icon?: string;
+	thumbnail?: Image;
+	title?: string;
+	message_title?: string;
+	colour?: string | number;
+	color?: string | number;
+	description?: string;
+	image?: Image;
+	actions?: Action[];
+	footer?: {text?: string, iconURL?: string};
+	footer_icon?: string;
+	fields?: Field[];
+};
+
+type customCommand = {
+	name: string;
+	message?: string;
+	image?: string;
+	permissions?: Discord.PermissionString[];
+	requires?: {mentions: number};
+	embed?: Embed;
+	insufficientMentions?: Embed;
+	insufficientPermissions?: Embed;
+	actions?: Action[];
+};
+
+type runableCommand = {
+	message?: string;
+	image?: string;
+	embed?: Embed;
+	actions?: Action[];
+	files?: string[];
+};
+
+let colors = {
+	error: 0xFF0000
+}
+
 const resolutions = [16, 32, 64, 128, 256, 512, 1024, 2048, 4096];
-function replacer(snippet, member){
+function replacer(snippet: string, member: Discord.GuildMember){
 	if(!member)
 		return undefined;
 	return (()=>{
@@ -19,6 +83,7 @@ function replacer(snippet, member){
 				return member.user.displayAvatarURL({
 					format: 'png',
 					dynamic: true,
+					//@ts-ignore
 					size: num
 				})
 			}
@@ -28,7 +93,7 @@ function replacer(snippet, member){
 
 const pattern = /\((mentions{0,1}|author)(\.(nth\(.*?\)|first|last|all)){0,1}(\.(id|mention|nickname|tag|username|pfp\(.{0,4}\))){0,1}\)/gi;
 
-function parseCommand(command, message){
+function parseCommand(command: string, message: Discord.Message): string{
 	return command.replace(pattern, match=>{
 		let arr = match.toLowerCase().replace(/^\(/, '').replace(/\)$/, '').split(/\./g);
 		if(arr[0]=='author')
@@ -50,16 +115,17 @@ function parseCommand(command, message){
 	});
 }
 
-const {mute} = require('../utils').mute;
-const { convertTime } = require('../utils');
+import { mute as Mute } from  './mute';
+const mute = Mute.mute;
+import { convertTime } from './utils';
 
-function takeAction(message, member, action, option){
+function takeAction(message: Discord.Message, member: Discord.GuildMember, action: action, option: string): void{
 	switch (action){
 		case 'mute':
 			let time = convertTime(option);
 			if(isNaN(time))
 				time = undefined;
-			mute(message.guild, member, time, 'Custom command test', message.author, message.channel)
+			mute(message.guild, member, time, 'Custom command test', message.member)
 			.catch(e=>
 				message.channel.send({embed:{
 					title: 'Unable to mute user',
@@ -97,16 +163,15 @@ function takeAction(message, member, action, option){
 	}
 }
 
-const { isArray } = require('util');
+import { isArray } from 'util';
 
 const errorEmbed = {embed:{
 	title: 'Custom command returned empty',
 	description: `Please see [custom command documentation](${require('../../package.json').repository.url.replace('git+', '').replace('.git', '')}/blob/master/docs/custom_commands.md) or refer server admins there.`
 }};
 
-function runCustomCommand(customCommand, message){
-	let command = parseCommand(customCommand, message);
-	command = JSON.parse(command);
+function runCustomCommand(customCommand: string, message: Discord.Message){
+	let command: runableCommand = JSON.parse(parseCommand(customCommand, message));
 	if(command.actions){
 		if(!isArray(command.actions))
 			command.actions = JSON.parse(command.actions);
@@ -127,7 +192,7 @@ function runCustomCommand(customCommand, message){
 							takeAction(message, message.mentions.members.first(), action.action, action.option);
 							break;
 						case 'last':
-							takeAction(message, member, message.mentions.members.last(), action.action, action.option);
+							takeAction(message, message.mentions.members.last(), action.action, action.option);
 							break;
 						default:
 							if(arr[1].startsWith('nth'))
@@ -137,12 +202,13 @@ function runCustomCommand(customCommand, message){
 					}
 			});
 	}
-	let msg = {};
+	let msg: runableCommand = {};
 	if(Object.keys(command.embed).length)
 		msg.embed = command.embed;
 	if(command.image)
 		msg.files = [command.image];
 	if(msg.embed||(msg.files&&msg.files[0]))
+		//@ts-ignore
 		message.channel.send(command.message, msg);
 	else if(command.message)
 		message.channel.send(command.message);
@@ -150,9 +216,9 @@ function runCustomCommand(customCommand, message){
 		message.channel.send(errorEmbed);
 }
 
-function processEmbed(input){
+function processEmbed(input: any): Embed{
 	if(!input) return {};
-	let embed = {author: {}, footer:{}, thumbnail: {}, image: {}, fields: []};
+	let embed: Embed = {author: {},footer:{},thumbnail: {},image: {},fields: []};
 
 	if(input.author&&typeof(input.author)=='string')
 		embed.author.name = input.author;
@@ -243,26 +309,88 @@ const customCommandSQL = `INSERT OR REPLACE INTO customCommands(
 )
 VALUES ((?),(?),(?),(?),(?),(?),(?),(?))`;
 
-const { permissionsFlags } = require('../utils');
-const {run, get, all} = require('../utils').asyncDB;
+import { permissionsFlags } from './utils';
+import  {asyncDB} from './utils';
+const {run, get, all} = asyncDB;
 
-const sqlite3 = require('sqlite3').verbose();
-let db = new sqlite3.Database('./databases/handler.db', (err) => {
+import * as sqlite from 'sqlite3';
+const sqlite3 = sqlite.verbose();
+
+let db = new sqlite3.Database(`${__dirname}/store.db`, (err) => {
 	if (err) {
 		return console.error(err.message);
 	}
 });
 
-function createCommand(command, guild){
+db.run('CREATE TABLE IF NOT EXISTS customCommands(guild TEXT NOT NULL, source TEXT NOT NULL, name TEXT NOT NULL, command TEXT NOT NULL, permissions TEXT, requires TEXT, insufficientPermissions TEXT, insufficientMentions TEXT);');
+
+async function runCommandIfExists(command: string, message: Discord.Message): Promise<void>{
+	let customCommand = await get(db, 'SELECT * FROM customCommands WHERE guild = (?) AND name = (?);', [message.guild.id, command]);
+	if(!(customCommand && customCommand.name))
+		return;
+	if(customCommand.permissions){
+		let perms = JSON.parse(customCommand.permissions);
+		if(perms&&isArray(perms)){
+			let lacking = [];
+			perms.forEach(perm => {
+				if(!message.member.hasPermission(perm))
+					lacking.push(perm);
+			});
+			if(lacking[0]){
+				if(customCommand.insufficientPermissions)
+					runCustomCommand(customCommand.insufficientPermissions, message);
+				else
+					message.channel.send('', {embed: {
+						title: 'You lack the necessary permissions to use this command',
+						color: colors.error,
+						fields: [{
+							name: 'Missing permission(s)',
+							inline: false,
+							value: lacking.reduce(
+								(accumulator, currentValue) => `${accumulator}, ${currentValue}`
+							).toLowerCase().replace(/_/g, ' ')
+						}]
+					}});
+				
+				return;
+			}
+		}
+	}
+	if(customCommand.requires){
+		let mentions = Number((JSON.parse(customCommand.requires)||{}).mentions)||0;
+		if(message.mentions.members.array().length<mentions){
+			if(customCommand.insufficientMentions)
+				runCustomCommand(customCommand.insufficientMentions, message);
+			else
+				message.channel.send('', {embed: {
+					title: 'Too few mentions',
+					color: colors.error
+				}});
+			return;
+		}
+	}
+	runCustomCommand(customCommand.command, message);
+}
+
+async function fetchCommands(guild: string){
+	let commands = (await all(db, 'SELECT source FROM customCommands WHERE guild = (?);', [guild]));
+	if(commands[0])
+	for (let i = 0; i < commands.length; i++) {
+		commands[i]=JSON.parse(commands[i].source);
+	}
+	return commands;
+}
+
+async function createCommand(command: customCommand, guild: string): Promise<void>{
 	return new Promise(function (resolve, reject){
 		if(!command)
-			return reject({status: 400, message: 'Incomplete command'});
+			return reject('Incomplete command');
 		let embed = processEmbed(command.embed)
-		if(!(embed.title||embed.description||(embed.fields&&embed.fields[0])||(embed.thumbnail&&embed.thumbnail.url)||(embed.image&&embed.image.url)||(embed.message&&typeof(embed.message)=='string')||(embed.image&&typeof(embed.image)=='string')))
-			return reject({status: 400, message: 'Incomplete command'});
+		if(!(embed.title||embed.description||(embed.fields&&embed.fields[0])||(embed.thumbnail&&embed.thumbnail.url)||(embed.image&&embed.image.url)||(embed.image&&typeof(embed.image)=='string')))
+			return reject('Incomplete command');
 
 		if(!command.name)
-			return reject({status: 400, message: 'Incomplete command'});
+			return reject('Incomplete command');
 
 		let permissions = processEmbed(command.insufficientPermissions);
 		if(!(permissions.title||permissions.description||(permissions.fields&&permissions.fields[0])||(permissions.thumbnail&&permissions.thumbnail.url)||(permissions.image&&permissions.image.url)))
@@ -276,6 +404,7 @@ function createCommand(command, guild){
 		if(command.permissions){
 			command.permissions = command.permissions.filter(perm => typeof(perm)==='string'&&permissionsFlags[perm.toLowerCase()]!=undefined);
 			for (const i in command.permissions)
+				//@ts-ignore
 				command.permissions[i] = command.permissions[i].toUpperCase();
 		}
 		run(db, 'DELETE FROM customCommands WHERE guild = (?) AND name = (?);', [guild, command.name])
@@ -294,11 +423,19 @@ function createCommand(command, guild){
 					(typeof(command.requires)=='object'&&command.requires.mentions?JSON.stringify(command.requires):null),
 					permissions?JSON.stringify({embed: permissions, actions: command.insufficientPermissions.actions}):null,
 					mentions?JSON.stringify({embed: mentions, actions: command.insufficientMentions.actions}):null
-				]).then(()=>resolve({status: 200, message: 'Command saved'}))
-				.catch(()=>reject({status: 500, message: 'Internal server error'}));
+				]).then(()=>resolve())
+				.catch(()=>reject('Internal server error'));
 			})
-			.catch(()=>reject({status: 500, message: 'Internal server error'}));
+			.catch(()=>reject('Internal server error'));
 	})
 }
 
-module.exports = { runCustomCommand, createCommand, processEmbed };
+async function deleteCommand(guild: string, command: string): Promise<void>{
+	return new Promise(function (resolve, reject){
+		run(db, 'DELETE FROM customCommands WHERE guild = (?) AND name = (?);', [guild, command])
+			.then(()=>resolve())
+			.catch(e=>reject(e));
+	});
+}
+
+export { createCommand, deleteCommand, processEmbed, runCommandIfExists, fetchCommands };

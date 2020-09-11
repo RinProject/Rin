@@ -7,10 +7,10 @@ let db = new sqlite3.Database('./databases/database.db', (err) => {
 
 db.run('CREATE TABLE IF NOT EXISTS expRole(guild TEXT UNIQUE NOT NULL, role TEXT NOT NULL);');
 
-const { run, get } = require('../../utils').asyncDB;
+const { run, get } = require('../../handler/index').utils.asyncDB;
 
 module.exports = {
-	async run(message, args) {
+	async run(message, args, colors) {
 		let member = message.mentions.members.first() || await message.guild.members.fetch(`${args[1]}`)
 
 		if (args[1] == undefined || !member)
@@ -53,7 +53,7 @@ module.exports = {
 	examples: prefix => `${prefix}disableexp @Soze#0040`,
 	name: 'disableExp',
 	aliases: ['disableXp', 'noExp', 'noXp'],
-	perms: ['MANAGE_SERVER'],
-	botPerms: ['MANAGE_ROLES'],
+	permissions: ['MANAGE_SERVER'],
+	botPermissions: ['MANAGE_ROLES'],
 	guildOnly: true
 }

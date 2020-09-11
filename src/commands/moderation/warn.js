@@ -19,7 +19,7 @@ db.run(
 const sql = `INSERT INTO warnings(id, user, moderator, reason, guild, time) VALUES((?), (?), (?), (?), (?), (?));`
 const crypto = require('crypto');
 module.exports = {
-	async run(message, args) {
+	async run(message, args, colors) {
 		let member = message.mentions.members.first()||await message.guild.members.cache.get(args[1]);
 		let reason = args.slice(2).join(' ');
 		if(reason&&member)
@@ -126,7 +126,7 @@ module.exports = {
 	detailed: 'Warns a user',
 	examples: prefix => `${prefix}warn @Tarren#9722 Being a chuckle fuck\n${prefix}warn 571487483016118292 writing bad code\n${prefix}warn remove [id]\n${prefix}warn restore [id]`,
 	name: 'warn',
-	perms: ['BAN_MEMBERS'],
-	botPerms: ['BAN_MEMBERS'],
+	permissions: ['BAN_MEMBERS'],
+	botPermissions: ['BAN_MEMBERS'],
 	guildOnly: true
 }

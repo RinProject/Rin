@@ -1,6 +1,6 @@
-const images = require('../../JSONStorage/hug.json')
+const images = require('../../../JSONstorage/hug.json')
 module.exports = {
-	run: async function (message, args) {
+	run: async function (message, args, colors) {
 		let member = message.mentions.members.first() || await message.guild.members.cache.get(args[1]);
 		
 		if(member) {
@@ -42,6 +42,5 @@ module.exports = {
 	detailed: 'Hugs first mentioned user',
 	examples: prefix => `${prefix}hug @member`,
 	name: 'hug',
-	perms: null,
 	guildOnly: true
 };

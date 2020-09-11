@@ -1,7 +1,7 @@
-const { unmute } = require('../../utils').mute;
+const { unmute } = require('../../handler/index').mute;
 
 module.exports = {
-	async run(message, args) {
+	async run(message, args, colors) {
 		let member = message.mentions.members.first() || await message.guild.members.fetch(`${args[1]}`)
 		.catch(e => {
 			message.channel.send('', {
@@ -33,7 +33,7 @@ module.exports = {
 	detailed: 'Unmutes given member with the option to add a reason for the unmute.',
 	examples: prefix => `${prefix}unmute @Jihyo#2423, ${prefix}unmute 157101769858613248`,
 	name: 'unmute',
-	perms: ['MANAGE_ROLES'],
-	botPerms: ['MANAGE_ROLES'],
+	permissions: ['MANAGE_ROLES'],
+	botPermissions: ['MANAGE_ROLES'],
 	guildOnly: true
 }
