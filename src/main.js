@@ -56,9 +56,29 @@ client.on('message', async (message) => {
 	}
 });
 
-// client.on('guildCreate', guild => {
+client.on('mute', async (guild, member, time, reason, moderator)=>{
+	let logChannel = await get(db, 'SELECT modLogChannel FROM logs WHERE guild = (?)', [guild.id]);
+	if (logChannel && logChannel.modLogChannel)
+		guild.channels.resolve(logChannel.modLogChannel).send({embed:{
+			title: 'User muted',
+			description: `${member.toString()} muted by ${moderator.toString()}\n\nReason:\n${reason}`,
+			color: 0xFF4040,
+			footer: {
+				text: time?'Mute ending':'Mute indefinite'
+			},
+			timestamp: time
+		}});
+})
 
-// });
+client.on('unmute', async (guild, member)=>{
+	let logChannel = await get(db, 'SELECT modLogChannel FROM logs WHERE guild = (?)', [guild.id])
+	if (logChannel && logChannel.modLogChannel)
+		guild.channels.resolve(logChannel.modLogChannel).send({embed:{
+			title: 'User unmuted',
+			description: `${member.toString()} unmuted`,
+			color: 0x80FF80
+		}});
+})
 
 //Message change logs
 client.on('channelPinsUpdate', (channel, time) => {

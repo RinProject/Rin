@@ -42,7 +42,7 @@ type customCommand = {
 	name: string;
 	message?: string;
 	image?: string;
-	permissions?: Discord.PermissionString[];
+	permissions?: Discord.PermissionString[] | string[];
 	requires?: {mentions: number};
 	embed?: Embed;
 	insufficientMentions?: Embed;
@@ -53,7 +53,7 @@ type customCommand = {
 type runableCommand = {
 	message?: string;
 	image?: string;
-	embed?: Embed;
+	embed?: Discord.MessageEmbed;
 	actions?: Action[];
 	files?: string[];
 };
@@ -83,7 +83,7 @@ function replacer(snippet: string, member: Discord.GuildMember){
 				return member.user.displayAvatarURL({
 					format: 'png',
 					dynamic: true,
-					//@ts-ignore
+					//	@ts-ignore
 					size: num
 				})
 			}
@@ -91,11 +91,13 @@ function replacer(snippet: string, member: Discord.GuildMember){
 	}})().replace(/"/g, '\\"');
 }
 
-const pattern = /\((mentions{0,1}|author)(\.(nth\(.*?\)|first|last|all)){0,1}(\.(id|mention|nickname|tag|username|pfp\(.{0,4}\))){0,1}\)/gi;
+const pattern = /\((mentions?|author)\.?(nth\(\d+\)|first|last|all)?\.?(id|mention|nickname|tag|username|pfp\(\d{0,4}\))?\)/gi;
+
+const splitPattern = /\w+(\(\d*\))?/g;
 
 function parseCommand(command: string, message: Discord.Message): string{
 	return command.replace(pattern, match=>{
-		let arr = match.toLowerCase().replace(/^\(/, '').replace(/\)$/, '').split(/\./g);
+		let arr = match.toLowerCase().match(splitPattern);
 		if(arr[0]=='author')
 			return replacer(arr[arr.length-1], message.member);
 		switch(arr[1]){
@@ -202,13 +204,12 @@ function runCustomCommand(customCommand: string, message: Discord.Message){
 					}
 			});
 	}
-	let msg: runableCommand = {};
+	let msg: Discord.MessageOptions = {};
 	if(Object.keys(command.embed).length)
 		msg.embed = command.embed;
 	if(command.image)
 		msg.files = [command.image];
 	if(msg.embed||(msg.files&&msg.files[0]))
-		//@ts-ignore
 		message.channel.send(command.message, msg);
 	else if(command.message)
 		message.channel.send(command.message);
@@ -404,7 +405,6 @@ async function createCommand(command: customCommand, guild: string): Promise<voi
 		if(command.permissions){
 			command.permissions = command.permissions.filter(perm => typeof(perm)==='string'&&permissionsFlags[perm.toLowerCase()]!=undefined);
 			for (const i in command.permissions)
-				//@ts-ignore
 				command.permissions[i] = command.permissions[i].toUpperCase();
 		}
 		run(db, 'DELETE FROM customCommands WHERE guild = (?) AND name = (?);', [guild, command.name])

@@ -19,7 +19,7 @@ module.exports = {
 		});
 		if (member == undefined) return;
 
-		mute(message.guild, member, time, reason, message.author, message.channel)
+		mute(message.guild, member, time, reason, message.member, message.channel)
 		.then(()=>
 			message.channel.send({embed:{
 				title: 'User muted',

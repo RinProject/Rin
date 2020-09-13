@@ -4,7 +4,7 @@ import { Client, Colors } from './index';
 
 type command = {
 	name: string;
-	run: (message: Discord.Message, args?: string[], colors?: Colors, Prompt?: (message: Discord.Message, search: RegExp)=>Promise<any>) => void;
+	run: (message: Discord.Message, args?: string[], colors?: Colors, Prompt?: (message: Discord.Message, search: RegExp)=>Promise<any>) => Promise<void>;
 	description?: string;
 	detailed?: string;
 	examples?: ((prefix: string) => string | string);
@@ -17,7 +17,7 @@ type command = {
 
 export class Command {
 	name: string;
-	run: (message: Discord.Message, args?: string[], colors?: Colors, Prompt?: (message: Discord.Message, search: RegExp)=>Promise<Discord.Message>) => void;
+	run: (message: Discord.Message, args?: string[], colors?: Colors, Prompt?: (message: Discord.Message, search: RegExp)=>Promise<Discord.Message>) => Promise<void>;
 	description: string;
 	detailed: string;
 	examples: string;
@@ -30,12 +30,12 @@ export class Command {
 
 	constructor(source: command, prefix: string = '!', category?: string) {
 		if (!source.name)
-			throw 'Cannot create a command without a name.';
+			throw new Error('Cannot create a command without a name.');
 
 		this.name = source.name;
 
 		if (!source.run)
-			throw 'Cannot create a command without a function to run.';
+			throw new Error('Cannot create a command without a function to run.');
 
 		this.run = source.run;
 

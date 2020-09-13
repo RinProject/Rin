@@ -1,10 +1,10 @@
 const sqlite3 = require('sqlite3').verbose();
 
 import * as Discord from 'discord.js';
-
+import { Client } from './index';
 import { asyncDB } from './utils';
 
-let client: Discord.Client;
+let client: Client;
 
 const { get, run, all } = asyncDB;
 
@@ -37,7 +37,7 @@ export const mute = {
 	mute: async function (guild: Discord.Guild, member: Discord.GuildMember, time: number, reason: string, moderator: Discord.GuildMember, channel?: Discord.TextChannel){
 		let mute: Mute = await get(db, 'SELECT member FROM mutes WHERE guild = (?) AND member = (?);', [guild.id, member.id]);
 		if(mute&&mute.member)
-			throw 'User Already Muted';
+			throw new Error('User Already Muted');
 		let r: Role = await get(db, 'SELECT role FROM muteRole WHERE guild = (?);', [guild.id]);
 
 		let role: Discord.Role;
@@ -73,36 +73,18 @@ export const mute = {
 			'INSERT OR REPLACE INTO mutes(member, guild, reason, ends, moderator) VALUES((?), (?), (?), (?), (?));',
 			[member.id, guild.id, reason, time||'inf', moderator.id]
 		);
-		let logChannel = await get(db, 'SELECT modLogChannel FROM logs WHERE guild = (?)', [guild.id])
-		if (logChannel && logChannel.modLogChannel)
-			//@ts-ignore
-			guild.channels.resolve(logChannel.modLogChannel).send({embed:{
-				title: 'User muted',
-				description: `${member.toString()} muted by ${moderator.toString()}\n\nReason:\n${reason}`,
-				color: 0xFF4040,
-				footer: {
-					text: time?'Mute ending':'Mute indefinite'
-				},
-				timestamp: time
-			}});
+		client.emit('mute', guild, member, time, reason, moderator);
 	},
 	unmute: async function(guild: Discord.Guild, member: Discord.GuildMember): Promise<void>{
 		let role: Role = await get(db, 'SELECT role FROM muteRole WHERE guild = (?);', [guild.id]);
 		await run(db, 'DELETE FROM mutes WHERE guild = (?) AND member = (?);', [guild.id, member.id]);
 		if(!role)
-			throw 'No muted role found';
+			throw new Error('No muted role found');
 		if(!member.roles.cache.get(role.role))
-			throw 'User not muted';
+			throw new Error('User not muted');
 		member.roles.remove(role.role, 'Mute time over');
 
-		let logChannel: any = await get(db, 'SELECT modLogChannel FROM logs WHERE guild = (?)', [guild.id])
-		if (logChannel && logChannel.modLogChannel)
-			//@ts-ignore
-			guild.channels.resolve(logChannel.modLogChannel).send({embed:{
-				title: 'User unmuted',
-				description: `${member.toString()} unmuted`,
-				color: 0x80FF80
-			}});
+		client.emit('unmute', guild, member);
 	}
 };
 
@@ -122,6 +104,6 @@ async function checkMutes(){
 	});
 }
 
-export function setClient(c: Discord.Client): void{
+export function setClient(c: Client): void{
 	client =  c;
 }

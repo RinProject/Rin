@@ -88,13 +88,18 @@ export class Toggle extends Command {
 				run: async function (message, args){
 					if(!args[1]){
 						message.channel.send('Please provide a command to enable / disable');
+						return;
 					}
 					let command = this.commandAliases[args[1].toLowerCase()];
-					if(!command)
-						return message.channel.send('`Command not found.`');
+					if(!command){
+						message.channel.send('`Command not found.`');
+						return;
+					}
 			
-					if(command=='toggleCommand')
-						return message.channel.send('`Operation not allowed, command can not be disabled.`');
+					if(command=='toggleCommand'){
+						message.channel.send('`Operation not allowed, command can not be disabled.`');
+						return;
+					}
 			
 					if(args[0]=='enable'||args[0]=='enableCommand')
 						this.client.enableCommand(message.guild.id, command);
@@ -124,11 +129,15 @@ let Prefix = new Command({
 			message.channel.send('Please provide a command to enable / disable');
 		}
 		let command = args[1];
-		if(!command)
-			return message.channel.send('`Command not found.`');
+		if(!command){
+			message.channel.send('`Command not found.`');
+			return;
+		}
 
-		if(command=='toggleCommand')
-			return message.channel.send('`Operation not allowed, command can not be disabled.`');
+		if(command=='toggleCommand'){
+			message.channel.send('`Operation not allowed, command can not be disabled.`');
+			return;
+		}
 
 		try {
 			if(args[0]=='enable'||args[0]=='enableCommand')
@@ -140,7 +149,7 @@ let Prefix = new Command({
 					await this.client.disableCommand(message.guild.id, command):
 					await this.client.enableCommand(message.guild.id, command);	
 		} catch (error) {
-			return message.channel.send({
+			message.channel.send({
 				embed: {
 					title: 'Unable to toggle command',
 					description: 'Make sure the command is spelt correctly'

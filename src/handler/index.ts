@@ -2,7 +2,8 @@
 import * as customCommands from './customCommands';
 import * as utils from './utils';
 import * as mute from './mute';
-export { customCommands, utils, mute };
+const Mute = mute.mute;
+export { customCommands, utils, Mute as mute };
 
 import * as Discord from 'discord.js';
 import * as fs from 'fs';
@@ -50,7 +51,7 @@ import { runCommandIfExists } from './customCommands';
 const PREFIX = {
 	async set(guild: string, prefix: string): Promise<void>{
 		return new Promise((resolve, reject)=>{
-			db.run('INSERT OR REPLACE INTO prefixes(guild, prefix) VALUES((?), (?));', [guild, Prefix], (err)=> {
+			db.run('INSERT OR REPLACE INTO prefixes(guild, prefix) VALUES((?), (?));', [guild, prefix], (err)=> {
 				if (err)
 					reject(err);
 				resolve();
@@ -70,12 +71,12 @@ const PREFIX = {
 }
 
 export const commandUtils = {
-	async disableCommand(guild: string, command: string): Promise<void>{
+	async disableCommand(place: string, command: string): Promise<void>{
 		return new Promise((resolve, reject)=>{
 			command = this.aliases.get(command.toLowerCase());
 			if(command == 'toggleCommand')
 				reject(new Error('Incorrect usage'));
-			db.run('INSERT OR REPLACE INTO FROM disabledCommands WHERE guild = (?) AND command = (?);', [guild, command], (err)=> {
+			db.run('INSERT OR REPLACE INTO FROM disabledCommands WHERE guild = (?) AND command = (?);', [place, command], (err)=> {
 				if (err)
 					reject(err);
 				resolve();
@@ -83,9 +84,9 @@ export const commandUtils = {
 		});
 	},
 
-	async enableCommand(guild: string, command: string): Promise<void>{
+	async enableCommand(place: string, command: string): Promise<void>{
 		return new Promise((resolve, reject)=>{
-			db.run('DELETE FROM disabledCommands WHERE guild = (?) AND command = (?);', [guild, command], (err)=> {
+			db.run('DELETE FROM disabledCommands WHERE guild = (?) AND command = (?);', [place, command], (err)=> {
 				if (err)
 					reject(err);
 				resolve();
@@ -93,10 +94,10 @@ export const commandUtils = {
 		});
 	},
 
-	async enabledIn(guild: string, command: string): Promise<boolean>{
+	async enabledIn(place: string, command: string): Promise<boolean>{
 		return new Promise((resolve, reject)=>{
 			command = this.aliases.get(command.toLowerCase());
-			db.get('SELECT * FROM disabledCommands WHERE guild = (?) AND command = (?)', [guild, command], (err, row)=> {
+			db.get('SELECT * FROM disabledCommands WHERE guild = (?) AND command = (?)', [place, command], (err, row)=> {
 				if (err)
 					reject(err);
 				resolve(!Boolean(row));
@@ -104,15 +105,20 @@ export const commandUtils = {
 		});
 	},
 
-	async allDisabledIn(guild: string): Promise<any[]>{
+	async allDisabledIn(place: string): Promise<any[]>{
 		return new Promise((resolve, reject)=>{
-			db.all('SELECT * FROM disabledCommands WHERE guild = (?) AND command = (?)', [guild], (err, rows)=> {
+			db.all('SELECT * FROM disabledCommands WHERE guild = (?) AND command = (?)', [place], (err, rows)=> {
 				if (err)
 					reject(err);
 				resolve(rows);
 			});
 		});
 	}
+}
+
+export interface ClientEvents extends Discord.ClientEvents{
+	mute: [Discord.Guild, Discord.GuildMember, number, string, Discord.GuildMember],
+	unmute: [Discord.Guild, Discord.GuildMember],
 }
 
 export class Client extends Discord.Client {
@@ -254,13 +260,13 @@ export class Client extends Discord.Client {
 			return;
 		}
 
-		// @ts-ignore
+		//	@ts-ignore
 		if (message.guild && !(message.channel.permissionsFor(message.guild.me).bitfield & 0x4000)) {
 			message.channel.send('`I need embed links permissions to work, please contact server owner`')
 				.catch(() => message.author.send({
 					embed: {
 						title: 'I need embed links and send messages permissions to work, please contact server owner or admins',
-						// @ts-ignore
+						//	@ts-ignore
 						description: `Error occurred in [${message.channel.name}](https://discordapp.com/channels/${message.guild.id}/${message.channel.id}/)`,
 						color: this.colors.error,
 						footer: {
@@ -320,7 +326,11 @@ export class Client extends Discord.Client {
 			}
 		}
 
-		command.run(message, args, this.colors, this.prompt.bind(this));
+		command.run(message, args, this.colors, this.prompt.bind(this))
+		.catch(e=>{
+			message.channel.send('`You shouldn\'t see this, an error has occurred and any output is likely corrupted, developers have been informed.`');
+			this.reportError(e);
+		});
 	}
 
 	public async isCommand(message: Discord.Message): Promise<boolean> {
@@ -341,13 +351,13 @@ export class Client extends Discord.Client {
 		});
 	}
 
-	public disableCommand: (guild: string, command: string) => Promise<void> = commandUtils.disableCommand;
+	public disableCommand: (place: string, command: string) => Promise<void> = commandUtils.disableCommand;
 
-	public enableCommand: (guild: string, command: string) => Promise<void> = commandUtils.enableCommand;
+	public enableCommand: (place: string, command: string) => Promise<void> = commandUtils.enableCommand;
 
-	public enabledIn: (guild: string, command: string) => Promise<boolean> = commandUtils.enabledIn;
+	public enabledIn: (place: string, command: string) => Promise<boolean> = commandUtils.enabledIn;
 
-	public allDisabledIn: (guild: string)=>Promise<any[]> = commandUtils.allDisabledIn;
+	public allDisabledIn: (place: string)=>Promise<any[]> = commandUtils.allDisabledIn;
 
 	public prefixFor: (guild: string) => Promise<string> = PREFIX.get;
 
@@ -391,10 +401,21 @@ export class Client extends Discord.Client {
 		});
 	}
 
+	public on<K extends keyof ClientEvents>(event: K, listener: (...args: ClientEvents[K]) => void): this{
+		//	@ts-ignore
+		super.on(event, listener);
+		return this;
+	}
+
+	public emit<K extends keyof ClientEvents>(event: K, ...args: ClientEvents[K]): boolean{
+		//	@ts-ignore
+		return super.emit(event, ...args);
+	}
+
 	constructor(options: ClientOptions) {
 		super(options);
 		if(!options.directory)
-			throw 'No directory provided to handler';
+			throw new Error('No directory provided to handler');
 		this.directory = options.directory;
 		this.categories = options.categories || true;
 		this.Prefix = options.prefix || '!';
@@ -410,8 +431,9 @@ export class Client extends Discord.Client {
 
 		this.on('ready', ()=>(()=>{
 			let channel = this.channels.resolve(options.logChannel)
-			//@ts-ignore
+			//	@ts-ignore
 			this.reportChannel = channel && channel.type === 'text' ? channel : null;
+			mute.setClient(this);
 		}).call(this));
 
 		this.store = db;
