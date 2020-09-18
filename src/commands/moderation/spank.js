@@ -1,4 +1,3 @@
-const { mute } = require('../../handler/index').mute;
 const { convertTime } = require('../../handler/index').utils;
 
 module.exports = {
@@ -17,7 +16,7 @@ module.exports = {
 		});
 		if (member == undefined) return;
 
-		mute(message.guild, member, time, reason, message.author, message.channel)
+		message.client.mute(message.guild, member, time, reason, message.author, message.channel)
 		.then(()=>
 			message.channel.send({embed:{
 				title: 'User spanked',

@@ -20,22 +20,22 @@ db.run('CREATE TABLE IF NOT EXISTS muteRole(guild TEXT UNIQUE NOT NULL, role TEX
 
 let checkingMutes = false;
 
-type Mute = {
-	member?: string;
-	guild?: string;
-	ends?: string;
-	reason?: string;
-	moderator?: string;
+export type Mute = {
+	member: string;
+	guild: string;
+	ends: string;
+	reason: string;
+	moderator: string;
 };
 
-type Role = {
+export type Role = {
 	role?: string;
 	guild?: string;
 }
 
 export const mute = {
 	mute: async function (guild: Discord.Guild, member: Discord.GuildMember, time: number, reason: string, moderator: Discord.GuildMember, channel?: Discord.TextChannel){
-		let mute: Mute = await get(db, 'SELECT member FROM mutes WHERE guild = (?) AND member = (?);', [guild.id, member.id]);
+		let mute: Mute | null = await get(db, 'SELECT member FROM mutes WHERE guild = (?) AND member = (?);', [guild.id, member.id]);
 		if(mute&&mute.member)
 			throw new Error('User Already Muted');
 		let r: Role = await get(db, 'SELECT role FROM muteRole WHERE guild = (?);', [guild.id]);
@@ -85,6 +85,17 @@ export const mute = {
 		member.roles.remove(role.role, 'Mute time over');
 
 		client.emit('unmute', guild, member);
+	},
+	getMute: async function (guild: Discord.GuildResolvable, member: Discord.GuildMemberResolvable): Promise<Mute> {
+		return new Promise((resolve, reject)=>{
+			let g = client.guilds.resolve(guild);
+			if(!g)
+				reject(new Error('Invalid guild'));
+			let m = g.members.resolve(member);
+			get(db, 'SELECT member FROM mutes WHERE guild = (?) AND member = (?);', [g.id, m.id||null])
+				.then(resolve)
+				.catch(reject);
+		});
 	}
 };
 

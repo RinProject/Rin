@@ -2,12 +2,12 @@ import * as Discord from 'discord.js';
 
 import { Client, Colors } from './index';
 
-type command = {
+export type command = {
 	name: string;
-	run: (message: Discord.Message, args?: string[], colors?: Colors, Prompt?: (message: Discord.Message, search: RegExp)=>Promise<any>) => Promise<void>;
+	run: (message: Discord.Message, args?: string[], colors?: Colors, Prompt?: (message: Discord.Message, search: RegExp)=>Promise<Discord.Message>) => Promise<void>;
 	description?: string;
 	detailed?: string;
-	examples?: ((prefix: string) => string | string);
+	examples?: (prefix: string) => string | string;
 	aliases?: string[];
 	permissions?: Discord.PermissionString[];
 	botPermissions?: Discord.PermissionString[];

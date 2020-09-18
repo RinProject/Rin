@@ -1,5 +1,3 @@
-const { unmute } = require('../../handler/index').mute;
-
 module.exports = {
 	async run(message, args, colors) {
 		let member = message.mentions.members.first() || await message.guild.members.fetch(`${args[1]}`)
@@ -14,7 +12,7 @@ module.exports = {
 		});
 		if (member == undefined) return; 
 		
-		unmute(message.guild, member)
+		message.client.unmute(message.guild, member)
 		.then(()=>{
 			message.channel.send({embed:{
 				title: 'User unmuted',

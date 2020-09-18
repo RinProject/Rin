@@ -2,8 +2,8 @@
 import * as customCommands from './customCommands';
 import * as utils from './utils';
 import * as mute from './mute';
-const Mute = mute.mute;
-export { customCommands, utils, Mute as mute };
+// const mute.mute = mute.mute;
+export { customCommands, utils };
 
 import * as Discord from 'discord.js';
 import * as fs from 'fs';
@@ -367,6 +367,12 @@ export class Client extends Discord.Client {
 		return this.Prefix;
 	}
 
+	public mute: (guild: Discord.Guild, member: Discord.GuildMember, time: number, reason: string, moderator: Discord.GuildMember, channel?: Discord.TextChannel) => Promise<void> = mute.mute.mute;
+
+	public unmute: (guild: Discord.Guild, member: Discord.GuildMember)=> Promise<void> = mute.mute.unmute;
+
+	public getMute: (guild: Discord.GuildResolvable, member: Discord.GuildMemberResolvable)=> Promise<mute.Mute> = mute.mute.getMute;
+
 	private prompts: sqlite3.Database;
 
 	private promptResolutionMap: Map<string, (message: Discord.Message)=>void>
@@ -386,15 +392,17 @@ export class Client extends Discord.Client {
 
 	public prompt(message: Discord.Message, search: RegExp): Promise<Discord.Message>{
 		return new Promise((resolve, reject)=>{
-			let id = crypto.createHash('sha256');
-			id.update((+new Date).toString()+message.author.id);
+			let hash = crypto.createHash('sha256');
+			hash.update((+new Date).toString()+message.author.id);
+			const id = hash.digest('base64')
 			let timer = setTimeout(()=>{
 				this.removePrompt.call(this, id);
 				reject('No reply');
 			},300000);
-			this.addPrompt(message, id.digest('base64'), (message: Discord.Message)=>{
+			this.addPrompt(message, id, (message: Discord.Message)=>{
 				if(Boolean(message.content.match(search))){
 					this.removePrompt.call(this, id);
+					clearTimeout(timer);
 					resolve(message);
 				}
 			});
@@ -430,7 +438,9 @@ export class Client extends Discord.Client {
 				);
 
 		this.on('ready', ()=>(()=>{
-			let channel = this.channels.resolve(options.logChannel)
+			let channel = this.channels.resolve(options.logChannel);
+			if(!channel)
+				console.warn('No log channel provided.');
 			//	@ts-ignore
 			this.reportChannel = channel && channel.type === 'text' ? channel : null;
 			mute.setClient(this);
@@ -460,6 +470,25 @@ export class Client extends Discord.Client {
 						this.handleCusomCommands.call(this, m);
 					}
 			);
+		
+		this.on('guildMemberAdd', async (member)=>{
+			if(member.partial)
+				member = await member.fetch();
+			
+			//@ts-ignore
+			let mute = await this.getMute(member.guild, member);
+
+			if(!(mute&&mute.member))
+				return;
+			
+			let r: mute.Role = await utils.asyncDB.get(db, 'SELECT role FROM muteRole WHERE guild = (?);', [member.guild.id]);
+
+			let role: Discord.Role;
+			role = member.guild.roles.resolve(r.role);
+
+			member.roles.add(role)
+				.catch(e=>{});
+		});
 	}
 }
 
