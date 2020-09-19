@@ -5,7 +5,7 @@
 		"target": "es6",
 		"watch": false,
 		"moduleResolution": "node",
-		"outDir": "build",
+		"outDir": "dist",
 		"allowJs": true,
 		"sourceMap": true,
 		"incremental": true

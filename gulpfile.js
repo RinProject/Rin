@@ -23,8 +23,7 @@ gulp.task('copy-web', function () {
 	return gulp.src(options.web).pipe(gulp.dest('dist'));
 });
 
-gulp.task('watch', function(){
-	gulp.watch(options.js, gulp.parallel('ts'));
+gulp.task('watch-web', function(){
 	gulp.watch(options.web, gulp.parallel('copy-web'));
 });
 

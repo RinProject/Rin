@@ -6,8 +6,9 @@
   "scripts": {
     "test": "nodemon .",
     "start": "node .",
-    "build-watch": "gulp && gulp watch",
-    "build": "gulp"
+    "build": "gulp",
+    "build-dev": "gulp copy-web && tsc --watch true",
+    "build-watch-web": "gulp copy-web && gulp watch-web"
   },
   "repository": {
     "type": "git",
