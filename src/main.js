@@ -1,9 +1,3 @@
-//load config file
-let config = require("../config.json");
-Object.keys(config.colors).forEach(key => {
-	config.colors[key]=parseInt(config.colors[key], 16);
-});
-
 const coreLibraries = require('./handler/index');
 const client = new coreLibraries.Client({
 	disableMentions: 'everyone',
@@ -22,39 +16,19 @@ const sqlite3 = require('sqlite3').verbose();
 
 global.client = client;
 
-let db = new sqlite3.Database('./databases/database.db', (err) => {
+const db = new sqlite3.Database('./databases/database.db', (err) => {
 	if (err)
 		return console.error(err.message);
 });
 
-client.on('ready', () => {
-	//print some information about the bot
-	console.log(`Logged in as ${client.user.username}#${client.user.discriminator} with ${client.guilds.cache.array().length} guilds! Using the prefix ${config.prefix}`);
-	if(config.enableWeb)
-		require('./web')({port: config.port, clientSecret: config.clientSecret});
+//load config file
+global.config = require("../config.json");
+Object.keys(config.colors).forEach(key => {
+	config.colors[key]=parseInt(config.colors[key], 16);
 });
 
-const { get, all, run } = require('./handler/index').utils.asyncDB;
-
-client.on('message', async (message) => {
-	if(message.author.bot) return;
-	if(message.guild && !await client.isCommand(message)){
-		let role = message.guild.roles.resolve((await get(db, 'SELECT role FROM expRole WHERE guild = (?);', [message.guild.id])||{}).role);
-		if(role && message.member.roles.cache.get(role.id))
-			return;
-		let expGain = 10;
-		let time = +new Date;
-		let xp = await get(db, 'SELECT * FROM exp WHERE user = (?) AND guild = (?)', [message.author.id, message.guild.id]);
-		if(xp && xp.exp){
-			if(xp.lastMessage < time - 60000){
-				run(db, 'UPDATE exp SET exp = (?), lastMessage = (?) WHERE user = (?) AND guild = (?)', [xp.exp + expGain, time, message.author.id, message.guild.id]);
-			}
-		}
-		else{
-			run(db, 'INSERT INTO exp(user, exp, lastMessage, guild) VALUES((?), (?), (?), (?))', [message.author.id, expGain, time, message.guild.id]);
-		}
-	}
-});
+// load the events
+require("./events/")(client);
 
 client.on('mute', async (guild, member, time, reason, moderator)=>{
 	let logChannel = await get(db, 'SELECT modLogChannel FROM logs WHERE guild = (?)', [guild.id]);
