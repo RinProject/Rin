@@ -1,4 +1,5 @@
 const coreLibraries = require('./handler/index');
+const sqlite3 = require('sqlite3').verbose();
 const client = new coreLibraries.Client({
 	disableMentions: 'everyone',
 	partials: ['MESSAGE', 'REACTION'],
@@ -12,11 +13,9 @@ const client = new coreLibraries.Client({
 	colors: config.colors
 });
 
-const sqlite3 = require('sqlite3').verbose();
-
 global.client = client;
 
-const db = new sqlite3.Database('./databases/database.db', (err) => {
+global.db = new sqlite3.Database('./databases/database.db', (err) => {
 	if (err)
 		return console.error(err.message);
 });
@@ -29,68 +28,6 @@ Object.keys(config.colors).forEach(key => {
 
 // load the events
 require("./events/")(client);
-
-client.on('mute', async (guild, member, time, reason, moderator)=>{
-	let logChannel = await get(db, 'SELECT modLogChannel FROM logs WHERE guild = (?)', [guild.id]);
-	if (logChannel && logChannel.modLogChannel)
-		guild.channels.resolve(logChannel.modLogChannel).send({embed:{
-			title: 'User muted',
-			description: `${member.toString()} muted by ${moderator.toString()}\n\nReason:\n${reason}`,
-			color: 0xFF4040,
-			footer: {
-				text: time?'Mute ending':'Mute indefinite'
-			},
-			timestamp: time
-		}});
-})
-
-client.on('unmute', async (guild, member)=>{
-	let logChannel = await get(db, 'SELECT modLogChannel FROM logs WHERE guild = (?)', [guild.id])
-	if (logChannel && logChannel.modLogChannel)
-		guild.channels.resolve(logChannel.modLogChannel).send({embed:{
-			title: 'User unmuted',
-			description: `${member.toString()} unmuted`,
-			color: 0x80FF80
-		}});
-})
-
-//Message change logs
-client.on('channelPinsUpdate', (channel, time) => {
-	if (!channel.guild) return;
-	db.all(`SELECT channelPinsUpdate, messageLogChannel FROM logs WHERE guild = "${channel.guild.id}"`, (err, rows) => {
-		client.channels.cache.get(rows[0]['messageLogChannel']).send({
-			embed: {
-				title: 'Channel pin update',
-				description: `Pins in ${channel} updated`
-			}
-		})
-		if (err)
-			client.reportError(err);
-	});
-});
-
-client.on('messageDelete', (message) => {
-	if (!message.guild) return;
-	db.all(`SELECT messageDelete, messageLogChannel FROM logs WHERE guild = "${message.channel.guild.id}"`, (err, rows) => {
-		if (rows[0] && rows[0]['messageDelete'])
-			client.channels.cache.get(rows[0]['messageLogChannel']).send({
-				embed: {
-					author: {
-						name: message.author.tag,
-						iconURL: message.author.avatarURL()
-					},
-					color: 0xcc1020,
-					title: `Message deleted in ${message.channel.name}`,
-					description: `${message.channel.toString()}\n${message.content}`,
-					footer: {
-						text: `uid: ${message.author.id}`
-					}
-				}
-			});
-		if (err)
-			client.reportError(err);
-	});
-});
 
 client.on('messageDeleteBulk', (messages) => {
 	if (!messages.first().guild) return;
