@@ -1,51 +1,55 @@
 module.exports = {
 	async run(message, args, colors) {
-		if(args[1] == undefined || args[2] == undefined) {
+		if (args[1] == undefined || args[2] == undefined) {
 			return message.channel.send('', {
 				embed: {
 					title: 'Invalid number of inputs',
-					description: 'Please enter a role, followed by a colour.\nExamples: `members #FF8000`, `@coolKids #FF80CC`',
-					color: colors.error
-				}
+					description:
+						'Please enter a role, followed by a colour.\nExamples: `members #FF8000`, `@coolKids #FF80CC`',
+					color: colors.error,
+				},
 			});
-		} else if(!args[2].match(/#?[0-9a-f]{6}/gi))
+		} else if (!args[2].match(/#?[0-9a-f]{6}/gi))
 			return message.channel.send('', {
 				embed: {
 					title: 'Invalid colour',
 					description: 'Please enter a colour in hex format.\nExample: #FF8000.',
-					color: colors.error
-				}
+					color: colors.error,
+				},
 			});
 		else {
-			let role = message.mentions.roles.first() || message.guild.roles.cache.find(role => role.name === args[1]);
-			if(role == undefined)
+			let role =
+				message.mentions.roles.first() ||
+				message.guild.roles.cache.find((role) => role.name === args[1]);
+			if (role == undefined)
 				return message.channel.send('', {
 					embed: {
-						title: "Could not find role.",
-						description: 'Please provide a valid role, either by @mention or by name.\nNote: names may not contain whitespace, in such cases us @mention',
-						color: colors.error
-					}
+						title: 'Could not find role.',
+						description:
+							'Please provide a valid role, either by @mention or by name.\nNote: names may not contain whitespace, in such cases us @mention',
+						color: colors.error,
+					},
 				});
 			let color = args[2].startsWith('#') ? args[2] : '#' + args[2];
 			let oldColor = role.hexColor;
 			role.edit({
-				color: color
+				color: color,
 			});
 			return message.channel.send('', {
 				embed: {
 					title: `Role ${role.name} colour updated`,
 					description: `Colour changed from ${oldColor} to ${color}`,
-					color: color
-				}
+					color: color,
+				},
 			});
 		}
 	},
 	description: 'Changes a Roles Color',
 	detailed: 'Changes the color of a preexisting role',
-	examples: prefix => `${prefix}rolecolour @rolename #hexcolor`,
+	examples: (prefix) => `${prefix}rolecolour @rolename #hexcolor`,
 	name: 'rolecolour',
 	aliases: ['rolecolor'],
 	permissions: ['MANAGE_ROLES'],
 	botPermissions: ['MANAGE_ROLES'],
-	guildOnly: true
-}
+	guildOnly: true,
+};

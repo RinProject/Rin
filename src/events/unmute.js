@@ -1,19 +1,18 @@
-const { asyncDB } = require("../handler/utils")
+const { asyncDB } = require('../handler/utils');
 
-module.exports = client => {
-    client.on("unmute", async (g, m) => {
+module.exports = (client) => {
+	client.on('unmute', async (guild, member) => {
+		let logChan = await asyncDB.get(db, 'SELECT modLogChannel FROM logs WHERE guild = (?)', [
+			guild.id,
+		]);
 
-        let logChan = await asyncDB.get(db,
-            "SELECT modLogChannel FROM logs WHERE guild = (?)", 
-            [guild.id]);
-        
-        if (logChan && logChan.modLogChannel)
-           g.channels.resolve(logChan.modLogChannel).send({
-               embed: {
-                   title: "User unmuted",
-                   description: `${member.toString()} unmuted`,
-                   color: 0x80FF80
-               }
-           })
-    })
-}
+		if (logChan && logChan.modLogChannel)
+			guild.channels.resolve(logChan.modLogChannel).send({
+				embed: {
+					title: 'User unmuted',
+					description: `${member.toString()} unmuted`,
+					color: 0x80ff80,
+				},
+			});
+	});
+};

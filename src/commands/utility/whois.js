@@ -4,86 +4,89 @@ const formatter = new Intl.DateTimeFormat('en-GB', options);
 const importantPermissions = [
 	{
 		permission: 'ADMINISTRATOR',
-		name: 'Administrator'
+		name: 'Administrator',
 	},
 	{
 		permission: 'KICK_MEMBERS',
-		name: 'Kick members'
+		name: 'Kick members',
 	},
 	{
 		permission: 'BAN_MEMBERS',
-		name: 'Ban members'
+		name: 'Ban members',
 	},
 	{
 		permission: 'MANAGE_CHANNELS',
-		name: 'Manage channels'
+		name: 'Manage channels',
 	},
 	{
 		permission: 'MANAGE_GUILD',
-		name: 'Manage guild'
+		name: 'Manage guild',
 	},
 	{
 		permission: 'VIEW_AUDIT_LOG',
-		name: 'View audit log'
+		name: 'View audit log',
 	},
 	{
 		permission: 'MANAGE_MESSAGES',
-		name: 'Manage messages'
+		name: 'Manage messages',
 	},
 	{
 		permission: 'MENTION_EVERYONE',
-		name: 'Mention everyone'
+		name: 'Mention everyone',
 	},
 	{
 		permission: 'MUTE_MEMBERS',
-		name: 'Mute members'
+		name: 'Mute members',
 	},
 	{
 		permission: 'DEAFEN_MEMBERS',
-		name: 'Deafen members'
+		name: 'Deafen members',
 	},
 	{
 		permission: 'MOVE_MEMBERS',
-		name: 'Move members'
+		name: 'Move members',
 	},
 	{
 		permission: 'MANAGE_NICKNAMES',
-		name: 'Manage nicknames'
+		name: 'Manage nicknames',
 	},
 	{
 		permission: 'MANAGE_ROLES',
-		name: 'Manage roles'
+		name: 'Manage roles',
 	},
 	{
 		permission: 'MANAGE_WEBHOOKS',
-		name: 'Manage webhook'
+		name: 'Manage webhook',
 	},
 	{
 		permission: 'MANAGE_EMOJIS',
-		name: 'Manage emojis'
-	}
+		name: 'Manage emojis',
+	},
 ];
 
 module.exports = {
 	async run(message, args, colors) {
-		let member = message.mentions.members.first() || await message.guild.members.cache.get(args[1]) || message.member;
+		let member =
+			message.mentions.members.first() ||
+			(await message.guild.members.cache.get(args[1])) ||
+			message.member;
 		let roles = '';
-		member.roles.cache.each(role=>{
-			if(role!=message.guild.id)
-				roles+=role.toString()+' ';
+		member.roles.cache.each((role) => {
+			if (role != message.guild.id) roles += role.toString() + ' ';
 		});
 		let permissions = '';
-		if(roles)
-			importantPermissions.forEach(permission=>{
-				if(member.hasPermission(permission.name))
-					permissions += `${permission.name}, `
+		if (roles)
+			importantPermissions.forEach((permission) => {
+				if (member.hasPermission(permission.name)) permissions += `${permission.name}, `;
 			});
 
-		message.guild.members.cache.sort((member1, member2)=>member1.joinedTimestamp-member2.joinedTimestamp);
-		let members = message.guild.members.cache.array()
+		message.guild.members.cache.sort(
+			(member1, member2) => member1.joinedTimestamp - member2.joinedTimestamp
+		);
+		let members = message.guild.members.cache.array();
 
 		for (let i = 0; i < members.length; i++) {
-			if(members[i].id==member.id){
+			if (members[i].id == member.id) {
 				joinPosition = i;
 				break;
 			}
@@ -94,55 +97,55 @@ module.exports = {
 				author: {
 					name: member.user.tag,
 					iconURL: member.user.displayAvatarURL({
-						format: "png",
-						dynamic: true
-					})
+						format: 'png',
+						dynamic: true,
+					}),
 				},
 				color: member.displayColor || colors.base,
 				thumbnail: {
 					url: member.user.displayAvatarURL({
-						format: "png",
-						dynamic: true
-					})
+						format: 'png',
+						dynamic: true,
+					}),
 				},
 				description: member.user.toString(),
 				fields: [
 					{
 						name: 'Joined server on',
 						inline: true,
-						value: formatter.format(member.joinedTimestamp)
+						value: formatter.format(member.joinedTimestamp),
 					},
 					{
 						name: 'Registered on',
 						inline: true,
-						value: formatter.format(member.user.createdAt)
+						value: formatter.format(member.user.createdAt),
 					},
 					{
 						name: 'Nickname',
 						inline: true,
-						value: member.displayName
+						value: member.displayName,
 					},
 					{
-						name: `Roles (${member.roles.cache.size-1})`,
+						name: `Roles (${member.roles.cache.size - 1})`,
 						inline: false,
-						value: roles || 'none'
+						value: roles || 'none',
 					},
 					{
 						name: 'Important permissions',
 						inline: false,
-						value: permissions.replace(/, $/, '') || 'none'
-					}
+						value: permissions.replace(/, $/, '') || 'none',
+					},
 				],
-				footer:{
-					text: `id: ${member.id} | join position: ${joinPosition}`
+				footer: {
+					text: `id: ${member.id} | join position: ${joinPosition}`,
 				},
-				timestamp: +new Date
-			}
+				timestamp: +new Date(),
+			},
 		});
 	},
 	aliases: ['who'],
 	description: 'Returns info of a user',
 	detailed: 'Returns info of a user',
-	examples: prefix => `${prefix}whois @someone`,
-	name: 'whois'
-}
+	examples: (prefix) => `${prefix}whois @someone`,
+	name: 'whois',
+};

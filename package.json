@@ -6,9 +6,11 @@
   "scripts": {
     "test": "nodemon .",
     "start": "node .",
-    "build": "gulp",
-    "build-dev": "gulp copy-web && tsc --watch true",
-    "build-watch-web": "gulp copy-web && gulp watch-web"
+    "build": "gulp copy-web && tsc",
+    "build-watch": "gulp copy-web && tsc --watch true",
+    "lint": "eslint ./src",
+    "prettify": "prettier --write ./src",
+    "lint-eslint": "eslint src"
   },
   "repository": {
     "type": "git",
@@ -38,11 +40,17 @@
     "@types/mongoose": "^5.7.36",
     "@types/node": "^14.6.4",
     "@types/sqlite3": "^3.1.6",
+    "@typescript-eslint/eslint-plugin": "^4.6.0",
+    "@typescript-eslint/parser": "^4.6.0",
+    "eslint": "^7.12.1",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-plugin-prettier": "^3.1.4",
     "gulp": "^4.0.2",
     "gulp-sourcemaps": "^2.6.5",
     "gulp-typescript": "^6.0.0-alpha.1",
     "gulp-uglify-es": "^2.0.0",
     "nodemon": "^2.0.4",
+    "prettier": "^2.1.2",
     "typescript": "^4.0.2"
   }
 }

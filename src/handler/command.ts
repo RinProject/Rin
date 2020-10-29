@@ -4,7 +4,12 @@ import { Client, Colors } from './index';
 
 export type command = {
 	name: string;
-	run: (message: Discord.Message, args?: string[], colors?: Colors, Prompt?: (message: Discord.Message, search: RegExp)=>Promise<Discord.Message>) => Promise<void>;
+	run: (
+		message: Discord.Message,
+		args?: string[],
+		colors?: Colors,
+		Prompt?: (message: Discord.Message, search: RegExp) => Promise<Discord.Message>
+	) => Promise<void>;
 	description?: string;
 	detailed?: string;
 	examples?: (prefix: string) => string | string;
@@ -13,11 +18,16 @@ export type command = {
 	botPermissions?: Discord.PermissionString[];
 	guildOnly?: boolean;
 	category?: string;
-}
+};
 
 export class Command {
 	name: string;
-	run: (message: Discord.Message, args?: string[], colors?: Colors, Prompt?: (message: Discord.Message, search: RegExp)=>Promise<Discord.Message>) => Promise<void>;
+	run: (
+		message: Discord.Message,
+		args?: string[],
+		colors?: Colors,
+		Prompt?: (message: Discord.Message, search: RegExp) => Promise<Discord.Message>
+	) => Promise<void>;
 	description: string;
 	detailed: string;
 	examples: string;
@@ -28,23 +38,21 @@ export class Command {
 	category: string;
 	client: Client;
 
-	constructor(source: command, prefix: string = '!', category?: string) {
-		if (!source.name)
-			throw new Error('Cannot create a command without a name.');
+	constructor(source: command, prefix = '!', category?: string) {
+		if (!source.name) throw new Error('Cannot create a command without a name.');
 
 		this.name = source.name;
 
-		if (!source.run)
-			throw new Error('Cannot create a command without a function to run.');
+		if (!source.run) throw new Error('Cannot create a command without a function to run.');
 
 		this.run = source.run;
 
 		this.description = source.description || 'No description provided';
 
 		if (source.examples)
-			this.examples = typeof (source.examples) === 'string' ? source.examples : source.examples(prefix);
-		else
-			this.examples = 'No examples available'
+			this.examples =
+				typeof source.examples === 'string' ? source.examples : source.examples(prefix);
+		else this.examples = 'No examples available';
 
 		this.description = source.description || 'No description available';
 
@@ -58,14 +66,14 @@ export class Command {
 
 		this.guildOnly = source.guildOnly || false;
 
-		this.category = source.category||category;
+		this.category = source.category || category;
 	}
 
-	public setClient(client: Client){
+	public setClient(client: Client): void {
 		this.client = client;
 	}
 
-	public async enabledIn(guild: string | Discord.Guild): Promise<boolean>{
-		return await this.client.enabledIn(this.name, typeof(guild)==='string'?guild : guild.id);
+	public async enabledIn(guild: string | Discord.Guild): Promise<boolean> {
+		return await this.client.enabledIn(this.name, typeof guild === 'string' ? guild : guild.id);
 	}
 }

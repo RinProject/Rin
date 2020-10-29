@@ -1,37 +1,31 @@
 import * as sqlite3 from 'sqlite3';
 
 export const asyncDB = {
-	get: async function (db: sqlite3.Database, sql: string, args: any[]): Promise<any>{
+	get: async function (db: sqlite3.Database, sql: string, args: any[]): Promise<any> {
 		return new Promise(function (resolve, reject) {
 			db.get(sql, args, function (error, row) {
-				if (error)
-					reject(error);
-				else
-					resolve(row);
+				if (error) reject(error);
+				else resolve(row);
 			});
 		});
 	},
-	all: async function (db: sqlite3.Database, sql: string, args: any[]): Promise<any[]>{
+	all: async function (db: sqlite3.Database, sql: string, args: any[]): Promise<any[]> {
 		return new Promise(function (resolve, reject) {
 			db.all(sql, args, function (error, rows) {
-				if (error)
-					reject(error);
-				else
-					resolve(rows);
+				if (error) reject(error);
+				else resolve(rows);
 			});
 		});
 	},
 
-	run: async function (db: sqlite3.Database, sql: string, args: any[]): Promise<void>{
+	run: async function (db: sqlite3.Database, sql: string, args: any[]): Promise<void> {
 		return new Promise(function (resolve, reject) {
 			db.run(sql, args, function (error) {
-				if (error)
-					reject(error);
-				else
-					resolve();
+				if (error) reject(error);
+				else resolve();
 			});
 		});
-	}
+	},
 };
 
 export const permissionsFlags = {
@@ -65,20 +59,19 @@ export const permissionsFlags = {
 	manage_nicknames: 0x08000000,
 	manage_roles: 0x10000000,
 	manage_webhooks: 0x20000000,
-	manage_emojis: 0x40000000
+	manage_emojis: 0x40000000,
 };
 
-export function convertTime(time){
-	if(!time)
-		return NaN;
-	switch(time.match(/\D/)[0].toLowerCase()){
+export function convertTime(time: string): number {
+	if (!time) return NaN;
+	switch (time.match(/\D/)[0].toLowerCase()) {
 		case 's':
-			return Math.floor(parseFloat(time) * 1000 + +new Date);
+			return Math.floor(parseFloat(time) * 1000 + +new Date());
 		case 'm':
-			return Math.floor(parseFloat(time) * 60000 + +new Date);
+			return Math.floor(parseFloat(time) * 60000 + +new Date());
 		case 'h':
-			return Math.floor(parseFloat(time) * 3600000 + +new Date);
+			return Math.floor(parseFloat(time) * 3600000 + +new Date());
 		case 'd':
-			return Math.floor(parseFloat(time) * 86400000 + +new Date);
+			return Math.floor(parseFloat(time) * 86400000 + +new Date());
 	}
 }

@@ -10,23 +10,18 @@ module.exports = {
 
 		let roles = 0;
 
-		message.guild.channels.cache.each(channel => {
-			if(channel.type == 'voice')
-				voiceChannels++;
-			if(channel.type == 'text')
-				textChannels++;
+		message.guild.channels.cache.each((channel) => {
+			if (channel.type == 'voice') voiceChannels++;
+			if (channel.type == 'text') textChannels++;
 		});
 
-		message.guild.members.cache.each(member => {
-			if(member.user.bot)
-				bots++;
-			else
-				people++;
+		message.guild.members.cache.each((member) => {
+			if (member.user.bot) bots++;
+			else people++;
 		});
 
-		message.guild.roles.cache.each(role => {
-			if(role)
-				roles++;
+		message.guild.roles.cache.each((role) => {
+			if (role) roles++;
 		});
 
 		message.channel.send({
@@ -35,99 +30,99 @@ module.exports = {
 				color: colors.base,
 				thumbnail: {
 					url: message.guild.iconURL({
-						format: "png",
-						dynamic: true
-					})
+						format: 'png',
+						dynamic: true,
+					}),
 				},
 				author: {
 					name: message.guild.name,
 					iconURL: message.guild.iconURL({
-						format: "png",
-						dynamic: true
-					})
+						format: 'png',
+						dynamic: true,
+					}),
 				},
 				fields: [
 					{
 						name: 'Owner',
 						value: message.guild.owner.toString(),
-						inline: true
+						inline: true,
 					},
 					{
 						name: 'Region',
-						value: (await message.guild.fetchVoiceRegions()).findKey(region => region.optimal),
-						inline: true
+						value: (await message.guild.fetchVoiceRegions()).findKey((region) => region.optimal),
+						inline: true,
 					},
 					{
 						name: 'Prefix',
 						value: message.client.prefix(),
-						inline: true
+						inline: true,
 					},
 					{
 						name: 'Members',
 						value: message.guild.memberCount,
-						inline: true
+						inline: true,
 					},
 					{
 						name: 'Humans',
 						value: people,
-						inline: true
+						inline: true,
 					},
 					{
 						name: 'Bots',
 						value: bots,
-						inline: true
+						inline: true,
 					},
 					{
 						name: 'Channels',
-						value: textChannels+voiceChannels,
-						inline: true
+						value: textChannels + voiceChannels,
+						inline: true,
 					},
 					{
 						name: 'Text',
 						value: textChannels,
-						inline: true
+						inline: true,
 					},
 					{
 						name: 'Voice',
 						value: voiceChannels,
-						inline: true
+						inline: true,
 					},
 					{
 						name: 'Roles',
 						value: roles,
-						inline: true
+						inline: true,
 					},
 					{
 						name: 'Emojis',
 						value: message.guild.emojis.cache.size,
-						inline: true
+						inline: true,
 					},
 					{
 						name: 'Verification',
-						value: (()=>{
+						value: (() => {
 							let level = message.guild.verificationLevel.toLowerCase().split('');
-							level[0]=level[0].toUpperCase();
+							level[0] = level[0].toUpperCase();
 							return level.join('');
 						})(),
-						inline: true
+						inline: true,
 					},
 					{
 						name: 'Created At',
 						value: formatter.format(message.guild.createdAt),
-						inline: false
-					}
+						inline: false,
+					},
 				],
 				footer: {
-					text: `id: ${message.guild.id}`
+					text: `id: ${message.guild.id}`,
 				},
-				timestamp: +new Date
-			}
+				timestamp: +new Date(),
+			},
 		});
 	},
 	aliases: ['info'],
 	description: 'Returns info about the server',
 	detailed: 'Returns info about the server',
-	examples: prefix => `${prefix}serverinfo`,
+	examples: (prefix) => `${prefix}serverinfo`,
 	name: 'serverinfo',
-	guildOnly: true
-}
+	guildOnly: true,
+};

@@ -1,5 +1,5 @@
-const coreLibraries = require("./handler/");
-const sqlite3DB = require("sqlite3").verbose();
+const coreLibraries = require('./handler/');
+const sqlite3DB = require('sqlite3').verbose();
 const client = new coreLibraries.Client({
 	disableMentions: 'everyone',
 	partials: ['MESSAGE', 'REACTION'],
@@ -10,23 +10,22 @@ const client = new coreLibraries.Client({
 	prefix: config.prefix,
 	logChannel: config.logChannel,
 	categories: true,
-	colors: config.colors
+	colors: config.colors,
 });
 
 global.client = client;
 
 global.db = new sqlite3DB.Database('./databases/database.db', (err) => {
-	if (err)
-		return console.error(err.message);
+	if (err) return console.error(err.message);
 });
 
 //load config file
-global.config = require("../config.json");
-Object.keys(config.colors).forEach(key => {
-	config.colors[key]=parseInt(config.colors[key], 16);
+global.config = require('../config.json');
+Object.keys(config.colors).forEach((key) => {
+	config.colors[key] = parseInt(config.colors[key], 16);
 });
 
 // load the events
-require("./events/")(client);
+require('./events/')(client);
 
 client.login(config.token);
