@@ -2,13 +2,13 @@
 	"compilerOptions": {
 		"module": "commonjs",
 		"esModuleInterop": true,
-		"target": "es6",
+		"target": "ES2017",
 		"watch": false,
 		"moduleResolution": "node",
 		"outDir": "dist",
 		"allowJs": true,
-		"sourceMap": true,
-		"incremental": true
+		"sourceMap": false,
+		"incremental": true,
 	},
 	"include": ["src"]
 }

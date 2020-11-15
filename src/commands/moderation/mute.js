@@ -1,4 +1,4 @@
-const { convertTime } = require('../../handler/index').utils;
+const { convertTime } = require('../../core');
 
 module.exports = {
 	async run(message, args, colors) {

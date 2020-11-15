@@ -5,6 +5,6 @@ module.exports = (client) => {
 
 	files.forEach((v) => {
 		require(`${__dirname}/${v}`)(client);
-		console.log(`Loaded event "${v.slice(0, -3)}"`);
+		// console.log(`Loaded event "${v.slice(0, -3)}"`);
 	});
 };

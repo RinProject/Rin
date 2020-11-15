@@ -12,10 +12,5 @@
 		"negative": "0xFF4040",
 		"success": "0x80FF80",
 		"error": "0xFF0000"
-	},
-	"enableWeb": true,
-	"clientID": "123456789123456789",
-	"clientSecret": "client-secret-here",
-	"redirect": "/auth/redirect",
-	"port": 1337
+	}
 }

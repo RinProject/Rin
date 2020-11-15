@@ -1,56 +1,41 @@
 {
-  "name": "rin",
-  "version": "0.0.1",
-  "description": "A multi-purpose Discord bot",
-  "main": "dist/main.js",
-  "scripts": {
-    "test": "nodemon .",
-    "start": "node .",
-    "build": "gulp copy-web && tsc",
-    "build-watch": "gulp copy-web && tsc --watch true",
-    "lint": "eslint ./src",
-    "prettify": "prettier --write ./src",
-    "lint-eslint": "eslint src"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/RinProject/Rin.git"
-  },
-  "author": "Jihyo#3301, Tarren#9722, & Soze#0040",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/RinProject/Rin/issues"
-  },
-  "homepage": "https://github.com/RinProject/Rin#readme",
-  "dependencies": {
-    "canvas": "^2.6.1",
-    "connect-sqlite3": "^0.9.11",
-    "discord.js": "^12.2.0",
-    "express": "^4.17.1",
-    "express-session": "^1.17.1",
-    "mongoose": "^5.10.7",
-    "passport": "^0.4.1",
-    "passport-discord": "^0.1.4",
-    "showdown": "^1.9.1",
-    "showdown-highlight": "^2.1.5",
-    "sqlite3": "^4.2.0"
-  },
-  "devDependencies": {
-    "@types/express": "^4.17.8",
-    "@types/mongoose": "^5.7.36",
-    "@types/node": "^14.6.4",
-    "@types/sqlite3": "^3.1.6",
-    "@typescript-eslint/eslint-plugin": "^4.6.0",
-    "@typescript-eslint/parser": "^4.6.0",
-    "eslint": "^7.12.1",
-    "eslint-config-prettier": "^6.15.0",
-    "eslint-plugin-prettier": "^3.1.4",
-    "gulp": "^4.0.2",
-    "gulp-sourcemaps": "^2.6.5",
-    "gulp-typescript": "^6.0.0-alpha.1",
-    "gulp-uglify-es": "^2.0.0",
-    "nodemon": "^2.0.4",
-    "prettier": "^2.1.2",
-    "typescript": "^4.0.2"
-  }
+	"name": "rin",
+	"version": "0.0.1",
+	"description": "A multi-purpose Discord bot",
+	"main": "dist/main.js",
+	"scripts": {
+		"test": "nodemon .",
+		"start": "node .",
+		"build": "tsc",
+		"build-dev": "tsc --watch true",
+		"lint": "eslint ./src",
+		"prettify": "prettier --write ./src"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/RinProject/Rin.git"
+	},
+	"author": "Jihyo#3301, Tarren#9722, & Soze#0040",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/RinProject/Rin/issues"
+	},
+	"homepage": "https://github.com/RinProject/Rin#readme",
+	"dependencies": {
+		"canvas": "^2.6.1",
+		"discord.js": "^12.2.0",
+		"mongoose": "^5.10.7"
+	},
+	"devDependencies": {
+		"@types/mongoose": "^5.7.36",
+		"@types/node": "^14.6.4",
+		"@typescript-eslint/eslint-plugin": "^4.6.0",
+		"@typescript-eslint/parser": "^4.6.0",
+		"eslint": "^7.12.1",
+		"eslint-config-prettier": "^6.15.0",
+		"eslint-plugin-prettier": "^3.1.4",
+		"nodemon": "^2.0.4",
+		"prettier": "^2.1.2",
+		"typescript": "^4.0.2"
+	}
 }
