@@ -21,7 +21,12 @@ const client = new coreLibraries.Client({
 
 global.client = client;
 
+process.env.RIN_MONGODB_HOST = config.mongoDBHost;
+
 // load the events
 require('./events/')(client);
+
+// Connect to database
+require('./database').connect();
 
 client.login(config.token);

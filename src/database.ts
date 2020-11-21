@@ -7,12 +7,13 @@ import {
 	MuteSchema,
 } from './database.schema';
 
-mongoose.connect(process.env.RIN_MONGODB_HOST || 'mongodb://localhost:27017/rin', {
-	useNewUrlParser: true,
-	useUnifiedTopology: true,
-	useFindAndModify: false,
-	useCreateIndex: true,
-});
+export const connect = async (): Promise<typeof mongoose> =>
+	mongoose.connect(process.env.RIN_MONGODB_HOST || 'mongodb://localhost:27017/rin', {
+		useNewUrlParser: true,
+		useUnifiedTopology: true,
+		useFindAndModify: false,
+		useCreateIndex: true,
+	});
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));

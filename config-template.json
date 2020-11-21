@@ -12,5 +12,6 @@
 		"negative": "0xFF4040",
 		"success": "0x80FF80",
 		"error": "0xFF0000"
-	}
+	},
+	"mongoDBHost": "mongodb://localhost:27017/rin"
 }
