@@ -1,5 +1,5 @@
 import { Guild } from '../../database';
-import { command, eventKeyName } from '../../core';
+import { Command, eventKeyName } from '../../core';
 
 const events = Object.keys(eventKeyName);
 
@@ -8,7 +8,7 @@ const eventsText = `Event list:
 ${events.reduce((a, v) => `${a}${eventKeyName[v]}\n`, '').slice(0, -1)}
 \`\`\``;
 
-const log: command = {
+export = new Command({
 	run: async function (message, args, colors) {
 		switch (args[1] ? args[1].toLowerCase() : '') {
 			case 'channel': {
@@ -22,9 +22,7 @@ const log: command = {
 					});
 					return;
 				}
-				console.log(message.guild.id);
 				const g = await Guild.findOne({ id: message.guild.id });
-				console.log(g);
 				g.logChannel = message.mentions.channels.first().id;
 				g.save();
 				message.channel.send({
@@ -149,10 +147,8 @@ const log: command = {
 	},
 	description: 'Sets, clears, and displays your log settings.',
 	detailed: 'Lets you set and modify: your log channel and what you log to your hearts content.',
-	examples: (prefix) => `${prefix}log channel #logs, ${prefix}log enable all`,
+	examples: [(prefix) => `${prefix}log channel #logs`, (prefix) => `${prefix}log enable all`],
 	name: 'log',
 	permissions: ['ADMINISTRATOR'],
 	guildOnly: true,
-};
-
-export = log;
+});

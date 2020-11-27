@@ -51,7 +51,10 @@ module.exports = {
 	description: 'Bans a user',
 	detailed:
 		'Bans given user, with options to erase messages from the past given amount of days, and a reason.',
-	examples: (prefix) => `${prefix}ban @someone days reason, ${prefix}ban <id> days reason`,
+	examples: [
+		(prefix) => `${prefix}ban @someone days reason`,
+		(prefix) => `${prefix}ban <id> days reason`,
+	],
 	name: 'ban',
 	permissions: ['BAN_MEMBERS'],
 	botPermissions: ['BAN_MEMBERS'],

@@ -5,15 +5,14 @@ import * as Discord from 'discord.js';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Command, PromptOptions } from './command';
-import { Help, Reload, Prefix, CustomCommand } from './systemCommands';
 import { IMuteSchema } from '../database.schema';
 import { Guild } from '../database';
 
 export type Colors = {
-	base?: number;
-	negative?: number;
-	success?: number;
-	error?: number;
+	base: number;
+	negative: number;
+	success: number;
+	error: number;
 	[key: string]: number;
 };
 
@@ -76,6 +75,8 @@ export class Client extends Discord.Client {
 
 	private Prefix: string;
 
+	public helpInfo: Discord.EmbedFieldData[];
+
 	private owners: string[];
 
 	public isOwner(id: string): boolean {
@@ -116,7 +117,7 @@ export class Client extends Discord.Client {
 		return command;
 	}
 
-	private reloadSingle(alias: string): boolean {
+	public reloadSingle(alias: string): boolean {
 		const path = this.commandPaths.get(this.aliases.get(alias));
 
 		if (!path) return false;
@@ -126,50 +127,44 @@ export class Client extends Discord.Client {
 		return true;
 	}
 
-	private loadCommands(): void {
+	public loadCommands(): void {
 		this.aliases = new Map();
 		this.commands = new Map();
 		this.commandPaths = new Map();
 
-		const helpInfo = [];
-		if (this.categories) {
-			fs.readdirSync(this.directory).forEach((directory) => {
-				helpInfo.push({
-					name: directory.toLowerCase().replace(/^./, (m) => m.toUpperCase()),
-					value: '',
-				});
+		this.helpInfo = [];
 
-				directory = path.join(this.directory, directory);
-
-				if (!fs.lstatSync(directory).isDirectory()) return;
-
-				fs.readdirSync(directory).forEach((file) => {
-					file = path.join(directory, file);
-
-					if (fs.lstatSync(file).isFile() && file.endsWith('.js')) {
-						const command = this.loadCommand(file);
-						helpInfo[
-							helpInfo.length - 1
-						].value += `**${command.name}:** ${command.description}\n\n`;
-					}
-				}, this);
-			}, this);
-		}
-
-		this.saveCommand(new Help(this.Prefix, this.commands, this.aliases, helpInfo, this));
-
-		this.saveCommand(
-			new Reload(
-				this.Prefix,
-				this.loadCommands,
-				(alias: string) => this.reloadSingle.call(this, alias),
+		if (this.categories)
+			fs.readdirSync(this.directory).forEach(
+				(directory) =>
+					this.loadCategory(
+						directory.replace(/^./, (match) => match.toUpperCase()),
+						path.join(this.directory, directory)
+					),
 				this
-			)
-		);
+			);
 
-		this.saveCommand(new Command(Prefix, this.Prefix, 'System', this));
+		this.loadCategory('System', `${__dirname}/systemCommands`);
+	}
 
-		this.saveCommand(new Command(CustomCommand, this.Prefix, 'System', this));
+	private loadCategory(name: string, directory: string) {
+		this.helpInfo.push({
+			name: name.toLowerCase().replace(/^./, (m) => m.toUpperCase()),
+			value: '',
+		});
+
+		if (!fs.lstatSync(directory).isDirectory()) return;
+
+		fs.readdirSync(directory).forEach((file) => {
+			file = path.join(directory, file);
+
+			if (fs.lstatSync(file).isFile() && file.endsWith('.js')) {
+				const command = this.loadCommand(file);
+				this.helpInfo[
+					this.helpInfo.length - 1
+				].value += `**${command.name}:** ${command.description}\n\n`;
+			}
+		}, this);
 	}
 
 	private async handleCustomCommands(message: Message) {
@@ -196,7 +191,7 @@ export class Client extends Discord.Client {
 
 		const args = message.content.slice(localPrefix.length).split(/\s+/);
 
-		const command = this.commands.get(this.aliases.get(args[0].toLowerCase()));
+		const command = this.getCommand(args[0]);
 
 		if (!command) return;
 
@@ -417,6 +412,10 @@ export class Client extends Discord.Client {
 				}
 			});
 		});
+	}
+
+	public getCommand(alias: string): Command {
+		return this.commands.get(this.aliases.get(alias.toLowerCase()));
 	}
 
 	public on<K extends keyof ClientEvents>(
