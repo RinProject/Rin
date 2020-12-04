@@ -50,6 +50,7 @@ module.exports = {
 		(prefix) => `${prefix}mute @Jihyo#2423 1d Being lazy`, 
 		(prefix) => `${prefix}mute 157101769858613248 1h`, 
 		(prefix) => `${prefix}mute @Tarren#9722 Too tardy`
+	]
 	name: 'Mute',
 	permissions: ['MANAGE_ROLES'],
 	botPermissions: ['MANAGE_ROLES', 'MANAGE_CHANNELS'],
