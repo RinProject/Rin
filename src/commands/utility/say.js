@@ -13,8 +13,8 @@ module.exports = {
 		return message.channel.send(args.splice(1).join(' '));
 	},
 	description: 'Says a given message.',
-	detailed: 'Says a given message.',
-	examples: (prefix) => `${prefix}say <message>`,
-	name: 'say',
+	detailed: 'Has the bot say a message in the same channel.',
+	examples: (prefix) => `${prefix}say Soze is an epic gamer!`,
+	name: 'Say',
 	permissions: ['ADMINISTRATOR'],
 };

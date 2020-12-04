@@ -36,6 +36,6 @@ export = new Command({
 		(prefix) => `${prefix}enable [command]`,
 	],
 	name: 'ToggleCommand',
-	aliases: ['disabledCommands', 'toggle', 'disable', 'enable', 'disableCommand', 'enableCommand'],
+	aliases: ['DisabledCommands', 'Toggle', 'Disable', 'Enable', 'DisableCommand', 'EnableCommand'],
 	permissions: ['ADMINISTRATOR'],
 });

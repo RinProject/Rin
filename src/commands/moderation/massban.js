@@ -39,10 +39,10 @@ module.exports = {
 		});
 	},
 	description: 'Bans all given users (by id)',
-	detailed: 'Bans all given users (by id)',
+	detailed: 'Bans all given users (by id).',
 	examples: (prefix) => `${prefix}massban <id> <id> <id>`,
-	name: 'massban',
-	aliases: ['mban'],
+	name: 'Massban',
+	aliases: ['mBan'],
 	permissions: ['BAN_MEMBERS'],
 	botPermissions: ['BAN_MEMBERS'],
 	guildOnly: true,

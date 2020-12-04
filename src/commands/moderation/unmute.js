@@ -35,9 +35,12 @@ module.exports = {
 			);
 	},
 	description: 'Unmutes a given member',
-	detailed: 'Unmutes given member with the option to add a reason for the unmute.',
-	examples: (prefix) => `${prefix}unmute @Jihyo#2423, ${prefix}unmute 157101769858613248`,
-	name: 'unmute',
+	detailed: 'Unmutes given member.',
+	examples: [
+		(prefix) => `${prefix}unmute @Jihyo#2423`, 
+		(prefix) => `${prefix}unmute 157101769858613248`
+	],
+	name: 'Unmute',
 	permissions: ['MANAGE_ROLES'],
 	botPermissions: ['MANAGE_ROLES'],
 	guildOnly: true,

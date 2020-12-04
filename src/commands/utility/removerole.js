@@ -35,8 +35,8 @@ module.exports = {
 		}
 	},
 	description: 'Removes a role from a user.',
-	detailed: 'Removes a role from a user.',
-	examples: (prefix) => `${prefix}removerole @user @role`,
-	name: 'removerole',
+	detailed: 'Removes a given role from a given user.',
+	examples: (prefix) => `${prefix}removerole @Jihyo@2423 @Cutie`,
+	name: 'RemoveRole',
 	permissions: ['MANAGE_ROLES'],
 };

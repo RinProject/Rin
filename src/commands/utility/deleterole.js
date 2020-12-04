@@ -40,9 +40,9 @@ module.exports = {
 			});
 	},
 	description: 'Deletes a role.',
-	detailed: 'Deletes a given role.',
-	examples: (prefix) => `${prefix}deleterole @rolename`,
-	name: 'deleterole',
+	detailed: 'Deletes a given role from the server.',
+	examples: (prefix) => `${prefix}deleterole @Cutie`,
+	name: 'DeleteRole',
 	permissions: ['MANAGE_ROLES'],
 	botPermissions: ['MANAGE_ROLES'],
 	guildOnly: true,

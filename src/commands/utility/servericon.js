@@ -30,10 +30,10 @@ module.exports = {
 				},
 			});
 	},
-	aliases: ['icon'],
-	description: 'Returns a server icon',
-	detailed: 'Returns a server icon',
+	aliases: ['Icon'],
+	description: 'Displays the icon of a server.',
+	detailed: 'Displays the icon of a server.',
 	examples: (prefix) => `${prefix}servericon`,
-	name: 'servericon',
+	name: 'ServerIcon',
 	guildOnly: true,
 };

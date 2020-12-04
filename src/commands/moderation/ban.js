@@ -55,7 +55,7 @@ module.exports = {
 		(prefix) => `${prefix}ban @someone days reason`,
 		(prefix) => `${prefix}ban <id> days reason`,
 	],
-	name: 'ban',
+	name: 'Ban',
 	permissions: ['BAN_MEMBERS'],
 	botPermissions: ['BAN_MEMBERS'],
 	guildOnly: true,

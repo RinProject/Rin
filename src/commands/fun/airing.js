@@ -103,8 +103,11 @@ module.exports = {
 	},
 	description: 'Shows airing anime',
 	detailed: 'Shows a list of airing anime or a specific title, queried from https://anilist.co',
-	examples: (prefix) => `${prefix}airing\n${prefix}next Shokugeki no Souma`,
-	name: 'airing',
-	aliases: ['next'],
+	examples: [
+		(prefix) => `${prefix}airing`,
+		(prefix) => `${prefix}next Shokugeki no Souma`
+	],
+	name: 'Airing',
+	aliases: ['Next'],
 	guildOnly: false,
 };

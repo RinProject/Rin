@@ -109,7 +109,10 @@ module.exports = {
 	},
 	aliases: ['q'],
 	description: 'Quotes a message.',
-	detailed: 'Quotes a message.',
-	examples: (prefix) => `${prefix}quote <messageID> OR ${prefix}quote #channel <messageID>`,
-	name: 'quote',
+	detailed: 'Quotes a previous message sent in the channel.',
+	examples: [
+		(prefix) => `${prefix}quote <messageID>`,
+		(prefix) => `${prefix}quote #channel <messageID>`
+	],
+	name: 'Quote',
 };

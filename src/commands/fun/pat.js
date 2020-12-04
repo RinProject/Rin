@@ -37,8 +37,8 @@ module.exports = {
 			});
 	},
 	description: 'Pats a user',
-	detailed: 'Pats first mentioned user',
-	examples: (prefix) => `${prefix}pat @member`,
-	name: 'pat',
+	detailed: 'Pats a mentioned user with a cute image or gif.',
+	examples: (prefix) => `${prefix}pat @Jihyo#3301`,
+	name: 'Pat',
 	guildOnly: true,
 };

@@ -93,12 +93,15 @@ const warnings: command = {
 			}
 		}
 	},
-	aliases: ['warning'],
+	aliases: ['Warning'],
 	description: 'Displays warnings and their ids of a user, or a specific warning',
-	detailed: 'Warns a user',
-	examples: (prefix) =>
-		`${prefix}warnings @Tarren#9722\n${prefix}warnings 157101769858613248\n${prefix}warning [id]`,
-	name: 'warnings',
+	detailed: 'Displays warnings and their ids of a user, or a specific warning by using the ID of the warning',
+	examples: [
+		(prefix) => `${prefix}warnings @Tarren#9722`,
+		(prefix) =>	`${prefix}warnings 157101769858613248`,
+		(prefix) =>	`${prefix}warning [id]`
+	],
+	name: 'Warnings',
 	permissions: ['BAN_MEMBERS'],
 	botPermissions: ['BAN_MEMBERS'],
 	guildOnly: true,

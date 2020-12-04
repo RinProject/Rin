@@ -20,7 +20,7 @@ module.exports = {
 	description: 'Returns heads or tails.',
 	detailed: 'Returns heads or tails.',
 	examples: (prefix) => `${prefix}coinflip`,
-	name: 'coinflip',
+	name: 'CoinFlip',
 	perms: null,
 	guildOnly: true,
 };

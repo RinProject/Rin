@@ -14,11 +14,14 @@ module.exports = {
 			},
 		});
 	},
-	aliases: ['randnum'],
+	aliases: ['RandNum'],
 	description: 'Returns a random number.',
 	detailed: 'Returns a random number in a given range or in a bot generated maximum.',
-	examples: (prefix) => `${prefix}randomnumber, ${prefix}randomnumber 1000`,
-	name: 'randomnumber',
+	examples: [
+		(prefix) => `${prefix}randomnumber`,
+		(prefix) => `${prefix}randomnumber 1000`
+	],
+	name: 'RandomNumber',
 	perms: null,
 	guildOnly: true,
 };

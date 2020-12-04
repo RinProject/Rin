@@ -24,8 +24,8 @@ module.exports = {
 		}
 	},
 	description: 'Says a given message in a given channel.',
-	detailed: 'Says a given message in a given channel.',
-	examples: (prefix) => `${prefix}sayc #channel <message>`,
-	name: 'sayc',
+	detailed: 'Has the bot say a message in a given channel.',
+	examples: (prefix) => `${prefix}sayc 676143854365310980 Tarren is an epic gamer!`,
+	name: 'SayC',
 	permissions: ['ADMINISTRATOR'],
 };

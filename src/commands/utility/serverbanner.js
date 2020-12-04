@@ -30,10 +30,10 @@ module.exports = {
 				},
 			});
 	},
-	aliases: ['banner'],
-	description: 'Returns a server banner',
-	detailed: 'Returns a server banner',
+	aliases: ['Banner'],
+	description: 'Displays the banner of a server.',
+	detailed: 'Displays the banner of a server.',
 	examples: (prefix) => `${prefix}serverbanner`,
-	name: 'serverbanner',
+	name: 'ServerBanner',
 	guildOnly: true,
 };

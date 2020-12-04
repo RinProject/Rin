@@ -143,9 +143,14 @@ module.exports = {
 			},
 		});
 	},
-	aliases: ['who'],
-	description: 'Returns info of a user',
-	detailed: 'Returns info of a user',
-	examples: (prefix) => `${prefix}whois @someone`,
-	name: 'whois',
+	aliases: ['Who'],
+	description: 'Returns info about a user.',
+	detailed: 'Returns info about a user.',
+	examples: [
+		(prefix) => `${prefix}whois`,
+		(prefix) => `${prefix}whois @Jihyo#3301`,
+		(prefix) => `${prefix}whois Jihyo`,
+		(prefix) => `${prefix}whois 571487483016118292` 
+	],
+	name: 'WhoIs',
 };

@@ -37,9 +37,12 @@ module.exports = {
 		}
 	},
 	description: 'Unbans a user',
-	detailed: 'Unbans mentioned user',
-	examples: (prefix) => `${prefix}unban <id>`,
-	name: 'unban',
+	detailed: 'Unbans mentioned user.',
+	examples: [
+		(prefix) => `${prefix}unban @Qred#0122`,
+		(prefix) => `${prefix}unban 186563462330056704`
+	],
+	name: 'Unban',
 	permissions: ['BAN_MEMBERS'],
 	botPermissions: ['BAN_MEMBERS'],
 	guildOnly: true,

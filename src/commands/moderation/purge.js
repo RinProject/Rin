@@ -33,11 +33,11 @@ module.exports = {
 			}
 		}
 	},
-	aliases: ['p'],
+	aliases: ['P'],
 	description: 'Purges Messages',
-	detailed: 'Purges Messages',
+	detailed: 'Purges a given number of messages.',
 	examples: (prefix) => `${prefix}purge <number of message to delete>`,
-	name: 'purge',
+	name: 'Purge',
 	permissions: ['MANAGE_MESSAGES'],
 	botPermissions: ['MANAGE_MESSAGES'],
 	guildOnly: true,

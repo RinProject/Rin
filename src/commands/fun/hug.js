@@ -37,8 +37,8 @@ module.exports = {
 			});
 	},
 	description: 'Hugs a user',
-	detailed: 'Hugs first mentioned user',
-	examples: (prefix) => `${prefix}hug @member`,
-	name: 'hug',
+	detailed: 'Hugs a mentioned user with a cute image or gif.',
+	examples: (prefix) => `${prefix}hug @Jihyo#3301`,
+	name: 'Hug',
 	guildOnly: true,
 };

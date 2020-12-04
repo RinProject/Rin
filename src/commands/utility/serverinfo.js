@@ -119,10 +119,10 @@ module.exports = {
 			},
 		});
 	},
-	aliases: ['info'],
+	aliases: ['Info'],
 	description: 'Returns info about the server',
 	detailed: 'Returns info about the server',
 	examples: (prefix) => `${prefix}serverinfo`,
-	name: 'serverinfo',
+	name: 'ServerInfo',
 	guildOnly: true,
 };

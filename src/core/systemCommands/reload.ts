@@ -17,5 +17,8 @@ export = new Command({
 	description: 'Reload one or several commands(owner only)',
 	detailed:
 		'Reload a specific command or all of the commands, this command is only usable by owners.',
-	examples: [(prefix) => `${prefix}reload`, (prefix) => `${prefix}reload pat`],
+	examples: [
+		(prefix) => `${prefix}reload`, 
+		(prefix) => `${prefix}reload pat`
+	],
 });

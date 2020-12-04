@@ -33,9 +33,12 @@ module.exports = {
 		}
 	},
 	description: 'Locks a channel',
-	detailed: 'Overwrites permissions to speak in channel it is called in',
-	examples: [(prefix) => `${prefix}lock`, (prefix) => `${prefix}lock off`],
-	name: 'lock',
+	detailed: 'Overwrites permissions to speak in channel it is called in.',
+	examples: [
+		(prefix) => `${prefix}lock`,
+		(prefix) => `${prefix}lock off`
+	],
+	name: 'Lock',
 	permissions: ['MANAGE_CHANNELS'],
 	botPermissions: ['MANAGE_CHANNELS'],
 	guildOnly: true,

@@ -37,8 +37,11 @@ module.exports = {
 			});
 	},
 	description: 'Bonks a user',
-	detailed: 'Bonks first mentioned user',
-	examples: (prefix) => `${prefix}bonk @member`,
-	name: 'bonk',
+	detailed: 'Bonks a mentioned user with an image or gif.',
+	examples: [
+		(prefix) => `${prefix}bonk @Soze#0040`,
+		(prefix) => `${prefix}bonk 169631518896029698`
+	] ,
+	name: 'Bonk',
 	guildOnly: true,
 };
