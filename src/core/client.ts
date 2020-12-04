@@ -33,9 +33,6 @@ export type reportInfo = {
 	mention?: boolean;
 };
 
-const category = /^[^\\/]*([\\/][^\\/]+)*[\\/](?=[^\\/]+[\\/][^\\/]+$)/;
-const fileEnd = /[\\/][^\\/]+$/;
-
 export interface ClientEvents extends Discord.ClientEvents {
 	mute: [
 		Discord.Guild,
@@ -102,17 +99,11 @@ export class Client extends Discord.Client {
 
 		command.aliases.forEach((alias) => this.aliases.set(alias.toLowerCase(), command.name), this);
 	}
-	private loadCommand(path: string): Command {
+	private loadCommand(path: string, category: string): Command {
 		delete require.cache[require.resolve(path)];
 		let command = require(path);
 		if (typeof command == 'function') command = new command(this.Prefix);
-		else
-			command = new Command(
-				command,
-				this.Prefix,
-				path.replace(category, '').replace(fileEnd, ''),
-				this
-			);
+		else command = new Command(command, this.Prefix, category, this);
 		this.saveCommand(command, path);
 		return command;
 	}
@@ -122,7 +113,7 @@ export class Client extends Discord.Client {
 
 		if (!path) return false;
 
-		this.loadCommand(path);
+		this.loadCommand(path, this.getCommand(alias).category);
 
 		return true;
 	}
@@ -159,7 +150,7 @@ export class Client extends Discord.Client {
 			file = path.join(directory, file);
 
 			if (fs.lstatSync(file).isFile() && file.endsWith('.js')) {
-				const command = this.loadCommand(file);
+				const command = this.loadCommand(file, name);
 				this.helpInfo[
 					this.helpInfo.length - 1
 				].value += `**${command.name}:** ${command.description}\n\n`;
