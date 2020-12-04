@@ -29,9 +29,9 @@ module.exports = {
 	description: 'Displays a users avatar.',
 	detailed: 'Displays a users avatar.',
 	examples: [
-		(prefix) => `${prefix}avatar`, 
+		(prefix) => `${prefix}avatar`,
 		(prefix) => `${prefix}avatar @Soze#0040`,
-		(prefix) => `${prefix}avatar 169631518896029698`
+		(prefix) => `${prefix}avatar 169631518896029698`,
 	],
 	name: 'Avatar',
 };

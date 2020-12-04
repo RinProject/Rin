@@ -47,9 +47,9 @@ module.exports = {
 	detailed:
 		'Mutes given member with the option to add a reason for the mute. Mutes are checked twice a minute meaning that an automatic unmute can be up to half a minute late.',
 	examples: [
-		(prefix) => `${prefix}mute @Jihyo#2423 1d Being lazy`, 
-		(prefix) => `${prefix}mute 157101769858613248 1h`, 
-		(prefix) => `${prefix}mute @Tarren#9722 Too tardy`
+		(prefix) => `${prefix}mute @Jihyo#2423 1d Being lazy`,
+		(prefix) => `${prefix}mute 157101769858613248 1h`,
+		(prefix) => `${prefix}mute @Tarren#9722 Too tardy`,
 	],
 	name: 'Mute',
 	permissions: ['MANAGE_ROLES'],

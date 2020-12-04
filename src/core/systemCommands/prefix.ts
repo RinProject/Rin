@@ -38,10 +38,7 @@ export = new Command({
 	},
 	description: 'Changes or displays the servers prefix.',
 	detailed: 'Change the prefix of the current server, display it, or reset it.',
-	examples: [
-		(prefix) => `${prefix}prefix`, 
-		(prefix) => `${prefix}prefix :?`
-	],
+	examples: [(prefix) => `${prefix}prefix`, (prefix) => `${prefix}prefix :?`],
 	name: 'Prefix',
 	guildOnly: true,
 });

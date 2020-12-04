@@ -37,8 +37,8 @@ module.exports = {
 	description: 'Unmutes a given member.',
 	detailed: 'Unmutes given member.',
 	examples: [
-		(prefix) => `${prefix}unmute @Jihyo#2423`, 
-		(prefix) => `${prefix}unmute 157101769858613248`
+		(prefix) => `${prefix}unmute @Jihyo#2423`,
+		(prefix) => `${prefix}unmute 157101769858613248`,
 	],
 	name: 'Unmute',
 	permissions: ['MANAGE_ROLES'],

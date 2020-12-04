@@ -36,5 +36,5 @@ module.exports = {
 	description: 'Kisses a user.',
 	detailed: 'Kisses a mentioned user with a cute image or gif.',
 	examples: (prefix) => `${prefix}kiss @Soze#0040`,
-	name: 'Kiss'
+	name: 'Kiss',
 };

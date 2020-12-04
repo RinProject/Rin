@@ -32,9 +32,9 @@ module.exports = {
 	description: `Gets a given role's info.`,
 	detailed: `Sends a given role's info.`,
 	examples: [
-		(prefix) =>`${prefix}roleinfo @Cutie`, 
-		(prefix) => `${prefix}roleinfo 676144532303380482`, 
-		(prefix) => `${prefix}roleinfo Cutie`
+		(prefix) => `${prefix}roleinfo @Cutie`,
+		(prefix) => `${prefix}roleinfo 676144532303380482`,
+		(prefix) => `${prefix}roleinfo Cutie`,
 	],
 	name: 'RoleInfo',
 	guildOnly: true,

@@ -150,7 +150,7 @@ module.exports = {
 		(prefix) => `${prefix}whois`,
 		(prefix) => `${prefix}whois @Jihyo#3301`,
 		(prefix) => `${prefix}whois Jihyo`,
-		(prefix) => `${prefix}whois 571487483016118292` 
+		(prefix) => `${prefix}whois 571487483016118292`,
 	],
 	name: 'WhoIs',
 };

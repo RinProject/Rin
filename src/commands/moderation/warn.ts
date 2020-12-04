@@ -97,10 +97,10 @@ const warn: command = {
 	description: 'Warns a user.',
 	detailed: 'Warns mentioned user and can also remove/restore warnings.',
 	examples: [
-		(prefix) => `${prefix}warn @Tarren#9722 Being a chuckle fuck`,
-		(prefix) =>	`${prefix}warn 571487483016118292 writing bad code`,
-		(prefix) =>	`${prefix}warn remove 6a6169c312`,
-		(prefix) =>	`${prefix}warn restore 6a6169c312`
+		(prefix: string): string => `${prefix}warn @Tarren#9722 Being a chuckle fuck`,
+		(prefix: string): string => `${prefix}warn 571487483016118292 writing bad code`,
+		(prefix: string): string => `${prefix}warn remove 6a6169c312`,
+		(prefix: string): string => `${prefix}warn restore 6a6169c312`,
 	],
 	name: 'Warn',
 	permissions: ['BAN_MEMBERS'],

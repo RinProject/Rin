@@ -41,10 +41,7 @@ module.exports = {
 	},
 	description: 'Kicks a givem member.',
 	detailed: 'Kicks given member with the option to add a reason for the kick.',
-	examples: [
-		(prefix) => `${prefix}kick @someone reason`,
-		(prefix) => `${prefix}kick <id> reason`
-	],
+	examples: [(prefix) => `${prefix}kick @someone reason`, (prefix) => `${prefix}kick <id> reason`],
 	name: 'Kick',
 	permissions: ['KICK_MEMBERS'],
 	botPermissions: ['KICK_MEMBERS'],

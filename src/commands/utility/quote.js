@@ -112,7 +112,7 @@ module.exports = {
 	detailed: 'Quotes a previous message sent in the channel.',
 	examples: [
 		(prefix) => `${prefix}quote <messageID>`,
-		(prefix) => `${prefix}quote #channel <messageID>`
+		(prefix) => `${prefix}quote #channel <messageID>`,
 	],
 	name: 'Quote',
 };

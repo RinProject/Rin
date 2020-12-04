@@ -40,7 +40,7 @@ module.exports = {
 	detailed: 'Unbans mentioned user.',
 	examples: [
 		(prefix) => `${prefix}unban @Qred#0122`,
-		(prefix) => `${prefix}unban 186563462330056704`
+		(prefix) => `${prefix}unban 186563462330056704`,
 	],
 	name: 'Unban',
 	permissions: ['BAN_MEMBERS'],
