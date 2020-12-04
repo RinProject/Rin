@@ -149,7 +149,7 @@ export class Client extends Discord.Client {
 
 	private loadCategory(name: string, directory: string) {
 		this.helpInfo.push({
-			name: name.toLowerCase().replace(/^./, (m) => m.toUpperCase()),
+			name: `** **\n__${name.toLowerCase().replace(/^./, (m) => m.toUpperCase())}__\n** **`,
 			value: '',
 		});
 
