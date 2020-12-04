@@ -14,8 +14,7 @@ plugins:
   - 'prettier'
 rules:
   linebreak-style:
-    - error
-    - windows
+    - off
   semi:
     - error
     - always
