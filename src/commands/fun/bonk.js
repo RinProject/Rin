@@ -36,7 +36,7 @@ module.exports = {
 				},
 			});
 	},
-	description: 'Bonks a user',
+	description: 'Bonks a user.',
 	detailed: 'Bonks a mentioned user with an image or gif.',
 	examples: [
 		(prefix) => `${prefix}bonk @Soze#0040`,

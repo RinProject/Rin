@@ -36,7 +36,7 @@ export = new Command({
 				},
 			});
 	},
-	description: 'Changes or displays the servers prefix',
+	description: 'Changes or displays the servers prefix.',
 	detailed: 'Change the prefix of the current server, display it, or reset it.',
 	examples: [
 		(prefix) => `${prefix}prefix`, 

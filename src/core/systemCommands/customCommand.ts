@@ -126,7 +126,7 @@ export = new Command({
 				}
 			}
 	},
-	description: 'Changes or displays the servers prefix',
+	description: 'Changes or displays the servers prefix.',
 	detailed: 'Change the prefix of a server or reset it.',
 	examples: (prefix) => `${prefix}prefix ;`,
 	name: 'CustomCommand',

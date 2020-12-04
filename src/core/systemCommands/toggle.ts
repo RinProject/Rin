@@ -27,7 +27,7 @@ export = new Command({
 				? message.client.disableCommand(message.guild.id, command.name)
 				: message.client.enableCommand(message.guild.id, command.name);
 	},
-	description: 'Enables/disables commands',
+	description: 'Enables/disables commands.',
 	detailed:
 		'Toggles whether or not a command is available in a server. If called explicitly with enable/disable it will always enable or disable the given command according to the used keyword.',
 	examples: [

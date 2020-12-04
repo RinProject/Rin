@@ -34,7 +34,7 @@ module.exports = {
 				})
 			);
 	},
-	description: 'Unmutes a given member',
+	description: 'Unmutes a given member.',
 	detailed: 'Unmutes given member.',
 	examples: [
 		(prefix) => `${prefix}unmute @Jihyo#2423`, 

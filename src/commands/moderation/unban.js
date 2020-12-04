@@ -36,7 +36,7 @@ module.exports = {
 			});
 		}
 	},
-	description: 'Unbans a user',
+	description: 'Unbans a user.',
 	detailed: 'Unbans mentioned user.',
 	examples: [
 		(prefix) => `${prefix}unban @Qred#0122`,

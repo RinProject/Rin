@@ -94,7 +94,7 @@ const warnings: command = {
 		}
 	},
 	aliases: ['Warning'],
-	description: 'Displays warnings and their ids of a user, or a specific warning',
+	description: 'Displays warnings and their ids of a user, or a specific warning.',
 	detailed: 'Displays warnings and their ids of a user, or a specific warning by using the ID of the warning',
 	examples: [
 		(prefix) => `${prefix}warnings @Tarren#9722`,

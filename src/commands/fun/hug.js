@@ -36,7 +36,7 @@ module.exports = {
 				},
 			});
 	},
-	description: 'Hugs a user',
+	description: 'Hugs a user.',
 	detailed: 'Hugs a mentioned user with a cute image or gif.',
 	examples: (prefix) => `${prefix}hug @Jihyo#3301`,
 	name: 'Hug',

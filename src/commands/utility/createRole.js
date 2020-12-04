@@ -33,8 +33,8 @@ module.exports = {
 			});
 		}
 	},
-	description: 'Creates a role',
-	detailed: 'Creates a role: Takes in name and color',
+	description: 'Creates a role.',
+	detailed: 'Creates a role: Takes in name and color.',
 	examples: (prefix) => `${prefix}createrole @Cutie #FF80CC`,
 	name: 'CreateRole',
 	permissions: ['MANAGE_ROLES'],

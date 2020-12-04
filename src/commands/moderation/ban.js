@@ -48,7 +48,7 @@ module.exports = {
 				});
 			});
 	},
-	description: 'Bans a user',
+	description: 'Bans a user.',
 	detailed:
 		'Bans given user, with options to erase messages from the past given amount of days, and a reason.',
 	examples: [

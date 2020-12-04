@@ -39,7 +39,7 @@ module.exports = {
 			});
 		}
 	},
-	description: 'Kicks a givem member',
+	description: 'Kicks a givem member.',
 	detailed: 'Kicks given member with the option to add a reason for the kick.',
 	examples: [
 		(prefix) => `${prefix}kick @someone reason`,

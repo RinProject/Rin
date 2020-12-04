@@ -94,7 +94,7 @@ const warn: command = {
 				},
 			});
 	},
-	description: 'Warns a user',
+	description: 'Warns a user.',
 	detailed: 'Warns mentioned user and can also remove/restore warnings.',
 	examples: [
 		(prefix) => `${prefix}warn @Tarren#9722 Being a chuckle fuck`,

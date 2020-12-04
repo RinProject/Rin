@@ -38,7 +38,7 @@ module.exports = {
 			},
 		});
 	},
-	description: 'Bans all given users (by id)',
+	description: 'Bans all given users (by id).',
 	detailed: 'Bans all given users (by id).',
 	examples: (prefix) => `${prefix}massban <id> <id> <id>`,
 	name: 'MassBan',

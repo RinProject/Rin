@@ -14,7 +14,7 @@ export = new Command({
 		}
 	},
 	name: 'Reload',
-	description: 'Reload one or several commands(owner only)',
+	description: 'Reload one or several commands(owner only).',
 	detailed:
 		'Reload a specific command or all of the commands, this command is only usable by owners.',
 	examples: [

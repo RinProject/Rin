@@ -31,7 +31,7 @@ export = new Command({
 			});
 	},
 	name: 'Help',
-	description: 'Get help with the bot',
+	description: 'Get help with the bot.',
 	detailed: 'Help command, gets a list of commands or information about a specific command.',
 	examples: [
 		(prefix) => `${prefix}help`, 

@@ -101,7 +101,7 @@ module.exports = {
 			});
 		}
 	},
-	description: 'Shows airing anime',
+	description: 'Shows airing anime.',
 	detailed: 'Shows a list of airing anime or a specific title, queried from https://anilist.co',
 	examples: [
 		(prefix) => `${prefix}airing`,

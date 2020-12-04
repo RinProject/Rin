@@ -26,7 +26,7 @@ module.exports = {
 		});
 	},
 	aliases: ['Avi', 'Pfp'],
-	description: 'Displays a users avatar',
+	description: 'Displays a users avatar.',
 	detailed: 'Displays a users avatar.',
 	examples: [
 		(prefix) => `${prefix}avatar`, 

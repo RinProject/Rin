@@ -29,7 +29,7 @@ module.exports = {
 			});
 		}
 	},
-	description: `Gets a given role's info`,
+	description: `Gets a given role's info.`,
 	detailed: `Sends a given role's info.`,
 	examples: [
 		(prefix) =>`${prefix}roleinfo @Cutie`, 

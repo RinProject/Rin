@@ -34,7 +34,7 @@ module.exports = {
 		}
 	},
 	aliases: ['P'],
-	description: 'Purges Messages',
+	description: 'Purges Messages.',
 	detailed: 'Purges a given number of messages.',
 	examples: (prefix) => `${prefix}purge <number of message to delete>`,
 	name: 'Purge',

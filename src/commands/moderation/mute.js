@@ -43,7 +43,7 @@ module.exports = {
 				})
 			);
 	},
-	description: 'Mutes a given member',
+	description: 'Mutes a given member.',
 	detailed:
 		'Mutes given member with the option to add a reason for the mute. Mutes are checked twice a minute meaning that an automatic unmute can be up to half a minute late.',
 	examples: [
