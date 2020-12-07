@@ -38,6 +38,6 @@ module.exports = {
 	description: 'Gives a given user a given role.',
 	detailed: 'Gives a given user a given role.',
 	examples: (prefix) => `${prefix}giverole @Jihyo#2423 @Cutie`,
-	name: 'giverole',
+	name: 'GiveRole',
 	permissions: ['MANAGE_ROLES'],
 };
