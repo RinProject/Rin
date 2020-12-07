@@ -9,6 +9,7 @@ A general purpose Discord bot written in JavaScript
 * Build with `yarn build`
 * Copy and rename config-template.json to config.json, fill in all data
 	* Token; get pre-existing bot token or create a new one through [Discord's Dev Portal](https://discord.com/developers/applications). **Note: discord.js will throw an error if this is not included**
+    	* Bot requires both `PRESENCE INTENT` and `SERVER MEMBERS INTENT` see [documentation](https://discord.com/developers/docs/topics/gateway#privileged-intents) and [official article](https://support.discord.com/hc/en-us/articles/360040720412) about privacy for more info.
 	* Pick your desired prefix for example: `;`, `!`, `r!` or something entirely different!
 	* Whether or not to enable the help command, defaults to true if undefined.
 	* Channel; id of a text channel to which the bot shall log.

@@ -1,7 +1,7 @@
 import { Guild } from '../../database';
-import { command } from '../../core';
+import { Command } from '../../core';
 
-const reactionRoles: command = {
+export = new Command({
 	run: async function (message, args, colors) {
 		if (args[1] == undefined) {
 			message.channel.send('', {
@@ -10,6 +10,7 @@ const reactionRoles: command = {
 					description: `Please follow the format ${message.client.prefix()}reactrole add <messageID> <emojiID> <roleID> or ${message.client.prefix()}reactrole remove <messageID> <emojiID>.`,
 				},
 			});
+			return;
 		}
 
 		const messageId = args[2];
@@ -28,6 +29,7 @@ const reactionRoles: command = {
 			}
 			const g = await Guild.findOne({ id: message.guild.id });
 			g.reactionRoles.set(messageId + emojiId, roleId);
+			g.save();
 
 			message.channel.messages
 				.fetch(messageId)
@@ -56,6 +58,7 @@ const reactionRoles: command = {
 			}
 			const g = await Guild.findOne({ id: message.guild.id });
 			g.reactionRoles.delete(messageId + emojiId);
+			g.save();
 
 			message.channel.send('', {
 				embed: {
@@ -68,10 +71,10 @@ const reactionRoles: command = {
 	aliases: ['rr', 'ReactRole'],
 	description: 'Add or remove a react role.',
 	detailed: 'Add a react role to a message, or remove a react role from a message.',
-	examples: (prefix) =>
-		`${prefix}reactrole add <messageID> <emojiID> <roleID>, ${prefix}reactrole remove <messageID> <roleID>`,
+	examples: [
+		(prefix) => `${prefix}reactrole add <messageID> <emojiID> <roleID>`,
+		(prefix) => `${prefix}reactrole remove <messageID> <roleID>`,
+	],
 	name: 'ReactionRole',
 	permissions: ['MANAGE_ROLES'],
-};
-
-export = reactionRoles;
+});
