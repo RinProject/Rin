@@ -13,14 +13,14 @@ export interface PromptOptions {
 
 export interface command {
 	name: string;
-	run?: (
+	run: (
 		message: Message,
 		args?: string[],
 		colors?: Colors,
 		Prompt?: (options: PromptOptions) => Promise<Message>
 	) => Promise<void>;
-	description?: string;
-	detailed?: string;
+	description: string;
+	detailed: string;
 	examples?: exampleResolvable[] | exampleResolvable;
 	aliases?: string[];
 	permissions?: Discord.PermissionString[];

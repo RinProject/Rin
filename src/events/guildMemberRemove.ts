@@ -6,7 +6,7 @@ export = (client: Client): void => {
 		const g = await Guild.findOne({ id: member.guild.id });
 		const channel = await fetchTextChannel(member.guild, g.logChannel);
 
-		if (channel && g.eventLogged('guildMemberRemove'))
+		if (channel && g.eventLogged('leave'))
 			channel.send({
 				embed: {
 					author: {

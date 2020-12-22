@@ -7,7 +7,7 @@ export = (client: Client): void => {
 		const g = await Guild.findOne({ id: oldMessage.guild.id });
 		const channel = await fetchTextChannel(oldMessage.guild, g.logChannel);
 
-		if (channel && g.eventLogged('messageUpdate')) {
+		if (channel && g.eventLogged('messageEdit')) {
 			const fields = [
 				{
 					name: 'Pre edit message',

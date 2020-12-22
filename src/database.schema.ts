@@ -1,8 +1,22 @@
 import mongoose from 'mongoose';
 
-import { ClientEvents } from './core/client';
 import { eventFlags } from './core/utils';
 import { CustomCommand } from './core/customCommandTypes';
+
+export type LogEvent =
+	| 'channelCreate'
+	| 'channelDelete'
+	| 'channelUpdate'
+	| 'ban'
+	| 'unban'
+	| 'join'
+	| 'leave'
+	| 'messageDelete'
+	| 'messageDeleteBulk'
+	| 'messageEdit'
+	| 'mute'
+	| 'unmute'
+	| 'warning';
 
 export const GuildSchema = new mongoose.Schema({
 	id: {
@@ -36,15 +50,15 @@ export const GuildSchema = new mongoose.Schema({
 	eventsLogged: { type: Number, default: 0 },
 });
 
-GuildSchema.methods.eventLogged = function (event: keyof ClientEvents): boolean {
+GuildSchema.methods.eventLogged = function (event: LogEvent): boolean {
 	return Boolean(this.eventsLogged & (eventFlags[event.toLowerCase()] || 0x0));
 };
 
-GuildSchema.methods.enableLoggingFor = function (event: keyof ClientEvents): void {
+GuildSchema.methods.enableLoggingFor = function (event: LogEvent): void {
 	this.eventsLogged |= eventFlags[event.toLowerCase()] || 0x0;
 };
 
-GuildSchema.methods.disableLoggingFor = function (event: keyof ClientEvents): void {
+GuildSchema.methods.disableLoggingFor = function (event: LogEvent): void {
 	if (eventFlags[event] !== undefined) this.eventsLogged &= ~eventFlags[event];
 };
 
@@ -77,9 +91,9 @@ export interface IGuildSchema extends mongoose.Document {
 	muteRole: string;
 	logChannel: string;
 	eventsLogged: number;
-	eventLogged(event: keyof ClientEvents | string): boolean;
-	enableLoggingFor(event: keyof ClientEvents | string): void;
-	disableLoggingFor(event: keyof ClientEvents | string): void;
+	eventLogged(event: LogEvent): boolean;
+	enableLoggingFor(event: LogEvent): void;
+	disableLoggingFor(event: LogEvent): void;
 	logAll(): void;
 	logNone(): void;
 }

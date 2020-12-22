@@ -1,12 +1,14 @@
-import { Guild } from '../../database';
+import { Guild, LogEvent } from '../../database';
 import { Command, eventKeyName } from '../../core';
 
 const events = Object.keys(eventKeyName);
-
-const eventsText = `Event list:
+const eventList = `Event list:
 \`\`\`
-${events.reduce((a, v) => `${a}${eventKeyName[v]}\n`, '').slice(0, -1)}
+${events.reduce((a, v) => `${a}• ${eventKeyName[v]}\n`, '').slice(0, -1)}
 \`\`\``;
+const detailed = `Lets you set and modify: your log channel and what you log to your hearts content.
+
+${eventList}`;
 
 export = new Command({
 	run: async function (message, args, colors) {
@@ -39,7 +41,7 @@ export = new Command({
 					message.channel.send({
 						embed: {
 							title: 'Incorrect command usage',
-							description: `Correct usage:\n\`\`\`${message.client.prefix()}log enable all\n${message.client.prefix()}log enable [event]\`\`\`\n\n${eventsText}`,
+							description: `Correct usage:\n\`\`\`${message.client.prefix()}log enable all\n${message.client.prefix()}log enable [event]\`\`\`\n\n${eventList}`,
 						},
 					});
 				else if (args[2] == 'all') {
@@ -60,12 +62,12 @@ export = new Command({
 					const event = args[2].toLowerCase();
 					if (events.includes(event)) {
 						const g = await Guild.findOne({ id: message.guild.id });
-						g.disableLoggingFor(event);
+						g.disableLoggingFor(event as LogEvent);
 						g.save();
 						message.channel.send({
 							embed: {
-								title: 'Event now logged',
-								description: `Now logging ${eventKeyName[event]}`,
+								title: 'Event enabled',
+								description: `This bot will log \`${eventKeyName[event]}\` events.`,
 								color: colors.success,
 							},
 						});
@@ -73,7 +75,7 @@ export = new Command({
 						message.channel.send({
 							embed: {
 								title: 'Unable to find an event that can be logged by that name',
-								description: eventsText,
+								description: eventList,
 								color: colors.error,
 							},
 						});
@@ -85,7 +87,7 @@ export = new Command({
 					message.channel.send({
 						embed: {
 							title: 'Incorrect command usage',
-							description: `Correct usage:\n\`\`\`${message.client.prefix()}log disable all\n${message.client.prefix()}log disable [event]\`\`\`\n\n${eventsText}`,
+							description: `Correct usage:\n\`\`\`${message.client.prefix()}log disable all\n${message.client.prefix()}log disable [event]\`\`\`\n\n${eventList}`,
 						},
 					});
 				else if (args[2] == 'all') {
@@ -104,12 +106,12 @@ export = new Command({
 					const event = args[2].toLowerCase();
 					if (events.includes(event)) {
 						const g = await Guild.findOne({ id: message.guild.id });
-						g.disableLoggingFor(event);
+						g.disableLoggingFor(event as LogEvent);
 						g.save();
 						message.channel.send({
 							embed: {
-								title: 'Event not logged',
-								description: `No longer logging ${eventKeyName[event]}`,
+								title: 'Event disabled',
+								description: `This bot will not log \`${eventKeyName[event]}\` events.`,
 								color: colors.success,
 							},
 						});
@@ -117,7 +119,7 @@ export = new Command({
 						message.channel.send({
 							embed: {
 								title: 'Unable to find an event that can be logged by that name',
-								description: eventsText,
+								description: eventList,
 								color: colors.error,
 							},
 						});
@@ -127,14 +129,14 @@ export = new Command({
 			default: {
 				const g = await Guild.findOne({ id: message.guild.id });
 				const status =
-					`Log channel: ${g.logChannel ? `<#${g.logChannel}>` : 'none'}\n\n` +
+					`Log channel: ${g.logChannel ? `<#${g.logChannel}>` : 'none'}\n\`\`\`` +
 					events
 						.reduce(
-							(acc, v) =>
-								`${acc}${eventKeyName[v]} ${g.eventLogged(v) ? ':white_check_mark:' : ':x:'}\n`,
+							(acc, v) => `${acc}${g.eventLogged(v as LogEvent) ? '✓' : '✕'} ${eventKeyName[v]}\n`,
 							''
 						)
-						.slice(0, -1);
+						.slice(0, -1) +
+					'```';
 				message.channel.send({
 					embed: {
 						title: 'Log status',
@@ -146,9 +148,15 @@ export = new Command({
 		}
 	},
 	description: 'Sets, clears, and displays your log settings.',
-	detailed: 'Lets you set and modify: your log channel and what you log to your hearts content.',
-	examples: [(prefix) => `${prefix}log channel #logs`, (prefix) => `${prefix}log enable all`],
-	name: 'log',
+	detailed,
+	examples: [
+		(prefix) => `${prefix}log channel #logs`,
+		(prefix) => `${prefix}log enable all`,
+		(prefix) => `${prefix}log disable all`,
+		(prefix) => `${prefix}log enable mute`,
+		(prefix) => `${prefix}log disable guildMemberAdd`,
+	],
+	name: 'Log',
 	permissions: ['ADMINISTRATOR'],
 	guildOnly: true,
 });

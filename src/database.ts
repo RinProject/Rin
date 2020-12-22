@@ -5,7 +5,10 @@ import {
 	GuildSchema,
 	IMuteSchema,
 	MuteSchema,
+	LogEvent,
 } from './database.schema';
+
+export { LogEvent };
 
 export const connect = async (): Promise<typeof mongoose> =>
 	mongoose.connect(process.env.RIN_MONGODB_HOST || 'mongodb://localhost:27017/rin', {
