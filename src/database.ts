@@ -56,7 +56,7 @@ export async function updateEntry(
 	if (!Object.values(ValidSchemas).includes(schema.toString()))
 		throw new Error(`${schema} is not a valid schema.`);
 
-	let GenericModel: mongoose.Model<any, {}>;
+	let GenericModel: mongoose.Model<any>;
 
 	try {
 		GenericModel = mongoose.model(ValidSchemas.toString());
@@ -81,7 +81,7 @@ export async function deleteEntry(
 	if (!Object.values(ValidSchemas).includes(schema.toString()))
 		throw new Error(`${schema} is not a valid schema.`);
 
-	let GenericModel: mongoose.Model<any, {}>;
+	let GenericModel: mongoose.Model<any>;
 
 	try {
 		GenericModel = mongoose.model(ValidSchemas.toString());
