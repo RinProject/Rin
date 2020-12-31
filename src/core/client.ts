@@ -186,7 +186,11 @@ export class Client extends Discord.Client {
 
 		if (!command) return;
 
-		if (message.guild && !(await command.enabledIn(message.guild.id))) return;
+		if (
+			message.guild &&
+			!(await this.enabledIn(message.guild.id, command.name, message.channel.id))
+		)
+			return;
 
 		if (command.guildOnly && !message.guild) {
 			message.channel.send({
@@ -307,41 +311,32 @@ export class Client extends Discord.Client {
 		});
 	}
 
-	private aliasToCommand(alias: string): string {
+	public aliasToCommand(alias: string): string {
 		const command = this.aliases.get(alias.toLowerCase());
 		if (!command) throw new Error('Invalid command.');
 		return command;
 	}
 
-	public async disableCommand(guild: string, commandAlias: string): Promise<void> {
-		const command = this.aliasToCommand(commandAlias);
+	public async disableCommand(guild: string, alias: string, channel?: string): Promise<void> {
+		const command = this.aliasToCommand(alias);
+		if (!command) throw new Error('Invalid command');
 		const g = await Guild.findOne({ id: guild });
-		if (g.disabledCommands.includes(command)) return;
-		g.disabledCommands.push(command);
-		g.update({ disabledCommands: g.disabledCommands });
+		g.disableCommand(command, channel);
 		g.save();
 	}
 
-	public async enableCommand(guild: string, commandAlias: string): Promise<void> {
-		const command = this.aliasToCommand(commandAlias);
+	public async enableCommand(guild: string, alias: string, channel?: string): Promise<void> {
+		const command = this.aliasToCommand(alias);
+		if (!command) throw new Error('Invalid command');
 		const g = await Guild.findOne({ id: guild });
-		const index = g.disabledCommands.indexOf(command);
-		if (index === -1) return;
-		else {
-			g.disabledCommands.splice(index, 1);
-			g.update({ disabledCommands: g.disabledCommands });
-			g.save();
-		}
+		g.enableCommand(command, channel);
+		g.save();
 	}
 
-	public async enabledIn(guild: string, command: string): Promise<boolean> {
+	public async enabledIn(guild: string, command: string, channel?: string): Promise<boolean> {
 		command = this.aliases.get(command.toLowerCase());
 		const g = await Guild.findOne({ id: guild });
-		return !(g && g.disabledCommands && g.disabledCommands.includes(command));
-	}
-
-	public async allDisabledIn(guild: string): Promise<string[]> {
-		return (await Guild.findOne({ id: guild })).disabledCommands || [];
+		return g.enabledIn(command, channel);
 	}
 
 	public async prefixFor(guild: string): Promise<string> {

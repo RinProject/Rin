@@ -129,10 +129,7 @@ export class Command {
 		}`;
 	}
 
-	public async enabledIn(guild: string | Discord.Guild): Promise<boolean> {
-		return await this.client.enabledIn(
-			this.name.toLowerCase(),
-			typeof guild === 'string' ? guild : guild.id
-		);
+	public async enabledIn(guild: string, channel?: string): Promise<boolean> {
+		return await this.client.enabledIn(guild, this.name.toLowerCase(), channel);
 	}
 }

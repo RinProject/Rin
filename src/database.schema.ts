@@ -24,11 +24,11 @@ export const GuildSchema = new mongoose.Schema({
 		type: String,
 		index: true,
 	},
-	disabledCommands: [
-		{
-			type: String,
-		},
-	],
+	disabledCommands: {
+		default: {},
+		type: Map,
+		of: Object,
+	},
 	customCommands: {
 		default: {},
 		type: Map,
@@ -72,7 +72,45 @@ GuildSchema.methods.logNone = function () {
 	this.eventsLogged = 0;
 };
 
-interface IWarnSchema {
+GuildSchema.methods.enableCommand = function (command: string, channel?: string) {
+	const status = (this as IGuildSchema).disabledCommands.get(command);
+	if (status === undefined) return;
+	if (channel === undefined) (this as IGuildSchema).disabledCommands.delete(command);
+	else {
+		if (status.guild) {
+			throw new Error('Command disabled globally, unable to disable in this channel.');
+		} else {
+			const i = status.channels.indexOf(channel);
+			if (i < 0) return;
+			status.channels.splice(i, 1);
+			(this as IGuildSchema).disabledCommands.set(command, status);
+		}
+	}
+};
+
+GuildSchema.methods.disableCommand = function (command: string, channel?: string) {
+	if (channel === undefined)
+		(this as IGuildSchema).disabledCommands.set(command, { guild: true, channels: [] });
+	else {
+		const status = (this as IGuildSchema).disabledCommands.get(command);
+		if (status === undefined)
+			(this as IGuildSchema).disabledCommands.set(command, {
+				guild: false,
+				channels: [channel],
+			});
+		else if (!status.guild) {
+			status.channels.push(channel);
+			(this as IGuildSchema).disabledCommands.set(command, status);
+		}
+	}
+};
+
+GuildSchema.methods.enabledIn = function (command: string, channel?: string) {
+	const status = (this as IGuildSchema).disabledCommands.get(command);
+	return !(status && (status.guild || (channel && status.channels.includes(channel))));
+};
+
+export interface IWarnSchema {
 	id: string;
 	user: string;
 	moderator: string;
@@ -81,9 +119,13 @@ interface IWarnSchema {
 	active: boolean;
 }
 
+export interface IDisabledCommand {
+	guild: boolean;
+	channels: string[];
+}
 export interface IGuildSchema extends mongoose.Document {
 	id: string;
-	disabledCommands: Array<string>;
+	disabledCommands: Map<string, IDisabledCommand>;
 	customCommands: Map<string, CustomCommand>;
 	reactionRoles: Map<string, string>; // Maps message id + emoji id to role id
 	warnings: IWarnSchema[];
@@ -94,6 +136,9 @@ export interface IGuildSchema extends mongoose.Document {
 	eventLogged(event: LogEvent): boolean;
 	enableLoggingFor(event: LogEvent): void;
 	disableLoggingFor(event: LogEvent): void;
+	disableCommand(command: string, channel?: string): void;
+	enableCommand(command: string, channel?: string): void;
+	enabledIn(command: string, channel?: string): boolean;
 	logAll(): void;
 	logNone(): void;
 }
