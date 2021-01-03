@@ -1,26 +1,16 @@
 module.exports = {
-	async run(message) {
-		if (Math.random() > 0.5)
-			return message.channel.send('', {
-				embed: {
-					title: 'Coin Flipped',
-					description: 'Heads',
-					color: colors.positive,
-				},
-			});
-		else
-			return message.channel.send('', {
-				embed: {
-					title: 'Coin Flipped',
-					description: 'Tails',
-					color: colors.positive,
-				},
-			});
+	async run(message, args, colors) {
+		message.channel.send('', {
+			embed: {
+				title: 'Tossed a coin',
+				description: Math.random() > 0.5 ? 'Heads' : 'Tails',
+				color: colors.success,
+			},
+		});
 	},
+	name: 'CoinFlip',
 	description: 'Returns heads or tails.',
 	detailed: 'Returns heads or tails.',
-	examples: (prefix) => `${prefix}coinflip`,
-	name: 'CoinFlip',
-	perms: null,
-	guildOnly: true,
+	aliases: ['Flip', 'CoinToss', 'Toss'],
+	examples: [(prefix) => `${prefix}flip`],
 };
