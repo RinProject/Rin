@@ -39,11 +39,10 @@ export const GuildSchema = new mongoose.Schema({
 		type: Map,
 		of: String,
 	},
-	warnings: [
-		{
-			type: Object,
-		},
-	],
+	warnings: {
+		type: Array,
+		default: [],
+	},
 	prefix: { type: String },
 	muteRole: { type: String },
 	logChannel: { type: String },
@@ -75,8 +74,12 @@ GuildSchema.methods.logNone = function () {
 GuildSchema.methods.enableCommand = function (command: string, channel?: string) {
 	const status = (this as IGuildSchema).disabledCommands.get(command);
 	if (status === undefined) return;
-	if (channel === undefined) (this as IGuildSchema).disabledCommands.delete(command);
-	else {
+	if (channel === undefined) {
+		if (!status.guild) {
+			(this as IGuildSchema).disabledCommands.delete(command);
+			(this as IGuildSchema).markModified('disabledCommands');
+		}
+	} else {
 		if (status.guild) {
 			throw new Error('Command disabled globally, unable to disable in this channel.');
 		} else {
@@ -84,23 +87,27 @@ GuildSchema.methods.enableCommand = function (command: string, channel?: string)
 			if (i < 0) return;
 			status.channels.splice(i, 1);
 			(this as IGuildSchema).disabledCommands.set(command, status);
+			(this as IGuildSchema).markModified('disabledCommands');
 		}
 	}
 };
 
 GuildSchema.methods.disableCommand = function (command: string, channel?: string) {
-	if (channel === undefined)
+	if (channel === undefined) {
 		(this as IGuildSchema).disabledCommands.set(command, { guild: true, channels: [] });
-	else {
+		(this as IGuildSchema).markModified('disabledCommands');
+	} else {
 		const status = (this as IGuildSchema).disabledCommands.get(command);
-		if (status === undefined)
+		if (status === undefined) {
 			(this as IGuildSchema).disabledCommands.set(command, {
 				guild: false,
 				channels: [channel],
 			});
-		else if (!status.guild) {
+			(this as IGuildSchema).markModified('disabledCommands');
+		} else if (!status.guild) {
 			status.channels.push(channel);
 			(this as IGuildSchema).disabledCommands.set(command, status);
+			(this as IGuildSchema).markModified('disabledCommands');
 		}
 	}
 };

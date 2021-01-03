@@ -34,17 +34,13 @@ async function fetchCommand(uri: string): Promise<string> {
 
 import { Command } from '../command';
 import { createCommand, deleteCommand } from '../customCommands';
+import customCommands = require('./customCommands');
+const listCommands = customCommands.run;
 
 export = new Command({
 	run: async function (message, args, colors, prompt) {
 		if (!args[1]) {
-			message.channel.send({
-				embed: {
-					title: 'Custom Command List',
-					description:
-						'If you wish too see a list of custom commands use the `customCommand` command.',
-				},
-			});
+			listCommands(message, args, colors);
 		} else
 			switch (args[1].toLowerCase()) {
 				case 'add':
@@ -58,36 +54,47 @@ export = new Command({
 							color: colors.base,
 						},
 					});
-					const commandMessage = await prompt({
+					prompt({
 						user: message.author.id,
 						channel: message.channel.id,
-					});
+					})
+						.then(async (commandMessage) => {
+							const command = commandMessage.content.match(
+								/^https:\/\/gist.githubusercontent.com\/.*?\/.*?\/raw\/(.*?\/.*\.json)?$/
+							)
+								? await fetchCommand(commandMessage.content)
+								: commandMessage.content;
 
-					const command = commandMessage.content.match(
-						/^https:\/\/gist.githubusercontent.com\/.*?\/.*?\/raw\/(.*?\/.*\.json)?$/
-					)
-						? await fetchCommand(commandMessage.content)
-						: commandMessage.content;
-
-					createCommand(JSON.parse(command), commandMessage.guild.id)
-						.then((command) =>
+							createCommand(command, commandMessage.guild.id)
+								.then((command) =>
+									message.channel.send({
+										embed: {
+											title: 'Command created',
+											description: `${command.name} successfully created.`,
+											color: colors.success,
+										},
+									})
+								)
+								.catch((e) =>
+									message.channel.send({
+										embed: {
+											title: 'An error occurred, command not created',
+											description: e.message || 'Unknown error.',
+											color: colors.error,
+										},
+									})
+								);
+						})
+						.catch(() => {
 							message.channel.send({
 								embed: {
-									title: 'Command created',
-									description: `${command.name} successfully created.`,
-									color: colors.success,
-								},
-							})
-						)
-						.catch((e) =>
-							message.channel.send({
-								embed: {
-									title: 'An error occurred, command not created',
-									description: e.message || e,
+									title: 'Custom command creation timed out',
+									description: 'If you still wish to create one rerun the command and send it.',
 									color: colors.error,
 								},
-							})
-						);
+							});
+						});
+
 					break;
 				}
 				case 'remove':
@@ -126,9 +133,17 @@ export = new Command({
 				}
 			}
 	},
-	description: 'Changes or displays the servers prefix.',
-	detailed: 'Change the prefix of a server or reset it.',
-	examples: (prefix) => `${prefix}prefix ;`,
+	aliases: ['Custom'],
+	description: 'Allows for the creation and removal of custom commands.',
+	detailed:
+		"Let's you create and or remove custom commands, for documentation go [here](https://github.com/RinProject/Rin/blob/master/docs/custom_commands.md).",
+	permissions: ['ADMINISTRATOR'],
+	examples: [
+		(prefix) => `${prefix}customcommand add`,
+		(prefix) => `${prefix}customcommand remove`,
+		(prefix) => `${prefix}custom create`,
+		(prefix) => `${prefix}custom delete`,
+	],
 	name: 'CustomCommand',
 	guildOnly: true,
 });

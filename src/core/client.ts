@@ -349,7 +349,7 @@ export class Client extends Discord.Client {
 
 	public async setPrefix(guild: string, prefix: string): Promise<void> {
 		const g = await Guild.findOne({ id: guild });
-		g.update({ prefix: prefix.toLowerCase() });
+		g.prefix = prefix.toLowerCase();
 		g.save();
 	}
 

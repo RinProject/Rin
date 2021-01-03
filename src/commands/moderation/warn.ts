@@ -7,7 +7,10 @@ const warn: command = {
 	async run(message, args, colors) {
 		const member =
 			message.mentions.members.first() || (await message.guild.members.cache.get(args[1]));
-		const reason = args.slice(2).join(' ');
+		const reason = args
+			.slice(2)
+			.join(' ')
+			.replace(/^\s+|\s+$/g, '');
 		const g = await Guild.findOne({ id: message.guild.id });
 
 		if (reason && member) {
@@ -88,8 +91,8 @@ const warn: command = {
 		} else
 			message.channel.send({
 				embed: {
-					title: 'Incorrect command usage',
-					description: `Correct syntax is:\n\`${this.examples}\``,
+					title: 'Incorrect input provided',
+					description: `\`\`\`${this.examples}\n\`\`\``,
 					color: colors.error,
 				},
 			});

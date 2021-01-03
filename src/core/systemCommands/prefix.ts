@@ -6,7 +6,7 @@ export = new Command({
 			message.channel.send({
 				embed: {
 					title: 'Current prefix is',
-					description: message.client.prefixFor(message.guild.id),
+					description: await message.client.prefixFor(message.guild.id),
 					color: colors.base,
 				},
 			});

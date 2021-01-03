@@ -377,6 +377,11 @@ export async function fetchCommands(guild: string): Promise<Map<string, CustomCo
 	return g.customCommands;
 }
 
+export async function fetchCommandList(guild: string): Promise<CustomCommand[]> {
+	const g = await Guild.findOne({ id: guild });
+	return Array.from(g.customCommands, (custom) => custom[1]);
+}
+
 export async function fetchCommand(guild: string, command: string): Promise<CustomCommand> {
 	const g = await Guild.findOne({ id: guild });
 	return g.customCommands.get(command);
@@ -390,10 +395,8 @@ const validEmbed = (embed: Embed) =>
 	(embed.image && embed.image.url) ||
 	(embed.image && typeof embed.image == 'string');
 
-export async function createCommand(
-	command: CustomCommandResolvable,
-	guild: string
-): Promise<CustomCommand> {
+export async function createCommand(commandString: string, guild: string): Promise<CustomCommand> {
+	const command: CustomCommandResolvable = JSON.parse(commandString);
 	if (!command) throw new Error('Incomplete command');
 	const embed = processEmbed(command.embed);
 	if (!validEmbed(embed)) throw new Error('Incomplete command');
