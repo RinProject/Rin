@@ -9,7 +9,8 @@
 		"build": "tsc",
 		"build-dev": "tsc --watch true",
 		"lint": "eslint ./src",
-		"prettify": "prettier --write ./src"
+		"prettify": "prettier --write ./src",
+		"docs": "node dist/docsBuilder"
 	},
 	"repository": {
 		"type": "git",
@@ -22,7 +23,6 @@
 	},
 	"homepage": "https://github.com/RinProject/Rin#readme",
 	"dependencies": {
-		"canvas": "^2.6.1",
 		"discord.js": "^12.2.0",
 		"mongoose": "^5.10.7"
 	},
